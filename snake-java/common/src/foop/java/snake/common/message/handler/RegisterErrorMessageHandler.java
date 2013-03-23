@@ -1,0 +1,37 @@
+package foop.java.snake.common.message.handler;
+
+import java.net.SocketAddress;
+
+import foop.java.snake.common.message.exception.NoMessageHandlerFoundException;
+import foop.java.snake.common.message.*;
+
+/**
+ * Handles messages sent by the server to client to indicate an error in the registration process.
+ *
+ * @author Florian Eckerstorfer <florian@eckerstorfer.co>
+ */
+public class RegisterErrorMessageHandler implements MessageHandlerInterface
+{
+    public RegisterErrorMessageHandler()
+    {
+    }
+
+    /**
+     * Handles a message sent by the client to the server to register a new player.
+     *
+     * @param  rawMessage
+     * @param  address
+     * @throws NoMessageHandlerFoundException when no handler can be found
+     */
+    public void handle(MessageInterface rawMessage, SocketAddress address)
+        throws NoMessageHandlerFoundException
+    {
+        if (!(rawMessage instanceof RegisterErrorMessage)) {
+            throw new NoMessageHandlerFoundException("This is not a RegisterErrorMessage.");
+        }
+        RegisterErrorMessage message = (RegisterErrorMessage)rawMessage;
+
+        System.out.println("Registration on server failed with the following error:\n");
+        System.out.println(message.getMessage());
+    }
+}

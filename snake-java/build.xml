@@ -59,9 +59,15 @@
         </jar>
     </target>
 
-    <target name="run-client" depends="dist-client">
+    <target name="run-client-1" depends="dist-client">
         <java jar="${client.jar}" fork="true">
-            <arg line="'Player 1' localhost 9400" />
+            <arg line="'Player 1' 9501 localhost 9400" />
+        </java>
+    </target>
+
+    <target name="run-client-2" depends="dist-client">
+        <java jar="${client.jar}" fork="true">
+            <arg line="'Player 2' 9502 localhost 9400" />
         </java>
     </target>
 

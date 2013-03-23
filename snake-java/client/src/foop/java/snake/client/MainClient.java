@@ -1,11 +1,13 @@
 package foop.java.snake.client;
 
 import java.net.UnknownHostException;
+import java.net.InetSocketAddress;
 import java.io.IOException;
 
 import foop.java.snake.common.message.*;
-
-import foop.java.snake.client.connection.*;
+import foop.java.snake.common.message.handler.*;
+import foop.java.snake.common.tcp.TCPClient;
+import foop.java.snake.common.tcp.TCPServer;
 
 /**
  * MainClient
@@ -23,7 +25,7 @@ class MainClient
     public static void main(String[] args)
     {
         System.out.println("Hello Client!");
-        if (args.length < 3) {
+        if (args.length < 4) {
             usage();
         }
 
@@ -38,11 +40,12 @@ class MainClient
      */
     protected static void usage()
     {
-        System.out.println("Usage: java -jar snake-client.jar PLAYER_NAME SERVER SERVER_PORT");
+        System.out.println("Usage: java -jar snake-client.jar PLAYER_NAME PORT SERVER SERVER_PORT");
         System.exit(0);
     }
 
     protected String playerName;
+    protected int port;
     protected String server;
     protected int serverPort;
 
@@ -55,8 +58,9 @@ class MainClient
     public MainClient(String[] args)
     {
         playerName = args[0];
-        server = args[1];
-        serverPort = Integer.parseInt(args[2]);
+        port = Integer.parseInt(args[1]);
+        server = args[2];
+        serverPort = Integer.parseInt(args[3]);
     }
 
     /**
@@ -65,9 +69,25 @@ class MainClient
     public void run()
     {
         try {
-            TCPClient client = new TCPClient(server, serverPort);
-            client.sendMessage(new RegisterMessage(playerName));
+            System.out.println("listen to port " + port);
+            TCPClient client = new TCPClient(new InetSocketAddress(server, serverPort));
+            client.sendMessage(new RegisterMessage(playerName, port));
             client.close();
+        } catch (Exception ex) {
+            exitWithError(ex);
+        }
+
+        try {
+            MessageHandlerRegistry messageHandlerRegistry = new MessageHandlerRegistry();
+            messageHandlerRegistry.registerHandler(
+                RegisterErrorMessage.TYPE, new RegisterErrorMessageHandler()
+            );
+            messageHandlerRegistry.registerHandler(
+                RegisterAckMessage.TYPE, new RegisterAckMessageHandler()
+            );
+
+            TCPServer server = new TCPServer(port, messageHandlerRegistry);
+            server.start();
         } catch (Exception ex) {
             exitWithError(ex);
         }
@@ -96,6 +116,11 @@ class MainClient
         System.exit(0);
     }
 
+    /**
+     * Exists the client if there was another problem.
+     *
+     * @param ex
+     */
     protected void exitWithError(Exception ex)
     {
         System.out.println("Ouch! Something went wrong:\n" + ex.getMessage());

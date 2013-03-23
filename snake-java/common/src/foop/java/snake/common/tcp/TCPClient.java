@@ -1,4 +1,4 @@
-package foop.java.snake.client.connection;
+package foop.java.snake.common.tcp;
 
 import java.io.*;
 import java.net.*;
@@ -14,10 +14,11 @@ public class TCPClient
 {
     protected Socket socket;
 
-    public TCPClient(String server, int serverPort)
+    public TCPClient(SocketAddress address)
         throws UnknownHostException, IOException
     {
-        socket = new Socket(server, serverPort);
+        socket = new Socket();
+        socket.connect(address);
     }
 
     /**

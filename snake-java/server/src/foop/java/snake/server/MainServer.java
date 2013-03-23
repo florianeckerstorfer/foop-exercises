@@ -2,7 +2,12 @@ package foop.java.snake.server;
 
 import java.io.IOException;
 
-import foop.java.snake.server.connection.*;
+import foop.java.snake.common.message.*;
+import foop.java.snake.common.message.handler.*;
+
+import foop.java.snake.common.tcp.TCPServer;
+import foop.java.snake.common.tcp.TCPClientRegistry;
+import foop.java.snake.common.player.PlayerRegistry;
 
 /**
  * MainServer
@@ -51,8 +56,16 @@ class MainServer
      */
     public void run()
     {
+        PlayerRegistry playerRegistry = new PlayerRegistry();
+        TCPClientRegistry clientRegistry = new TCPClientRegistry();
+
         try {
-            TCPServer server = new TCPServer(port);
+            MessageHandlerRegistry messageHandlerRegistry = new MessageHandlerRegistry();
+            messageHandlerRegistry.registerHandler(
+                RegisterMessage.TYPE, new RegisterMessageHandler(playerRegistry, clientRegistry)
+            );
+
+            TCPServer server = new TCPServer(port, messageHandlerRegistry);
             server.start();
         } catch (Exception ex) {
             exitWithError(ex);
