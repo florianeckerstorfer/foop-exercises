@@ -8,11 +8,22 @@ package foop.java.snake.common.message;
 public class RegisterMessage implements MessageInterface
 {
     public static final long serialVersionUID = 0;
-    protected static int MESSAGE_TYPE = 1;
+    public static final int TYPE = 1;
+
     protected String playerName;
 
     public RegisterMessage(String playerName)
     {
         this.playerName = playerName;
+    }
+
+    public String getPlayerName()
+    {
+        return playerName;
+    }
+
+    public int getType()
+    {
+        return TYPE;
     }
 }

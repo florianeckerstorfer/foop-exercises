@@ -9,4 +9,10 @@ import java.io.Serializable;
  */
 public interface MessageInterface extends Serializable
 {
+    /**
+     * Returns the type of message.
+     *
+     * @return
+     */
+    public int getType();
 }

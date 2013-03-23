@@ -3,6 +3,10 @@ package foop.java.snake.server.connection;
 import java.io.*;
 import java.net.*;
 
+import foop.java.snake.common.message.exception.NoMessageHandlerFoundException;
+import foop.java.snake.common.message.*;
+import foop.java.snake.common.message.handler.*;
+
 /**
  * TCPServer
  *
@@ -24,12 +28,19 @@ public class TCPServer
         System.out.println("Start TCPServer");
         socket = new ServerSocket(port);
 
+        MessageHandlerRegistry messageHandlerRegistry = new MessageHandlerRegistry();
+        messageHandlerRegistry.registerHandler(RegisterMessage.TYPE, new RegisterMessageHandler());
+
         while (true) {
             Socket connectionSocket = socket.accept();
             ObjectInputStream inputStream = new ObjectInputStream(connectionSocket.getInputStream());
 
-            Object obj = inputStream.readObject();
-            System.out.println("Received object: " + obj.getClass().getName() + '\n');
+            MessageInterface message = (MessageInterface)inputStream.readObject();
+            try {
+                messageHandlerRegistry.handle(message);
+            } catch (NoMessageHandlerFoundException ex) {
+                System.out.println("Couldn\'t find message handler:\n" + ex.getMessage());
+            }
         }
     }
 
