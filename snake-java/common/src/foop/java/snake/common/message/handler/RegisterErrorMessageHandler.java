@@ -26,7 +26,7 @@ public class RegisterErrorMessageHandler implements MessageHandlerInterface
     public void handle(MessageInterface rawMessage, SocketAddress address)
         throws NoMessageHandlerFoundException
     {
-        if (!(rawMessage instanceof RegisterErrorMessage)) {
+        if (rawMessage.getType() != RegisterErrorMessage.TYPE) {
             throw new NoMessageHandlerFoundException("This is not a RegisterErrorMessage.");
         }
         RegisterErrorMessage message = (RegisterErrorMessage)rawMessage;

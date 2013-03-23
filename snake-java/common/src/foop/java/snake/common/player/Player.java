@@ -7,7 +7,7 @@ import java.net.SocketAddress;
  *
  * @author Florian Eckerstorfer <florian@eckerstorfer.co>
  */
-class Player
+public class Player
 {
     protected String name;
     protected SocketAddress address;

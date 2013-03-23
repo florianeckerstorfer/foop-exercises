@@ -66,7 +66,7 @@ class MainServer
             );
 
             TCPServer server = new TCPServer(port, messageHandlerRegistry);
-            server.start();
+            (new Thread(server)).start();
         } catch (Exception ex) {
             exitWithError(ex);
         }

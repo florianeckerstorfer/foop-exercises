@@ -8,7 +8,7 @@ package foop.java.snake.common.message;
 public class RegisterAckMessage implements MessageInterface
 {
     public static final long serialVersionUID = 0;
-    public static final int TYPE = 2;
+    public static final int TYPE = 3;
 
     public RegisterAckMessage()
     {

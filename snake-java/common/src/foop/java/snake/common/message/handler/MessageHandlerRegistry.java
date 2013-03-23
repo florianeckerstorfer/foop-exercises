@@ -23,6 +23,7 @@ public class MessageHandlerRegistry implements MessageHandlerInterface
      */
     public void registerHandler(int type, MessageHandlerInterface handler)
     {
+        System.out.println("registerHandler: " + type);
         handlers.put(type, handler);
     }
 
@@ -40,7 +41,7 @@ public class MessageHandlerRegistry implements MessageHandlerInterface
         if (handlers.containsKey(type)) {
             handlers.get(type).handle(message, address);
         } else {
-            throw new NoMessageHandlerFoundException();
+            throw new NoMessageHandlerFoundException("Unkown message type \""+type+"\".");
         }
     }
 }

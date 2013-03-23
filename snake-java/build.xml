@@ -71,6 +71,12 @@
         </java>
     </target>
 
+    <target name="run-client-2b" depends="dist-client">
+        <java jar="${client.jar}" fork="true">
+            <arg line="'Player 2' 9503 localhost 9400" />
+        </java>
+    </target>
+
     <target name="init-server">
         <tstamp/>
         <mkdir dir="${server.build-dir}" />

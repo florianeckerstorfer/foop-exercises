@@ -12,7 +12,7 @@ import foop.java.snake.common.message.handler.*;
  *
  * @author Florian Eckerstorfer <florian@eckerstorfer.co>
  */
-public class TCPServer
+public class TCPServer implements Runnable
 {
     protected int port;
     protected ServerSocket socket;
@@ -30,22 +30,26 @@ public class TCPServer
      * @throws IOException            when an IO errors occurs
      * @throws ClassNotFoundException when a message can't be converted into an object
      */
-    public void start()
-        throws IOException, ClassNotFoundException
+    public void run()
     {
-        System.out.println("Start TCPServer");
-        socket = new ServerSocket(port);
+        System.out.println("Start TCPServer at port " + port + ".");
 
-        while (true) {
-            Socket connectionSocket = socket.accept();
-            ObjectInputStream inputStream = new ObjectInputStream(connectionSocket.getInputStream());
+        try {
+            socket = new ServerSocket(port);
 
-            MessageInterface message = (MessageInterface)inputStream.readObject();
-            try {
-                messageHandlerRegistry.handle(message, connectionSocket.getRemoteSocketAddress());
-            } catch (NoMessageHandlerFoundException ex) {
-                System.out.println("Couldn\'t find message handler:\n" + ex.getMessage());
+            while (true) {
+                Socket connectionSocket = socket.accept();
+                ObjectInputStream inputStream = new ObjectInputStream(connectionSocket.getInputStream());
+
+                MessageInterface message = (MessageInterface)inputStream.readObject();
+                try {
+                    messageHandlerRegistry.handle(message, connectionSocket.getRemoteSocketAddress());
+                } catch (NoMessageHandlerFoundException ex) {
+                    System.out.println("Couldn\'t find message handler:\n> " + ex.getMessage());
+                }
             }
+        } catch (Exception ex) {
+            exitWithError(ex);
         }
     }
 
@@ -58,5 +62,39 @@ public class TCPServer
         throws IOException
     {
         socket.close();
+    }
+
+    /**
+     * Exits the client if the given hostname is not valid.
+     *
+     * @param ex
+     */
+    protected void exitWithError(UnknownHostException ex)
+    {
+        System.out.println("Unknown host:\n> "+ex.getMessage());
+        System.exit(0);
+    }
+
+    /**
+     * Exists the client if there were problems with the connection.
+     *
+     * @param ex
+     */
+    protected void exitWithError(IOException ex)
+    {
+        System.out.println("There was something wrong with the connection to the server:");
+        System.out.println("> "+ex.getMessage());
+        System.exit(0);
+    }
+
+    /**
+     * Exists the client if there was another problem.
+     *
+     * @param ex
+     */
+    protected void exitWithError(Exception ex)
+    {
+        System.out.println("Ouch! Something went wrong:\n> " + ex.getMessage());
+        System.exit(0);
     }
 }

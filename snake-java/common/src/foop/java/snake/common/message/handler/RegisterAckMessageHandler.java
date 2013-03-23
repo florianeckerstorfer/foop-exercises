@@ -26,7 +26,7 @@ public class RegisterAckMessageHandler implements MessageHandlerInterface
     public void handle(MessageInterface rawMessage, SocketAddress address)
         throws NoMessageHandlerFoundException
     {
-        if (!(rawMessage instanceof RegisterAckMessage)) {
+        if (rawMessage.getType() != RegisterAckMessage.TYPE) {
             throw new NoMessageHandlerFoundException("This is not a RegisterAckMessage.");
         }
         RegisterAckMessage message = (RegisterAckMessage)rawMessage;

@@ -69,15 +69,6 @@ class MainClient
     public void run()
     {
         try {
-            System.out.println("listen to port " + port);
-            TCPClient client = new TCPClient(new InetSocketAddress(server, serverPort));
-            client.sendMessage(new RegisterMessage(playerName, port));
-            client.close();
-        } catch (Exception ex) {
-            exitWithError(ex);
-        }
-
-        try {
             MessageHandlerRegistry messageHandlerRegistry = new MessageHandlerRegistry();
             messageHandlerRegistry.registerHandler(
                 RegisterErrorMessage.TYPE, new RegisterErrorMessageHandler()
@@ -87,7 +78,16 @@ class MainClient
             );
 
             TCPServer server = new TCPServer(port, messageHandlerRegistry);
-            server.start();
+            (new Thread(server)).start();
+        } catch (Exception ex) {
+            exitWithError(ex);
+        }
+
+        try {
+            System.out.println("listen to port " + port);
+            TCPClient client = new TCPClient(new InetSocketAddress(server, serverPort));
+            client.sendMessage(new RegisterMessage(playerName, port));
+            client.close();
         } catch (Exception ex) {
             exitWithError(ex);
         }
