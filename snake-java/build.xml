@@ -1,32 +1,58 @@
 <project name="foop-snake-java" default='compile' basedir="." >
-    <property name="project-name" value="foop-snake-java" />
 
-    <property name="client-build-dir" location="client/bin" />
-    <property name="client-dist-dir" location="client/dist" />
-    <property name="client-source-dir" location="client/src" />
 
-    <property name="server-build-dir" location="server/bin" />
-    <property name="server-dist-dir" location="server/dist" />
-    <property name="server-source-dir" location="server/src" />
+    <property name="common.build-dir" location="common/bin" />
+    <property name="common.source-dir" location="common/src" />
+
+    <property name="client.name" value="snake-client" />
+    <property name="client.build-dir" location="client/bin" />
+    <property name="client.dist-dir" location="client/dist" />
+    <property name="client.source-dir" location="client/src" />
+    <property name="client.jar" location="${client.dist-dir}/lib/${client.name}.jar" />
+
+    <property name="server.name" value="snake-server" />
+    <property name="server.build-dir" location="server/bin" />
+    <property name="server.dist-dir" location="server/dist" />
+    <property name="server.source-dir" location="server/src" />
+    <property name="server.jar" location="${server.dist-dir}/lib/${server.name}.jar" />
+
+    <target name="init-common">
+        <mkdir dir="${common.build-dir}" />
+    </target>
+
+    <target name="clean-common">
+        <delete dir="${common.build-dir}" />
+        <mkdir dir="${common.build-dir}" />
+    </target>
+
+    <target name="compile-common" depends="init-common">
+        <javac srcdir="${common.source-dir}" destdir="${common.build-dir}" includeantruntime="false" />
+        <copy todir="${client.build-dir}">
+            <fileset dir="${common.build-dir}" />
+        </copy>
+        <copy todir="${server.build-dir}">
+            <fileset dir="${common.build-dir}" />
+        </copy>
+    </target>
 
     <target name="init-client">
         <tstamp/>
-        <mkdir dir="${client-build-dir}" />
-        <mkdir dir="${client-dist-dir}" />
+        <mkdir dir="${client.build-dir}" />
+        <mkdir dir="${client.dist-dir}" />
     </target>
 
     <target name="clean-client">
-        <delete dir="${client-build-dir}" />
-        <mkdir dir="${client-build-dir}" />
+        <delete dir="${client.build-dir}" />
+        <mkdir dir="${client.build-dir}" />
     </target>
 
-    <target name="compile-client" depends="init-client">
-        <javac srcdir="${client-source-dir}" destdir="${client-build-dir}" includeantruntime="false" />
+    <target name="compile-client" depends="init-client, compile-common">
+        <javac srcdir="${client.source-dir}" destdir="${client.build-dir}" includeantruntime="false" />
     </target>
 
     <target name="dist-client" depends="compile-client">
-        <mkdir dir="${client-dist-dir}/lib"/>
-        <jar jarfile="${client-dist-dir}/lib/${project-name}.jar" basedir="${client-build-dir}">
+        <mkdir dir="${client.dist-dir}/lib"/>
+        <jar jarfile="${client.jar}" basedir="${client.build-dir}">
             <manifest>
                 <attribute name="Main-Class" value="foop.java.snake.client.MainClient" />
             </manifest>
@@ -34,30 +60,29 @@
     </target>
 
     <target name="run-client" depends="dist-client">
-        <java jar="${client-dist-dir}/lib/${project-name}.jar" fork="true">
-            <arg line="localhost" />
-            <arg line="9400" />
+        <java jar="${client.jar}" fork="true">
+            <arg line="'Player 1' localhost 9400" />
         </java>
     </target>
 
     <target name="init-server">
         <tstamp/>
-        <mkdir dir="${server-build-dir}" />
-        <mkdir dir="${server-dist-dir}" />
+        <mkdir dir="${server.build-dir}" />
+        <mkdir dir="${server.dist-dir}" />
     </target>
 
     <target name="clean-server">
-        <delete dir="${server-build-dir}" />
-        <mkdir dir="${server-build-dir}" />
+        <delete dir="${server.build-dir}" />
+        <mkdir dir="${server.build-dir}" />
     </target>
 
-    <target name="compile-server" depends="init-server">
-        <javac srcdir="${server-source-dir}" destdir="${server-build-dir}" includeantruntime="false" />
+    <target name="compile-server" depends="init-server, compile-common">
+        <javac srcdir="${server.source-dir}" destdir="${server.build-dir}" includeantruntime="false" />
     </target>
 
     <target name="dist-server" depends="compile-server">
-        <mkdir dir="${server-dist-dir}/lib"/>
-        <jar jarfile="${server-dist-dir}/lib/${project-name}.jar" basedir="${server-build-dir}">
+        <mkdir dir="${server.dist-dir}/lib"/>
+        <jar jarfile="${server.jar}" basedir="${server.build-dir}">
             <manifest>
                 <attribute name="Main-Class" value="foop.java.snake.server.MainServer" />
             </manifest>
@@ -65,9 +90,11 @@
     </target>
 
     <target name="run-server" depends="dist-server">
-        <java jar="${server-dist-dir}/lib/${project-name}.jar" fork="true">
+        <java jar="${server.jar}" fork="true">
             <arg line="9400" />
         </java>
     </target>
+
+    <target name="clean" depends="clean-client, clean-server, clean-common" />
 
 </project>

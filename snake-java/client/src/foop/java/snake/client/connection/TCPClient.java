@@ -3,20 +3,38 @@ package foop.java.snake.client.connection;
 import java.io.*;
 import java.net.*;
 
+import foop.java.snake.common.message.MessageInterface;
+
+/**
+ * TCPClient
+ *
+ * @author Florian Eckerstorfer <florian@eckerstorfer.co>
+ */
 public class TCPClient
 {
     protected Socket socket;
 
-    public TCPClient(String server, int serverPort) throws Exception
+    public TCPClient(String server, int serverPort)
+        throws UnknownHostException, IOException
     {
         socket = new Socket(server, serverPort);
-        DataOutputStream outputStream = new DataOutputStream(socket.getOutputStream());
-        BufferedReader inputStream = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-        outputStream.writeBytes("Hello Server! How do you do?\n");
-        System.out.println(inputStream.readLine());
     }
 
-    public void close() throws Exception
+    /**
+     * Sends a message to the server.
+     *
+     * @param message
+     */
+    public void sendMessage(MessageInterface message)
+        throws IOException
+    {
+        ObjectOutputStream outputStream = new ObjectOutputStream(socket.getOutputStream());
+        outputStream.writeObject(message);
+        outputStream.close();
+    }
+
+    public void close()
+        throws IOException
     {
         socket.close();
     }
