@@ -34,7 +34,10 @@
     </target>
 
     <target name="run-client" depends="dist-client">
-        <java jar="${client-dist-dir}/lib/${project-name}.jar" fork="true" />
+        <java jar="${client-dist-dir}/lib/${project-name}.jar" fork="true">
+            <arg line="localhost" />
+            <arg line="9400" />
+        </java>
     </target>
 
     <target name="init-server">
@@ -62,7 +65,9 @@
     </target>
 
     <target name="run-server" depends="dist-server">
-        <java jar="${server-dist-dir}/lib/${project-name}.jar" fork="true" />
+        <java jar="${server-dist-dir}/lib/${project-name}.jar" fork="true">
+            <arg line="9400" />
+        </java>
     </target>
 
 </project>
