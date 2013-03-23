@@ -1,0 +1,68 @@
+<project name="foop-snake-java" default='compile' basedir="." >
+    <property name="project-name" value="foop-snake-java" />
+
+    <property name="client-build-dir" location="client/bin" />
+    <property name="client-dist-dir" location="client/dist" />
+    <property name="client-source-dir" location="client/src" />
+
+    <property name="server-build-dir" location="server/bin" />
+    <property name="server-dist-dir" location="server/dist" />
+    <property name="server-source-dir" location="server/src" />
+
+    <target name="init-client">
+        <tstamp/>
+        <mkdir dir="${client-build-dir}" />
+        <mkdir dir="${client-dist-dir}" />
+    </target>
+
+    <target name="clean-client">
+        <delete dir="${client-build-dir}" />
+        <mkdir dir="${client-build-dir}" />
+    </target>
+
+    <target name="compile-client" depends="init-client">
+        <javac srcdir="${client-source-dir}" destdir="${client-build-dir}" includeantruntime="false" />
+    </target>
+
+    <target name="dist-client" depends="compile-client">
+        <mkdir dir="${client-dist-dir}/lib"/>
+        <jar jarfile="${client-dist-dir}/lib/${project-name}.jar" basedir="${client-build-dir}">
+            <manifest>
+                <attribute name="Main-Class" value="foop.java.snake.client.MainClient" />
+            </manifest>
+        </jar>
+    </target>
+
+    <target name="run-client" depends="dist-client">
+        <java jar="${client-dist-dir}/lib/${project-name}.jar" fork="true" />
+    </target>
+
+    <target name="init-server">
+        <tstamp/>
+        <mkdir dir="${server-build-dir}" />
+        <mkdir dir="${server-dist-dir}" />
+    </target>
+
+    <target name="clean-server">
+        <delete dir="${server-build-dir}" />
+        <mkdir dir="${server-build-dir}" />
+    </target>
+
+    <target name="compile-server" depends="init-server">
+        <javac srcdir="${server-source-dir}" destdir="${server-build-dir}" includeantruntime="false" />
+    </target>
+
+    <target name="dist-server" depends="compile-server">
+        <mkdir dir="${server-dist-dir}/lib"/>
+        <jar jarfile="${server-dist-dir}/lib/${project-name}.jar" basedir="${server-build-dir}">
+            <manifest>
+                <attribute name="Main-Class" value="foop.java.snake.server.MainServer" />
+            </manifest>
+        </jar>
+    </target>
+
+    <target name="run-server" depends="dist-server">
+        <java jar="${server-dist-dir}/lib/${project-name}.jar" fork="true" />
+    </target>
+
+</project>
