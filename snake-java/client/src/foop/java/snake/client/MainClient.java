@@ -16,6 +16,9 @@ import foop.java.snake.common.tcp.TCPServer;
  */
 class MainClient
 {
+	
+	private TCPClient client;
+	
     /**
      * Client main method.
      *
@@ -85,9 +88,8 @@ class MainClient
 
         try {
             System.out.println("listen to port " + port);
-            TCPClient client = new TCPClient(new InetSocketAddress(server, serverPort));
+            client = new TCPClient(new InetSocketAddress(server, serverPort));
             client.sendMessage(new RegisterMessage(playerName, port));
-            client.close();
         } catch (Exception ex) {
             exitWithError(ex);
         }
