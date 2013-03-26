@@ -16,7 +16,12 @@
     <property name="server.source-dir" location="server/src" />
     <property name="server.jar" location="${server.dist-dir}/lib/${server.name}.jar" />
 
-    <target name="init-common">
+
+	<!-- default target, compile all -->
+	<target name="compile" depends="compile-server, compile-client">
+    </target>
+
+	<target name="init-common">
         <mkdir dir="${common.build-dir}" />
     </target>
 
