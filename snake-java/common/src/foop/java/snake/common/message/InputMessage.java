@@ -8,7 +8,7 @@ package foop.java.snake.common.message;
 public class InputMessage implements MessageInterface {
 
 	private static final long serialVersionUID = 1;
-    public static final int TYPE = 1;
+    public static final int TYPE = 4;
 
 	public enum Keycode {
 		UP, DOWN, LEFT, RIGHT
