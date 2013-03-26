@@ -12,3 +12,11 @@
 *.jar
 *.war
 *.ear
+
+# IntelliJ files
+*.iml
+*.ipr
+*.iws
+
+# Mac files
+*.DS_store
