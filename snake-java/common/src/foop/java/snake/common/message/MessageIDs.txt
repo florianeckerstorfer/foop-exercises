@@ -1,0 +1,11 @@
+Created to track the message-IDs
+================================
+
+ID		Message-Class
+1		RegisterMessage
+2		RegisterErrorMessage
+3		RegisterAckMessage
+4		InputMessage
+5		UnregisterMessage
+99		PrioChangedMessage
+100		BoardMessage

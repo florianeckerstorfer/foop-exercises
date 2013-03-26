@@ -25,6 +25,18 @@ public class PlayerRegistry
     }
 
     /**
+     * Removes a player from the registry.
+     *
+     * @param  player
+     * @return
+     */
+    public PlayerRegistry removesPlayer(Player player)
+    {
+        players.remove(player);
+        return this;
+    }
+
+    /**
      * Returns if a player with the given name exists.
      *
      * @param  name

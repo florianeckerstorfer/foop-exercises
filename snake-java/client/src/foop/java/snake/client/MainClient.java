@@ -5,6 +5,7 @@ import java.net.InetSocketAddress;
 import java.io.IOException;
 
 import foop.java.snake.common.message.*;
+import foop.java.snake.common.board.*;
 import foop.java.snake.common.message.handler.*;
 import foop.java.snake.common.tcp.TCPClient;
 import foop.java.snake.common.tcp.TCPServer;
@@ -65,7 +66,30 @@ class MainClient
         server = args[2];
         serverPort = Integer.parseInt(args[3]);
     }
-
+    
+    /*
+     * Registers all the different handlers
+     * @param handerRegistry registry to use
+     * @exception Exception, welche immer das auch sein mag ;-) 
+     */
+    public void registerHandlers(MessageHandlerRegistry handlerRegistry) throws Exception{
+        
+        handlerRegistry.registerHandler(
+            RegisterErrorMessage.TYPE, new RegisterErrorMessageHandler()
+        );
+        
+        handlerRegistry.registerHandler(
+            RegisterAckMessage.TYPE, new RegisterAckMessageHandler()
+        );
+        
+        handlerRegistry.registerHandler(
+                BoardMessage.TYPE, new BoardMessageHandler()
+        );
+        
+        handlerRegistry.registerHandler(
+                PrioChangeMessage.TYPE, new PrioChangeMessageHandler()
+        );
+    }
     /**
      * Runs the client.
      */
@@ -73,12 +97,8 @@ class MainClient
     {
         try {
             MessageHandlerRegistry messageHandlerRegistry = new MessageHandlerRegistry();
-            messageHandlerRegistry.registerHandler(
-                RegisterErrorMessage.TYPE, new RegisterErrorMessageHandler()
-            );
-            messageHandlerRegistry.registerHandler(
-                RegisterAckMessage.TYPE, new RegisterAckMessageHandler()
-            );
+            
+            registerHandlers(messageHandlerRegistry);
 
             TCPServer server = new TCPServer(port, messageHandlerRegistry);
             (new Thread(server)).start();
