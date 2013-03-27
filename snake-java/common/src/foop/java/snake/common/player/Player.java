@@ -10,6 +10,7 @@ import java.net.SocketAddress;
 public class Player
 {
     protected String name;
+    protected int Id;
     protected SocketAddress address;
 
     /**
@@ -43,6 +44,28 @@ public class Player
     public String getName()
     {
         return name;
+    }
+
+    /**
+     * Sets the name of the player.
+     *
+     * @param  name
+     * @return
+     */
+    public Player setID(int Id)
+    {
+        this.Id = Id;
+        return this;
+    }
+
+    /**
+     * Returns the name of the player.
+     *
+     * @return
+     */
+    public int getId()
+    {
+        return Id;
     }
 
     /**

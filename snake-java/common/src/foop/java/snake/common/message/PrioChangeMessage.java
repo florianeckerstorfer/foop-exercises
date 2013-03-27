@@ -1,4 +1,5 @@
 package foop.java.snake.common.message;
+import foop.java.snake.common.player.*;
 import java.util.*;
 
 /**
@@ -14,13 +15,12 @@ public class PrioChangeMessage implements MessageInterface {
     /*
      * Just a ordered list of player-IDs. First in the list has highest Prio
      */
-    protected List<String> playerPrio;
+    protected List<Player> playerPrio;
 
-    public PrioChangeMessage(List<String> list)
+    public PrioChangeMessage(List<Player> list)
     {
         this.playerPrio = list;
     }
-
     
 	@Override
 	public int getType() {
@@ -30,14 +30,14 @@ public class PrioChangeMessage implements MessageInterface {
 	/*
 	 * @param prio "ordered prioritylist with unique names of players. First in list has highest priority"
 	 */
-	public void setPlayerPrio(List<String> prio) {
+	public void setPlayerPrio(List<Player> prio) {
 		this.playerPrio=prio;
 	}
 	
 	/*
 	 * @return ordered prioritylist with unique names of players. First in list has highest priority
 	 */
-	public List<String> getPlayerPrio() {
+	public List<Player> getPlayerPrio() {
 		return playerPrio;
 	}	
 }

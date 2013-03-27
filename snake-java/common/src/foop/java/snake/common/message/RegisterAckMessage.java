@@ -9,7 +9,8 @@ public class RegisterAckMessage implements MessageInterface
 {
     public static final long serialVersionUID = 0;
     public static final int TYPE = 3;
-
+    protected int playerID;
+    
     public RegisterAckMessage()
     {
     }
@@ -18,4 +19,12 @@ public class RegisterAckMessage implements MessageInterface
     {
         return TYPE;
     }
+    
+    public int getPlayerID() {
+    	return playerID;
+    }
+    public void setPlayerID(int playerID) {
+    	this.playerID=playerID;
+    }
+    
 }
