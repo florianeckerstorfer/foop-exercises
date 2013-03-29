@@ -11,23 +11,23 @@ public class InputMessage implements MessageInterface {
     public static final int TYPE = 4;
 
 	public enum Keycode {
-		UP, DOWN, LEFT, RIGHT
+		IGNORE, UP, DOWN, LEFT, RIGHT 
 	}
 	
 	private Keycode input;
-	private String playerName;
+	private int playerID;
 	
-	public InputMessage(String playerName, Keycode input) {
+	public InputMessage(int playerID, Keycode input) {
 		this.input = input;
-		this.playerName = playerName;
+		this.playerID = playerID;
 	}
 
 	public Keycode getInput() {
 		return input;
 	}
 
-	public String getPlayerName() {
-		return playerName;
+	public int getPlayerID() {
+		return playerID;
 	}
 	
 	@Override

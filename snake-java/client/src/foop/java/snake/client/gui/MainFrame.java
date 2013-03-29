@@ -1,5 +1,6 @@
 package foop.java.snake.client.gui;
 
+import foop.java.snake.client.InputListener;
 import foop.java.snake.common.board.Board;
 import javax.swing.*;
 
@@ -92,5 +93,6 @@ public class MainFrame extends JFrame {
 
         board.setBoard(b3);
         mainFrame.renderBoard(board);
+        mainFrame.addKeyListener(new InputListener());
     }
 }
