@@ -1,6 +1,8 @@
 package foop.java.snake.client.gui;
 
 import foop.java.snake.common.board.Board;
+import foop.java.snake.common.board.SnakeHeadDirection;
+
 import javax.swing.*;
 import java.awt.*;
 
@@ -13,11 +15,24 @@ public class BoardPanel extends JPanel{
 
     private Board board;
     private int OFFSET = 20;
+    private Color[] colors = new Color[] {
+        Color.blue,
+        Color.cyan,
+        Color.yellow,
+        Color.red,
+        Color.green,
+        Color.orange,
+        Color.magenta
+    };
 
     public void setBoard(Board board) {
         this.board = board;
     }
 
+    /**
+     * renders the board
+     * @param graphics  canvas
+     */
     @Override
     public void paintComponent(Graphics graphics) {
         if (board == null) {
@@ -45,35 +60,36 @@ public class BoardPanel extends JPanel{
         //render snakes
         Byte[][] field = board.getBoard();
         for (int i=0; i<field.length; i++) {
-            int x = i * OFFSET;
             for (int j=0; j<field[i].length; j++) {
-                int y = j * OFFSET;
-                Byte value = field[i][j];
-                if (value != 0) {
-                    drawSnake(graphics, value, x, y);
-                }
+                drawSnake(graphics, i, j);
             }
         }
     }
 
-    private void drawSnake(Graphics graphics, Byte value, int x, int y) {
-        graphics.setColor(getColor(value));
-        if (isHead(value)) {
-            graphics.fillRoundRect(x, y, OFFSET, OFFSET, OFFSET / 2, OFFSET / 2);
+    /**
+     * draws the snake on the canvas
+     * @param graphics  canvas
+     * @param column    column
+     * @param row       row
+     */
+    private void drawSnake(Graphics graphics, int column, int row) {
+        int player = board.getPlayerNumber(column, row);
+        graphics.setColor(colors[player % colors.length]);
+        if (board.isSnakeBody(column, row)) {
+            graphics.fillOval(column * OFFSET, row * OFFSET, OFFSET, OFFSET);
         } else {
-            graphics.fillOval(x, y, OFFSET, OFFSET);
+            if (board.isSnakeHead(column, row)) {
+                byte snakeHead = board.getSnakeHeadDirection(column, row);
+                if (snakeHead == SnakeHeadDirection.snakeHeadUp) {
+                    graphics.fillArc(column * OFFSET, row * OFFSET, OFFSET, OFFSET, 120, 300);
+                } else if (snakeHead == SnakeHeadDirection.snakeHeadDown) {
+                    graphics.fillArc(column * OFFSET, row * OFFSET, OFFSET, OFFSET, 300, 300);
+                } else if (snakeHead == SnakeHeadDirection.snakeHeadLeft) {
+                    graphics.fillArc(column * OFFSET, row * OFFSET, OFFSET, OFFSET, 210, 300);
+                } else if (snakeHead == SnakeHeadDirection.snakeHeadRight) {
+                    graphics.fillArc(column * OFFSET, row * OFFSET, OFFSET, OFFSET, 30, 300);
+                }
+            }
         }
     }
-
-    private boolean isHead(Byte value) {
-        if (value == 1) {
-            return true;
-        }
-        return false;
-    }
-
-    private Color getColor(Byte value) {
-        return Color.BLUE;
-    }
-
 }

@@ -4,8 +4,8 @@ import foop.java.snake.common.board.SnakeHeadDirection;
 /**
  * Board
  * Holds the current board, that is, which field is occupied by which player
- * A board consists of columns x rows fields. Each field codes a player-number and (what else, direction?)  
- * 
+ * A board consists of columns x rows fields. Each field codes a player-number and (what else, direction?)
+ *
  * @author Robert Kapeller <rkapeller@gmail.com>
  */
 public class Board implements Serializable{
@@ -15,18 +15,18 @@ public class Board implements Serializable{
 	private Integer rows;
 	private Integer columns;
 	private Byte[][] board;
-	
+
 	/**
 	 * Initializes a board with given dimensions
 	 * @param rows number of rows
-	 * @param comumns number of columns
+	 * @param columns number of columns
 	 */
 	public Board(Integer rows, Integer columns) {
 		this.setBoard(new Byte[columns][rows]);
 		this.setColumns(columns);
 		this.setRows(rows);
 	}
-	
+
 	public Integer getRows() {
 		return rows;
 	}
@@ -45,19 +45,19 @@ public class Board implements Serializable{
 	public void setBoard(Byte[][] board) {
 		this.board = board;
 	}
-	
+
 	/**
 	 * Returns the direction of the snake head at the given position. If no snake head is there it
 	 * returns SnakeHeadDirection.noSnakeHead
 	 * @param column column to be checked
 	 * @param row row to be checked
-	 * @return a byte value, which can be checked by class SnakeHeadDirection 
+	 * @return a byte value, which can be checked by class SnakeHeadDirection
 	 * @see SnakeHeadDirection
-	 */	
+	 */
 	public byte getSnakeHeadDirection(Integer column, Integer row) {
 		return (byte)(board[column][row]&(byte)0xF0);
 	}
-	
+
 	/**
 	 * Returns the player ID at a given position on the board
 	 * @param column column to be checked
@@ -81,7 +81,7 @@ public class Board implements Serializable{
 			return true;
 		return false;
 	}
-	
+
 	/**
 	 * Returns the player ID at a given position on the board
 	 * @param column column to be checked
