@@ -1,5 +1,7 @@
 package foop.java.snake.common.player;
 
+import java.util.ArrayDeque;
+import java.util.Deque;
 import java.util.List;
 import java.util.ArrayList;
 
@@ -11,6 +13,18 @@ import java.util.ArrayList;
 public class PlayerRegistry
 {
     protected List<Player> players = new ArrayList<Player>();
+    protected static Deque<Integer> playerIDs = new ArrayDeque<Integer>();
+    private static final int maxPlayerID=15;
+    private static final int noPlayerID=-1;
+
+    /**
+     * Static block to initialize the Stack for player-IDs once
+     * IDs are between 1 and maxPlayerID
+     */
+    static {
+    	for (int i=maxPlayerID; i > 0; i--)
+    		playerIDs.addFirst(new Integer(i));
+    }
 
     /**
      * Adds a player to the registry.
@@ -21,6 +35,8 @@ public class PlayerRegistry
     public PlayerRegistry addPlayer(Player player)
     {
         players.add(player);
+        player.setID(this.getNextPlayerID());
+        
         return this;
     }
 
@@ -33,6 +49,7 @@ public class PlayerRegistry
     public PlayerRegistry removesPlayer(Player player)
     {
         players.remove(player);
+        playerIDs.addFirst(new Integer(player.getId())); //put back ID
         return this;
     }
 
@@ -78,4 +95,20 @@ public class PlayerRegistry
     {
         return players;
     }
+    
+    /**
+     * Retrieves next Player-ID from Stack.
+     * 
+     * @return player-ID
+     */
+    private int getNextPlayerID() {
+	    try {
+	    	return playerIDs.removeFirst().intValue();
+	    } catch (Exception e) {
+	    	System.out.println("No ID for player left...");
+	    	// TODO: What shall we do if we run out of IDs?
+	    }
+	    return noPlayerID;
+    }
+
 }

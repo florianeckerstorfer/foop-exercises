@@ -32,5 +32,6 @@ public class RegisterAckMessageHandler implements MessageHandlerInterface
         RegisterAckMessage message = (RegisterAckMessage)rawMessage;
 
         System.out.println("Registration successful.\n");
+        System.out.println("We got the ID " + message.getPlayerID());
     }
 }

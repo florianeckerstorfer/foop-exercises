@@ -4,7 +4,6 @@ import java.net.SocketAddress;
 
 /**
  * Represents a player.
- *
  * @author Florian Eckerstorfer <florian@eckerstorfer.co>
  */
 public class Player
@@ -47,14 +46,15 @@ public class Player
     }
 
     /**
-     * Sets the name of the player.
+     * Sets the ID of the player.
      *
      * @param  name
      * @return
      */
     public Player setID(int Id)
     {
-        this.Id = Id;
+       	this.Id = Id;
+       
         return this;
     }
 

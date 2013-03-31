@@ -14,7 +14,12 @@ public class RegisterAckMessage implements MessageInterface
     public RegisterAckMessage()
     {
     }
-
+    
+    public RegisterAckMessage(int Id)
+    {
+    	setPlayerID(Id);
+    }
+    
     public int getType()
     {
         return TYPE;

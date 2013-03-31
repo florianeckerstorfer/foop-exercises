@@ -49,9 +49,10 @@ public class RegisterMessageHandler implements MessageHandlerInterface
             response = new RegisterErrorMessage("The name \"" + message.getPlayerName() + "\" is already taken. Please choose another name.");
             System.out.println("Username \"" + message.getPlayerName() + "\" already exists.");
         } else {
-            playerRegistry.addPlayer(new Player(message.getPlayerName()));
+        	Player p = new Player(message.getPlayerName());
+            playerRegistry.addPlayer(p);
             System.out.println("Registered " + message.getPlayerName());
-            response = new RegisterAckMessage();
+            response = new RegisterAckMessage(p.getId());
         }
 
         SocketAddress newAddress = new InetSocketAddress(((InetSocketAddress)address).getHostName(), message.getPort());
