@@ -1,7 +1,9 @@
 package foop.java.snake.common.message.handler;
 
 import java.net.SocketAddress;
+import java.util.Observable;
 
+import foop.java.snake.common.IGUIHandler;
 import foop.java.snake.common.message.MessageInterface;
 import foop.java.snake.common.message.PrioChangeMessage;
 import foop.java.snake.common.message.exception.NoMessageHandlerFoundException;
@@ -11,7 +13,7 @@ import foop.java.snake.common.message.exception.NoMessageHandlerFoundException;
  * 
  * @author Robert Kapeller <rkapeller@gmail.com>
  */
-public class PrioChangeMessageHandler implements MessageHandlerInterface {
+public class PrioChangeMessageHandler extends Observable implements MessageHandlerInterface {
 
 	@Override
 	public void handle(MessageInterface message, SocketAddress address)
@@ -22,9 +24,11 @@ public class PrioChangeMessageHandler implements MessageHandlerInterface {
         }
 		PrioChangeMessage prioMessage = (PrioChangeMessage)message;
 
-		// TODO Message received - what now ;-)
-        System.out.println("Priority changed, message received.\n");
 
+		// TODO Message received - what now ;-)
+        // Implementation of the observer-pattern
+        setChanged();
+        notifyObservers(prioMessage.getPlayerPrio());
 	}
 
 }

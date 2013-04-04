@@ -1,6 +1,7 @@
 package foop.java.snake.common.message.handler;
 
 import java.net.SocketAddress;
+import java.util.Observable;
 
 import foop.java.snake.common.message.exception.NoMessageHandlerFoundException;
 import foop.java.snake.common.message.*;
@@ -10,7 +11,7 @@ import foop.java.snake.common.message.*;
  *
  * @author Florian Eckerstorfer <florian@eckerstorfer.co>
  */
-public class RegisterAckMessageHandler implements MessageHandlerInterface
+public class RegisterAckMessageHandler  extends Observable implements MessageHandlerInterface
 {
     public RegisterAckMessageHandler()
     {
@@ -33,5 +34,10 @@ public class RegisterAckMessageHandler implements MessageHandlerInterface
 
         System.out.println("Registration successful.\n");
         System.out.println("We got the ID " + message.getPlayerID());
+
+        // Implementation of the observer-pattern
+        setChanged();
+        notifyObservers(message.getPlayerID());
+
     }
 }

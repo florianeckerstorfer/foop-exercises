@@ -23,6 +23,8 @@ public class InputListener implements KeyListener {
 				lastKeyCode=convertedKeyCode;
 				InputMessage message = new InputMessage(0,convertedKeyCode); // TODO correct player ID
 				// TODO send message
+				// MainClient is the only one who knows about the TCPClient - right?
+				// I'm wondering if FACADE would be the right pattern
 			}
 			System.out.println("Orig: "+currentKeyCode);
 			System.out.println("Conv: "+convertedKeyCode);

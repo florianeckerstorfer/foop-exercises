@@ -1,7 +1,9 @@
 package foop.java.snake.common.message.handler;
 
 import java.net.SocketAddress;
+import java.util.Observable;
 
+import foop.java.snake.common.IGUIHandler;
 import foop.java.snake.common.message.MessageInterface;
 import foop.java.snake.common.message.BoardMessage;
 import foop.java.snake.common.message.exception.NoMessageHandlerFoundException;
@@ -11,8 +13,8 @@ import foop.java.snake.common.message.exception.NoMessageHandlerFoundException;
  * 
  * @author Robert Kapeller <rkapeller@gmail.com>
  */
-public class BoardMessageHandler implements MessageHandlerInterface {
-
+public class BoardMessageHandler extends Observable implements MessageHandlerInterface {
+	
 	@Override
 	public void handle(MessageInterface message, SocketAddress address)
 			throws NoMessageHandlerFoundException {
@@ -24,6 +26,8 @@ public class BoardMessageHandler implements MessageHandlerInterface {
 		// TODO Message received - what now ;-)
         System.out.println("New Board State received.\n");
 
+        // Implementation of the observer-pattern
+        setChanged();
+        notifyObservers(boardMessage.getBoard());
 	}
-
 }

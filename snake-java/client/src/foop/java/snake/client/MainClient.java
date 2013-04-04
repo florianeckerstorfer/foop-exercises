@@ -1,12 +1,20 @@
 package foop.java.snake.client;
 
-import java.net.UnknownHostException;
-import java.net.InetSocketAddress;
 import java.io.IOException;
+import java.net.InetSocketAddress;
+import java.net.UnknownHostException;
 
-import foop.java.snake.common.message.*;
-import foop.java.snake.common.board.*;
-import foop.java.snake.common.message.handler.*;
+import foop.java.snake.client.gui.MainFrame;
+import foop.java.snake.common.message.BoardMessage;
+import foop.java.snake.common.message.PrioChangeMessage;
+import foop.java.snake.common.message.RegisterAckMessage;
+import foop.java.snake.common.message.RegisterErrorMessage;
+import foop.java.snake.common.message.RegisterMessage;
+import foop.java.snake.common.message.handler.BoardMessageHandler;
+import foop.java.snake.common.message.handler.MessageHandlerRegistry;
+import foop.java.snake.common.message.handler.PrioChangeMessageHandler;
+import foop.java.snake.common.message.handler.RegisterAckMessageHandler;
+import foop.java.snake.common.message.handler.RegisterErrorMessageHandler;
 import foop.java.snake.common.tcp.TCPClient;
 import foop.java.snake.common.tcp.TCPServer;
 
@@ -17,16 +25,16 @@ import foop.java.snake.common.tcp.TCPServer;
  */
 class MainClient
 {
-	
 	private TCPClient client;
-	
+	private MainFrame mainFrame; 
+    
     /**
      * Client main method.
      *
      * @param  args
      * @return
      */
-    public static void main(String[] args)
+	public static void main(String[] args)
     {
         System.out.println("Hello Client!");
         if (args.length < 4) {
@@ -65,6 +73,8 @@ class MainClient
         port = Integer.parseInt(args[1]);
         server = args[2];
         serverPort = Integer.parseInt(args[3]);
+
+    	mainFrame = new MainFrame();
     }
     
     /*
@@ -82,12 +92,16 @@ class MainClient
             RegisterAckMessage.TYPE, new RegisterAckMessageHandler()
         );
         
+        BoardMessageHandler b = new BoardMessageHandler();
+        b.addObserver(mainFrame);
         handlerRegistry.registerHandler(
-                BoardMessage.TYPE, new BoardMessageHandler()
+                BoardMessage.TYPE, b
         );
         
+		PrioChangeMessageHandler p = new PrioChangeMessageHandler();
+		p.addObserver(mainFrame);
         handlerRegistry.registerHandler(
-                PrioChangeMessage.TYPE, new PrioChangeMessageHandler()
+                PrioChangeMessage.TYPE, p
         );
     }
     /**

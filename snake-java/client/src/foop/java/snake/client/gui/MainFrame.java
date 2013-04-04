@@ -2,16 +2,21 @@ package foop.java.snake.client.gui;
 
 import foop.java.snake.client.InputListener;
 import foop.java.snake.common.board.Board;
+import foop.java.snake.common.player.*;
+import foop.java.snake.common.message.handler.*;
+
 import javax.swing.*;
+import java.util.*;
 
 /**
  * User: Alexander Duml
  * Date: 26.03.13
  * Time: 13:33
  */
-public class MainFrame extends JFrame {
+public class MainFrame extends JFrame implements Observer {
     //panel where the board is rendered
     private BoardPanel boardPanel;
+    private int Id = 0;	//our Player-ID
 
     public MainFrame() {
         init();
@@ -20,6 +25,7 @@ public class MainFrame extends JFrame {
         this.setTitle("Snake");
         this.setSize(600, 623);
         this.setVisible(true);
+        addKeyListener(new InputListener());
     }
 
     /**
@@ -32,12 +38,41 @@ public class MainFrame extends JFrame {
     }
 
     /**
+     * we have been updated by the Observable --> do something
+     * unfortunately Observer is not generic. We have to check and cast
+     * Not so very nice but I do not really want to create gerneri Observer/Observable for this 
+     */
+    @Override 
+    public void update(Observable o, Object arg) {
+    	// Now, this is the problem here. We still have to distinguish from which Observable this is comming...
+    	if (o instanceof PrioChangeMessageHandler) {
+    		this.renderPlayers((List<Player>)arg);
+    	}
+    	if (o instanceof BoardMessageHandler) {
+    		this.renderBoard((Board)arg);    		
+    	}
+    	if (o instanceof RegisterAckMessageHandler) {
+    		this.Id=(int)arg;    		
+    	}
+
+    }
+
+    /**
      * takes a board and renders int on the board panel
      * @param board
      */
     public void renderBoard(Board board) {
         boardPanel.setBoard(board);
         boardPanel.repaint();
+    }
+    
+    /**
+     * takes a list of @see {Player}-objects and renders int on the playeröierarchy panel
+     * @param List of Players
+     */
+    public void renderPlayers(List<Player> players) {
+    	// TODO implement the method ;-)
+    	
     }
 
     /**
