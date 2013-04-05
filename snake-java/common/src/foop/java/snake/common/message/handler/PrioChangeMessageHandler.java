@@ -3,7 +3,6 @@ package foop.java.snake.common.message.handler;
 import java.net.SocketAddress;
 import java.util.Observable;
 
-import foop.java.snake.common.IGUIHandler;
 import foop.java.snake.common.message.MessageInterface;
 import foop.java.snake.common.message.PrioChangeMessage;
 import foop.java.snake.common.message.exception.NoMessageHandlerFoundException;
@@ -23,7 +22,7 @@ public class PrioChangeMessageHandler extends Observable implements MessageHandl
             throw new NoMessageHandlerFoundException("This is not a PrioChangedMessage.");
         }
 		PrioChangeMessage prioMessage = (PrioChangeMessage)message;
-
+		System.out.println("Got PrioChanged-Message.");
 
 		// TODO Message received - what now ;-)
         // Implementation of the observer-pattern

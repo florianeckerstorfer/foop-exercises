@@ -3,7 +3,6 @@ package foop.java.snake.common.message.handler;
 import java.net.SocketAddress;
 import java.util.Observable;
 
-import foop.java.snake.common.IGUIHandler;
 import foop.java.snake.common.message.MessageInterface;
 import foop.java.snake.common.message.BoardMessage;
 import foop.java.snake.common.message.exception.NoMessageHandlerFoundException;
@@ -24,7 +23,7 @@ public class BoardMessageHandler extends Observable implements MessageHandlerInt
 		BoardMessage boardMessage = (BoardMessage)message;
 
 		// TODO Message received - what now ;-)
-        System.out.println("New Board State received.\n");
+		System.out.println("Got Board-Message.");
 
         // Implementation of the observer-pattern
         setChanged();

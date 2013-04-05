@@ -1,12 +1,13 @@
 package foop.java.snake.common.player;
 
+import java.io.Serializable;
 import java.net.SocketAddress;
 
 /**
  * Represents a player.
  * @author Florian Eckerstorfer <florian@eckerstorfer.co>
  */
-public class Player
+public class Player implements Serializable
 {
     protected String name;
     protected int Id;

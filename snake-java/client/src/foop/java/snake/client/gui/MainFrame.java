@@ -3,9 +3,10 @@ package foop.java.snake.client.gui;
 import foop.java.snake.client.InputListener;
 import foop.java.snake.common.board.Board;
 import foop.java.snake.common.player.*;
-import foop.java.snake.common.message.handler.*;
 
 import javax.swing.*;
+
+import java.awt.BorderLayout;
 import java.util.*;
 
 /**
@@ -16,6 +17,7 @@ import java.util.*;
 public class MainFrame extends JFrame implements Observer {
     //panel where the board is rendered
     private BoardPanel boardPanel;
+    private PlayerPanel playerPanel;
     private int Id = 0;	//our Player-ID
 
     public MainFrame() {
@@ -32,9 +34,14 @@ public class MainFrame extends JFrame implements Observer {
      * initializes the frame
      */
     private void init() {
+    	this.setLayout(new BorderLayout());
         boardPanel = new BoardPanel();
+        playerPanel = new PlayerPanel();
+        playerPanel.setVisible(true);
         boardPanel.setVisible(true);
-        this.add(boardPanel);
+        add(boardPanel, BorderLayout.CENTER);
+        add(playerPanel, BorderLayout.EAST);
+        
     }
 
     /**
@@ -45,16 +52,15 @@ public class MainFrame extends JFrame implements Observer {
     @Override 
     public void update(Observable o, Object arg) {
     	// Now, this is the problem here. We still have to distinguish from which Observable this is comming...
-    	if (o instanceof PrioChangeMessageHandler) {
+    	if (arg instanceof List<?>) {
     		this.renderPlayers((List<Player>)arg);
     	}
-    	if (o instanceof BoardMessageHandler) {
+    	if (arg instanceof Board) {
     		this.renderBoard((Board)arg);    		
     	}
-    	if (o instanceof RegisterAckMessageHandler) {
-    		this.Id=(int)arg;    		
+    	if (arg instanceof Integer) {
+    		this.Id=((Integer)arg).intValue();    		
     	}
-
     }
 
     /**
@@ -72,7 +78,8 @@ public class MainFrame extends JFrame implements Observer {
      */
     public void renderPlayers(List<Player> players) {
     	// TODO implement the method ;-)
-    	
+    	playerPanel.setPlayers(players);
+    	playerPanel.repaint();
     }
 
     /**
@@ -96,6 +103,7 @@ public class MainFrame extends JFrame implements Observer {
         board.setBoard(b);
 
         MainFrame mainFrame = new MainFrame();
+        mainFrame.testPlayerPanel();
         mainFrame.renderBoard(board);
 
         try {
@@ -136,5 +144,31 @@ public class MainFrame extends JFrame implements Observer {
         board.setBoard(b);
         mainFrame.renderBoard(board);
         mainFrame.addKeyListener(new InputListener());
+    }
+    /**
+     * Testmethod just to test how the Player-List would be presented
+     */
+    private void testPlayerPanel() {
+        
+        // TODO Just a test...
+        Player p1 = new Player("Player 1");
+        p1.setID(1);
+        Player p2 = new Player("Player 2");
+        p2.setID(2);
+        Player p3 = new Player("Player 3");
+        p3.setID(3);
+        Player p4 = new Player("Player 4");
+        p4.setID(4);
+        Player p5 = new Player("Player 5");
+        p5.setID(5);
+        List<Player> pl = new ArrayList<Player>();
+        pl.add(p1);
+        pl.add(p2);
+        pl.add(p3);
+        pl.add(p4);
+        pl.add(p5);
+        playerPanel.setPlayers(pl);
+        playerPanel.repaint();
+    	
     }
 }

@@ -2,6 +2,7 @@ package foop.java.snake.client.gui;
 
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.Graphics;
 
 import javax.swing.JPanel;
@@ -50,7 +51,8 @@ public class PlayerPanel  extends JPanel{
      */
     @Override
     public void paintComponent(Graphics graphics) {
-	    if (players == null) {
+
+        if (players == null) {
             graphics.setColor(Color.BLACK);
             graphics.drawString("Waiting for Players", 10, 50);
             return;
@@ -61,12 +63,13 @@ public class PlayerPanel  extends JPanel{
 
         Iterator<Player> it = players.iterator();
         int line = 20 + OFFSET;
+        graphics.setFont(new Font("Monospaced",Font.BOLD,12));
         while (it.hasNext()) {
         	Player p =it.next();
         	String name = p.getName();
         	int prio = p.getId();
         	graphics.setColor(colors[prio % colors.length]);
-            graphics.drawString(name, 10, line);
+        	graphics.drawString(name, 10, line);
             line=line+OFFSET;
         }
     }
