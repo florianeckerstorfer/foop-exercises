@@ -32,12 +32,11 @@ public class RegisterAckMessageHandler  extends Observable implements MessageHan
         }
         RegisterAckMessage message = (RegisterAckMessage)rawMessage;
 
-        System.out.println("Registration successful.\n");
+        System.out.println("Registration successful.");
         System.out.println("We got the ID " + message.getPlayerID());
 
         // Implementation of the observer-pattern
         setChanged();
         notifyObservers(new Integer(message.getPlayerID()));
-
     }
 }

@@ -6,44 +6,50 @@ import java.awt.event.KeyListener;
 import foop.java.snake.common.message.InputMessage;
 import foop.java.snake.common.message.InputMessage.Keycode;
 
-public class InputListener implements KeyListener {
-
+public class InputListener implements KeyListener
+{
 	private Keycode lastKeyCode;
-	
-	public InputListener() {
-		lastKeyCode=Keycode.IGNORE;
+
+	public InputListener()
+	{
+		lastKeyCode = Keycode.IGNORE;
 	}
 
 	@Override
-	public void keyPressed(KeyEvent arg0) {
-		int currentKeyCode = arg0.getExtendedKeyCode();
+	public void keyPressed(KeyEvent arg0)
+	{
+		// getExtendedKeyCode() is only available in Java 7. It is absolutley required?
+		// int currentKeyCode = arg0.getExtendedKeyCode();
+		int currentKeyCode = arg0.getKeyCode();
+
 		Keycode convertedKeyCode = convertKeycode(currentKeyCode);
-		if(convertedKeyCode != Keycode.IGNORE) { 
-			if(lastKeyCode!=convertedKeyCode) {
-				lastKeyCode=convertedKeyCode;
-				InputMessage message = new InputMessage(0,convertedKeyCode); // TODO correct player ID
+		if(convertedKeyCode != Keycode.IGNORE) {
+			if(lastKeyCode != convertedKeyCode) {
+				lastKeyCode = convertedKeyCode;
+				InputMessage message = new InputMessage(0, convertedKeyCode); // TODO correct player ID
 				// TODO send message
 				// MainClient is the only one who knows about the TCPClient - right?
 				// I'm wondering if FACADE would be the right pattern
 			}
-			System.out.println("Orig: "+currentKeyCode);
-			System.out.println("Conv: "+convertedKeyCode);
+			System.out.println("Orig: " + currentKeyCode);
+			System.out.println("Conv: " + convertedKeyCode);
 		}
 	}
 
 	@Override
-	public void keyReleased(KeyEvent arg0) {
+	public void keyReleased(KeyEvent arg0)
+	{
 		// TODO Auto-generated method stub
-
 	}
 
 	@Override
-	public void keyTyped(KeyEvent arg0) {
+	public void keyTyped(KeyEvent arg0)
+	{
 		// TODO Auto-generated method stub
-
 	}
 
-	private Keycode convertKeycode(int extendedKeycode) {
+	private Keycode convertKeycode(int extendedKeycode)
+	{
 		switch(extendedKeycode) {
 			case 65: // 'A'
 			case 37: // Arrow Left
@@ -61,5 +67,5 @@ public class InputListener implements KeyListener {
 				return Keycode.IGNORE;
 		}
 	}
-	
+
 }

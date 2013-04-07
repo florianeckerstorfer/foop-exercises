@@ -26,8 +26,8 @@ import foop.java.snake.common.tcp.TCPServer;
 class MainClient
 {
 	private TCPClient client;
-	private MainFrame mainFrame; 
-    
+	private MainFrame mainFrame;
+
     /**
      * Client main method.
      *
@@ -76,34 +76,37 @@ class MainClient
 
     	mainFrame = new MainFrame();
     }
-    
+
     /*
      * Registers all the different handlers
+
      * @param handerRegistry registry to use
-     * @exception Exception, welche immer das auch sein mag ;-) 
      */
-    public void registerHandlers(MessageHandlerRegistry handlerRegistry) throws Exception{
-        
+    public void registerHandlers(MessageHandlerRegistry handlerRegistry)
+    {
         handlerRegistry.registerHandler(
             RegisterErrorMessage.TYPE, new RegisterErrorMessageHandler()
         );
-        
+
         handlerRegistry.registerHandler(
             RegisterAckMessage.TYPE, new RegisterAckMessageHandler()
         );
-        
+
         BoardMessageHandler b = new BoardMessageHandler();
-        b.addObserver(mainFrame);
-        handlerRegistry.registerHandler(
-                BoardMessage.TYPE, b
-        );
-        
+        try {
+            b.addObserver(mainFrame);
+            handlerRegistry.registerHandler(BoardMessage.TYPE, b);
+        } catch (NullPointerException ex) {
+            exitWithError(ex);
+        }
+
 		PrioChangeMessageHandler p = new PrioChangeMessageHandler();
 		p.addObserver(mainFrame);
         handlerRegistry.registerHandler(
                 PrioChangeMessage.TYPE, p
         );
     }
+
     /**
      * Runs the client.
      */
@@ -111,7 +114,7 @@ class MainClient
     {
         try {
             MessageHandlerRegistry messageHandlerRegistry = new MessageHandlerRegistry();
-            
+
             registerHandlers(messageHandlerRegistry);
 
             TCPServer server = new TCPServer(port, messageHandlerRegistry);

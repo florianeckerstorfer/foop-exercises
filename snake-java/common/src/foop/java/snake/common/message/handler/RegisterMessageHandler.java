@@ -5,6 +5,7 @@ import java.net.InetSocketAddress;
 import java.util.ArrayList;
 import java.util.List;
 
+import java.io.*;
 import foop.java.snake.common.board.Board;
 import foop.java.snake.common.message.exception.NoMessageHandlerFoundException;
 import foop.java.snake.common.message.*;
@@ -64,8 +65,8 @@ public class RegisterMessageHandler implements MessageHandlerInterface
             TCPClient client = clientRegistry.getClient(newAddress);
             client.sendMessage(response);
             testMessages(client);
-            
-            client.close();
+
+            // client.close();
         } catch (Exception ex) {
             System.out.println("Couldn\'t send response to \"" + ((InetSocketAddress)newAddress).getHostName()+":"+((InetSocketAddress)newAddress).getPort() + "\".");
             System.out.println(ex.getMessage());
@@ -78,7 +79,7 @@ public class RegisterMessageHandler implements MessageHandlerInterface
      */
     private void testMessages(TCPClient client) throws Exception {
     	MessageInterface response;
-  
+
 		// Test: send board and prio-Message just for test and fun
 		Player p1 = new Player("Player 1");
 		p1.setID(1);
@@ -96,13 +97,17 @@ public class RegisterMessageHandler implements MessageHandlerInterface
 		pl.add(p3);
 		pl.add(p4);
 		pl.add(p5);
-		 
+
 		response = new PrioChangeMessage(pl);
-		
+
 		System.out.println("Sending Prio-List");
-		 
-		client.sendMessage(response);
-		 
+
+        try {
+            client.sendMessage(response);
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
+
 		Board board = new Board(30, 30);
 		Byte[][] b = new Byte[][]{
 			{0, 0, (byte)0x20, (byte)0x10, (byte)0x10, 0, 0, 0, 0},
@@ -116,10 +121,10 @@ public class RegisterMessageHandler implements MessageHandlerInterface
 			{0, 0, 0, 0, 0, 0, 0, (byte)0x11, 0}
 		};
 		board.setBoard(b);
-		
+
 		Thread.sleep(1000);
 		System.out.println("Sending Board");
 		response = new BoardMessage(board);
-		client.sendMessage(response);       
+		client.sendMessage(response);
     }
 }
