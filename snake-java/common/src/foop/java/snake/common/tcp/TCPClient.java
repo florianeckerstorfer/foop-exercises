@@ -14,24 +14,40 @@ public class TCPClient
 {
     protected Socket socket;
     protected ObjectOutputStream outputStream;
-
+    protected SocketAddress address;
+    
     public TCPClient(SocketAddress address)
         throws UnknownHostException, IOException
-    {
-        socket = new Socket();
-        socket.connect(address);
-        outputStream = new ObjectOutputStream(socket.getOutputStream());
+    {	
+    	this.address=address;
+    	this.open();
     }
 
     /**
      * Sends a message to the server.
+     * KaRo: to fullfill the accept() of the TCPServer there must be a reconnect 
+     * after each message is sent. senMessage automatically tries to open() and close()
+     * the socket.
      *
      * @param message
      */
     public void sendMessage(MessageInterface message)
         throws IOException
     {
+    	if (socket.isClosed())
+    		open();
+    	
         outputStream.writeObject(message);
+        close();
+    }
+    
+    public void open() 
+            throws UnknownHostException, IOException
+    {
+        System.out.println("TCPClient: Opening new socket...");
+    	socket = new Socket();
+        socket.connect(address);
+        outputStream = new ObjectOutputStream(socket.getOutputStream());	
     }
 
     public void close()

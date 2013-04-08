@@ -6,6 +6,11 @@ import java.awt.event.KeyListener;
 import foop.java.snake.common.message.InputMessage;
 import foop.java.snake.common.message.InputMessage.Keycode;
 
+/**
+ * TCPServer
+ *
+ * @author Robert Kapeller<rkapeller@gmail.com>
+ */
 public class InputListener implements KeyListener
 {
 	private Keycode lastKeyCode;

@@ -64,6 +64,7 @@ public class RegisterMessageHandler implements MessageHandlerInterface
         try {
             TCPClient client = clientRegistry.getClient(newAddress);
             client.sendMessage(response);
+            client.close();
             testMessages(client);
 
             // client.close();
@@ -103,7 +104,9 @@ public class RegisterMessageHandler implements MessageHandlerInterface
 		System.out.println("Sending Prio-List");
 
         try {
+        	client.open();
             client.sendMessage(response);
+            client.close();
         } catch (IOException ex) {
             ex.printStackTrace();
         }
@@ -122,9 +125,14 @@ public class RegisterMessageHandler implements MessageHandlerInterface
 		};
 		board.setBoard(b);
 
-		Thread.sleep(1000);
 		System.out.println("Sending Board");
 		response = new BoardMessage(board);
-		client.sendMessage(response);
+        try {
+	    	client.open();
+	        client.sendMessage(response);
+	        client.close();
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
     }
 }
