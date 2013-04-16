@@ -1,4 +1,4 @@
-package foop.java.snake.client;
+package foop.java.snake.client.gui;
 
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;

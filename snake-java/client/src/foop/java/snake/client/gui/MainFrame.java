@@ -1,6 +1,5 @@
 package foop.java.snake.client.gui;
 
-import foop.java.snake.client.InputListener;
 import foop.java.snake.common.board.Board;
 import foop.java.snake.common.player.*;
 
