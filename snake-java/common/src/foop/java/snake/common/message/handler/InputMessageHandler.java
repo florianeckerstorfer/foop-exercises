@@ -20,27 +20,34 @@ public class InputMessageHandler implements MessageHandlerInterface {
 		// TODO Message received - what now ;-)
 		this.printInput((InputMessage)message);
 	}
+	
 	/**
 	 * Dummy-method to test and print input
 	 * @param m
 	 */
 	private void printInput(InputMessage m) {
 		System.out.println("Got new Input-Message.");
-		System.out.print("Following Key has been pressed: " );
+		System.out.print("Following Key has been pressed by player "+m.getPlayerID()+": " );
 		Keycode key = m.getInput();
 
 		switch(key) {
 			case LEFT:
 				System.out.println("LEFT" );
+				break;
 			case RIGHT:
 				System.out.println("RIGHT" );
+				break;
 			case UP:
 				System.out.println("UP" );
+				break;
 			case DOWN:
 				System.out.println("DOWN" );
+				break;
 			case IGNORE:
 				System.out.println("IGNORE" );
 		}
+		
+		// TODO: store input in player object
 		
 	}
 

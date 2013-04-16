@@ -3,7 +3,7 @@ package foop.java.snake.client.gui;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
-import foop.java.snake.common.message.InputMessage;
+import foop.java.snake.client.InputHandler;
 import foop.java.snake.common.message.InputMessage.Keycode;
 
 /**
@@ -14,9 +14,11 @@ import foop.java.snake.common.message.InputMessage.Keycode;
 public class InputListener implements KeyListener
 {
 	private Keycode lastKeyCode;
+	private InputHandler inputHandler;
 
-	public InputListener()
+	public InputListener(InputHandler inputHandler)
 	{
+		this.inputHandler=inputHandler;
 		lastKeyCode = Keycode.IGNORE;
 	}
 
@@ -31,10 +33,7 @@ public class InputListener implements KeyListener
 		if(convertedKeyCode != Keycode.IGNORE) {
 			if(lastKeyCode != convertedKeyCode) {
 				lastKeyCode = convertedKeyCode;
-				InputMessage message = new InputMessage(0, convertedKeyCode); // TODO correct player ID
-				// TODO send message
-				// MainClient is the only one who knows about the TCPClient - right?
-				// I'm wondering if FACADE would be the right pattern
+				inputHandler.handleInput(lastKeyCode);
 			}
 			System.out.println("Orig: " + currentKeyCode);
 			System.out.println("Conv: " + convertedKeyCode);

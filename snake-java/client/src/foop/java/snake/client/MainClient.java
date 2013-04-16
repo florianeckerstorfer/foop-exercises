@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.UnknownHostException;
 
+import foop.java.snake.client.gui.InputListener;
 import foop.java.snake.client.gui.MainFrame;
 import foop.java.snake.common.message.BoardMessage;
 import foop.java.snake.common.message.PrioChangeMessage;
@@ -25,10 +26,7 @@ import foop.java.snake.common.tcp.TCPServer;
  */
 class MainClient
 {
-	private TCPClient client;
-	private MainFrame mainFrame;
-
-    /**
+	/**
      * Client main method.
      *
      * @param  args
@@ -44,8 +42,7 @@ class MainClient
         MainClient client = new MainClient(args);
         client.run();
     }
-
-    /**
+	/**
      * Prints usage instructions to a CLI.
      *
      * @return
@@ -55,6 +52,11 @@ class MainClient
         System.out.println("Usage: java -jar snake-client.jar PLAYER_NAME PORT SERVER SERVER_PORT");
         System.exit(0);
     }
+
+    private TCPClient client;
+    private InputHandler inputHandler;
+    
+    private MainFrame mainFrame;
 
     protected String playerName;
     protected int port;
@@ -75,6 +77,40 @@ class MainClient
         serverPort = Integer.parseInt(args[3]);
 
     	mainFrame = new MainFrame();
+    }
+
+    /**
+     * Exists the client if there was another problem.
+     *
+     * @param ex
+     */
+    protected void exitWithError(Exception ex)
+    {
+        System.out.println("Ouch! Something went wrong:\n" + ex.getMessage());
+        System.exit(0);
+    }
+
+    /**
+     * Exists the client if there were problems with the connection.
+     *
+     * @param ex
+     */
+    protected void exitWithError(IOException ex)
+    {
+        System.out.println("There was something wrong with the connection to the server:");
+        System.out.println(ex.getMessage());
+        System.exit(0);
+    }
+
+    /**
+     * Exits the client if the given hostname is not valid.
+     *
+     * @param ex
+     */
+    protected void exitWithError(UnknownHostException ex)
+    {
+        System.out.println("Could not find \"" + server + ":" + serverPort + "\".");
+        System.exit(0);
     }
 
     /*
@@ -127,42 +163,13 @@ class MainClient
             System.out.println("listen to port " + port);
             client = new TCPClient(new InetSocketAddress(server, serverPort));
             client.sendMessage(new RegisterMessage(playerName, port));
+            
+            inputHandler = new InputHandler(client);
+            mainFrame.addKeyListener(new InputListener(inputHandler));
+            
+            
         } catch (Exception ex) {
             exitWithError(ex);
         }
-    }
-
-    /**
-     * Exits the client if the given hostname is not valid.
-     *
-     * @param ex
-     */
-    protected void exitWithError(UnknownHostException ex)
-    {
-        System.out.println("Could not find \"" + server + ":" + serverPort + "\".");
-        System.exit(0);
-    }
-
-    /**
-     * Exists the client if there were problems with the connection.
-     *
-     * @param ex
-     */
-    protected void exitWithError(IOException ex)
-    {
-        System.out.println("There was something wrong with the connection to the server:");
-        System.out.println(ex.getMessage());
-        System.exit(0);
-    }
-
-    /**
-     * Exists the client if there was another problem.
-     *
-     * @param ex
-     */
-    protected void exitWithError(Exception ex)
-    {
-        System.out.println("Ouch! Something went wrong:\n" + ex.getMessage());
-        System.exit(0);
     }
 }

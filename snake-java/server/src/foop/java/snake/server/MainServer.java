@@ -64,6 +64,8 @@ class MainServer
             messageHandlerRegistry.registerHandler(
                 RegisterMessage.TYPE, new RegisterMessageHandler(playerRegistry, clientRegistry)
             );
+            
+            messageHandlerRegistry.registerHandler(InputMessage.TYPE, new InputMessageHandler());
 
             TCPServer server = new TCPServer(port, messageHandlerRegistry);
             (new Thread(server)).start();

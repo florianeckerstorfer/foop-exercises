@@ -26,7 +26,6 @@ public class MainFrame extends JFrame implements Observer {
         this.setTitle("Snake");
         this.setSize(600, 623);
         this.setVisible(true);
-        addKeyListener(new InputListener());
     }
 
     /**
@@ -142,7 +141,6 @@ public class MainFrame extends JFrame implements Observer {
 
         board.setBoard(b);
         mainFrame.renderBoard(board);
-        mainFrame.addKeyListener(new InputListener());
     }
     /**
      * Testmethod just to test how the Player-List would be presented

@@ -7,7 +7,6 @@ import foop.java.snake.common.message.RegisterErrorMessage;
 import foop.java.snake.common.message.UnregisterMessage;
 import foop.java.snake.common.message.MessageInterface;
 import foop.java.snake.common.message.exception.NoMessageHandlerFoundException;
-import foop.java.snake.common.player.Player;
 import foop.java.snake.common.player.PlayerRegistry;
 import foop.java.snake.common.tcp.TCPClientRegistry;
 
