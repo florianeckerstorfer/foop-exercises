@@ -13,6 +13,8 @@ import foop.java.snake.common.message.*;
  */
 public class RegisterAckMessageHandler  extends Observable implements MessageHandlerInterface
 {
+	int myID;
+	
     public RegisterAckMessageHandler()
     {
     }
@@ -34,6 +36,7 @@ public class RegisterAckMessageHandler  extends Observable implements MessageHan
 
         System.out.println("Registration successful.");
         System.out.println("We got the ID " + message.getPlayerID());
+        this.myID=message.getPlayerID();
 
         // Implementation of the observer-pattern
         setChanged();

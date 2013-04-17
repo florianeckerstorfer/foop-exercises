@@ -65,7 +65,7 @@ public class RegisterMessageHandler implements MessageHandlerInterface
             TCPClient client = clientRegistry.getClient(newAddress);
             client.sendMessage(response);
             client.close();
-            testMessages(client);
+//            testMessages(client);
 
             // client.close();
         } catch (Exception ex) {
