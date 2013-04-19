@@ -17,6 +17,7 @@
 *.iml
 *.ipr
 *.iws
+/out
 
 # Mac files
 *.DS_store
