@@ -13,17 +13,12 @@ import java.awt.*;
  */
 public class BoardPanel extends JPanel{
 
+    private MainFrame parent;
     private Board board;
-    private int OFFSET = 20;
-    private Color[] colors = new Color[] {
-        Color.blue,
-        Color.cyan,
-        Color.yellow,
-        Color.red,
-        Color.green,
-        Color.orange,
-        Color.magenta
-    };
+
+    public BoardPanel(MainFrame parent) {
+        this.parent = parent;
+    }
 
     public void setBoard(Board board) {
         this.board = board;
@@ -42,17 +37,17 @@ public class BoardPanel extends JPanel{
         }
 
         //clean board
-        graphics.setColor(Color.WHITE);
-        graphics.fillRect(0, 0, board.getRows() * OFFSET, board.getColumns() * OFFSET);
+        graphics.setColor(Color.LIGHT_GRAY);
+        graphics.fillRect(0, 0, board.getRows() * parent.getOffset(), board.getColumns() * parent.getOffset());
 
         //render gird
         graphics.setColor(Color.GRAY);
         for (int i=0; i<= board.getColumns(); i++) {
-            int x = i * OFFSET;
-            int max = board.getColumns() * OFFSET;
+            int x = i * parent.getOffset();
+            int max = board.getColumns() * parent.getOffset();
             graphics.drawLine(x, 0, x, max);
             for (int j=0; j <= board.getRows(); j++) {
-                int y = j * OFFSET;
+                int y = j * parent.getOffset();
                 graphics.drawLine(0, y, max, y);
             }
         }
@@ -73,21 +68,21 @@ public class BoardPanel extends JPanel{
      * @param row       row
      */
     private void drawSnake(Graphics graphics, int column, int row) {
-        int player = board.getPlayerNumber(column, row);
-        graphics.setColor(colors[player % colors.length]);
+        int playerId = board.getPlayerNumber(column, row);
+        graphics.setColor(parent.getPlayerColor(playerId));
         if (board.isSnakeBody(column, row)) {
-            graphics.fillOval(column * OFFSET, row * OFFSET, OFFSET, OFFSET);
+            graphics.fillOval(column * parent.getOffset(), row * parent.getOffset(), parent.getOffset(), parent.getOffset());
         } else {
             if (board.isSnakeHead(column, row)) {
                 byte snakeHead = board.getSnakeHeadDirection(column, row);
                 if (snakeHead == SnakeHeadDirection.snakeHeadUp) {
-                    graphics.fillArc(column * OFFSET, row * OFFSET, OFFSET, OFFSET, 120, 300);
+                    graphics.fillArc(column * parent.getOffset(), row * parent.getOffset(), parent.getOffset(), parent.getOffset(), 120, 300);
                 } else if (snakeHead == SnakeHeadDirection.snakeHeadDown) {
-                    graphics.fillArc(column * OFFSET, row * OFFSET, OFFSET, OFFSET, 300, 300);
+                    graphics.fillArc(column * parent.getOffset(), row * parent.getOffset(), parent.getOffset(), parent.getOffset(), 300, 300);
                 } else if (snakeHead == SnakeHeadDirection.snakeHeadLeft) {
-                    graphics.fillArc(column * OFFSET, row * OFFSET, OFFSET, OFFSET, 210, 300);
+                    graphics.fillArc(column * parent.getOffset(), row * parent.getOffset(), parent.getOffset(), parent.getOffset(), 210, 300);
                 } else if (snakeHead == SnakeHeadDirection.snakeHeadRight) {
-                    graphics.fillArc(column * OFFSET, row * OFFSET, OFFSET, OFFSET, 30, 300);
+                    graphics.fillArc(column * parent.getOffset(), row * parent.getOffset(), parent.getOffset(), parent.getOffset(), 30, 300);
                 }
             }
         }

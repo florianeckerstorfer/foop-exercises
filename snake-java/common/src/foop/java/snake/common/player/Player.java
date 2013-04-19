@@ -10,9 +10,9 @@ import java.net.SocketAddress;
 public class Player implements Serializable
 {
     protected String name;
-    protected int Id;
-    protected int priority; 
-    protected int nextPriority; 
+    protected int id;
+    protected int priority;
+    protected int nextPriority;
     protected SocketAddress address;
 
     /**
@@ -24,6 +24,13 @@ public class Player implements Serializable
     public Player(String name)
     {
         setName(name);
+    }
+
+    public Player(String name, int id, int priority, int nextPriority) {
+        this.name = name;
+        this.id = id;
+        this.priority = priority;
+        this.nextPriority = nextPriority;
     }
 
     /**
@@ -51,13 +58,13 @@ public class Player implements Serializable
     /**
      * Sets the ID of the player.
      *
-     * @param  name
+     * @param  id
      * @return
      */
-    public Player setID(int Id)
+    public Player setID(int id)
     {
-       	this.Id = Id;
-       
+       	this.id = id;
+
         return this;
     }
 
@@ -68,13 +75,13 @@ public class Player implements Serializable
      */
     public int getId()
     {
-        return Id;
+        return id;
     }
 
     /**
      * Sets the socket address of the player.
      *
-     * @param  server
+     * @param  address
      * @return
      */
     public Player setAddress(SocketAddress address)
@@ -92,7 +99,7 @@ public class Player implements Serializable
     {
         return address;
     }
-    
+
 	/**
 	 * @return the priority
 	 */

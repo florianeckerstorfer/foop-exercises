@@ -20,57 +20,81 @@ import java.util.*;
  * @author Robert Kapeller <rkapeller@gmail.com>
  */
 public class PlayerPanel  extends JPanel{
+    private MainFrame parent;
 	private List<Player> players;
-    private int OFFSET = 20;
 
-	// TODO: just copied from BoardPanel, no good ... maybe better to incorporate whole functionality into BoardPanel
-	private Color[] colors = new Color[] {
-            Color.blue,
-            Color.cyan,
-            Color.yellow,
-            Color.red,
-            Color.green,
-            Color.orange,
-            Color.magenta
-       };
-	
-	public PlayerPanel() {
-		this.setPreferredSize(new Dimension(120,100));	// To set some width
+	public PlayerPanel(MainFrame parent) {
+        this.parent = parent;
+        this.setPreferredSize(new Dimension(120, 100));	// To set some width
+
         TitledBorder b = new TitledBorder("Players");
         b.setTitleColor(Color.DARK_GRAY);
-		this.setBorder(b);
+        this.setBorder(b);
 	}
-	
+
 	public void setPlayers(List<Player> players) {
-        this.players=players;
+        this.players = players;
 	}
-	
+
     /**
-     * renders the board
+     * renders the player list
      * @param graphics  canvas
      */
     @Override
     public void paintComponent(Graphics graphics) {
-
-        if (players == null) {
-            graphics.setColor(Color.BLACK);
-            graphics.drawString("Waiting for Players", 10, 50);
-            return;
-        }
         // clean the player-list
         graphics.setColor(Color.LIGHT_GRAY);
         graphics.fillRect(0, 0, this.getWidth(), this.getHeight());
 
+        //check if there are any players
+        if (players == null || (players != null && players.isEmpty())) {
+            graphics.setColor(Color.BLACK);
+            graphics.drawString("Waiting for Players:", 10, 50);
+            return;
+        }
+
+        //current priorities
+        Collections.sort(players, new Comparator<Player>(){
+            @Override
+            public int compare(Player p1, Player p2) {
+                if(p1.getPriority() == p2.getPriority())
+                    return 0;
+                return p1.getPriority() > p2.getPriority() ? -1 : 1;
+            }
+        });
+
+        graphics.setColor(Color.BLACK);
+        int line = 2 * parent.getOffset();
+        graphics.drawString("Priorities", 10, line);
+        line += parent.getOffset();
         Iterator<Player> it = players.iterator();
-        int line = 20 + OFFSET;
-        graphics.setFont(new Font("Monospaced",Font.BOLD,12));
         while (it.hasNext()) {
-        	Player p =it.next();
-        	String name = p.getName();
-        	int prio = p.getId();
-        	graphics.setColor(colors[prio % colors.length]);
-        	graphics.drawString(name, 10, line);
-            line=line+OFFSET;
+            Player p = it.next();
+            graphics.setColor(parent.getPlayerColor(p.getId()));
+            graphics.drawString(String.format("%s (%s)", p.getName(), p.getPriority()) , 10, line);
+            line += parent.getOffset();
+        }
+
+        //next priorities
+        Collections.sort(players, new Comparator<Player>(){
+            @Override
+            public int compare(Player p1, Player p2) {
+                if(p1.getPriority() == p2.getPriority())
+                    return 0;
+                return p1.getNextPriority() > p2.getNextPriority() ? -1 : 1;
+            }
+        });
+
+        graphics.setColor(Color.BLACK);
+        line += parent.getOffset();
+        graphics.drawString("Next priorities:", 10, line);
+        line += parent.getOffset();
+        it = players.iterator();
+        while (it.hasNext()) {
+            Player p = it.next();
+            graphics.setColor(parent.getPlayerColor(p.getId()));
+            graphics.drawString(String.format("%s (%s)", p.getName(), p.getNextPriority()) , 10, line);
+            line += parent.getOffset();
         }
     }
 }
