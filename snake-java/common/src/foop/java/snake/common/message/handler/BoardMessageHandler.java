@@ -9,11 +9,11 @@ import foop.java.snake.common.message.exception.NoMessageHandlerFoundException;
 
 /**
  * Handles messages sent by the server to the client to present new board-status.
- * 
+ *
  * @author Robert Kapeller <rkapeller@gmail.com>
  */
 public class BoardMessageHandler extends Observable implements MessageHandlerInterface {
-	
+
 	@Override
 	public void handle(MessageInterface message, SocketAddress address)
 			throws NoMessageHandlerFoundException {
@@ -23,7 +23,7 @@ public class BoardMessageHandler extends Observable implements MessageHandlerInt
 		BoardMessage boardMessage = (BoardMessage)message;
 
 		// TODO Message received - what now ;-)
-		System.out.println("Got Board-Message.");
+		System.out.println("BoardMessageHandler: Got Board-Message.");
 
         // Implementation of the observer-pattern
         setChanged();

@@ -31,7 +31,7 @@ public class RegisterErrorMessageHandler implements MessageHandlerInterface
         }
         RegisterErrorMessage message = (RegisterErrorMessage)rawMessage;
 
-        System.out.println("Registration on server failed with the following error:\n");
+        System.out.println("RegisterErrorMessageHandler: Registration on server failed with the following error:\n");
         System.out.println(message.getMessage());
     }
 }

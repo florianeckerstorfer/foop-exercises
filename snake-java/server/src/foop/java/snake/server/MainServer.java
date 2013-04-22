@@ -64,7 +64,7 @@ class MainServer
             messageHandlerRegistry.registerHandler(
                 RegisterMessage.TYPE, new RegisterMessageHandler(playerRegistry, clientRegistry)
             );
-            
+
             messageHandlerRegistry.registerHandler(InputMessage.TYPE, new InputMessageHandler());
 
             TCPServer server = new TCPServer(port, messageHandlerRegistry);
@@ -81,7 +81,7 @@ class MainServer
      */
     protected void exitWithError(IOException ex)
     {
-        System.out.println("There was some error with the TCP connection:\n" + ex.getMessage());
+        System.out.println("MainServer: There was some error with the TCP connection:\n" + ex.getMessage());
         System.exit(0);
     }
 
@@ -92,7 +92,7 @@ class MainServer
      */
     protected void exitWithError(ClassNotFoundException ex)
     {
-        System.out.println("Couldn't understand received message:\n" + ex.getMessage());
+        System.out.println("MainServer: Couldn't understand received message:\n" + ex.getMessage());
         System.exit(0);
     }
 
@@ -103,7 +103,7 @@ class MainServer
      */
     protected void exitWithError(Exception ex)
     {
-        System.out.println("Oh no! Something went wrong:\n" + ex.getMessage());
+        System.out.println("MainServer: Oh no! Something went wrong:\n" + ex.getMessage());
         System.exit(0);
     }
 }

@@ -23,7 +23,7 @@ public class MessageHandlerRegistry implements MessageHandlerInterface
      */
     public void registerHandler(int type, MessageHandlerInterface handler)
     {
-        System.out.println("registerHandler: " + type);
+        System.out.println("MessageHandlerRegistry: registerHandler: " + type);
         handlers.put(type, handler);
     }
 

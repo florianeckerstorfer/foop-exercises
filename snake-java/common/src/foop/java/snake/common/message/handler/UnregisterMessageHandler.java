@@ -13,7 +13,7 @@ import foop.java.snake.common.tcp.TCPClientRegistry;
 /**
  * Handles messages sent by the client to the server to indicate that a player leaves the game.
  * Currently no ACK forseen...
- * 
+ *
  * @author Robert Kapeller <rkapeller@gmail.com>
  */
 public class UnregisterMessageHandler implements MessageHandlerInterface {
@@ -39,22 +39,22 @@ public class UnregisterMessageHandler implements MessageHandlerInterface {
 
         // message received, remove Player from player-registry
         String playerName=unregisterMessage.getPlayerName();
-        System.out.println(playerName + " wants to unregister from the server.");
-        
+        System.out.println("UnregisterMessageHandler: " + playerName + " wants to unregister from the server.");
+
         if (playerRegistry.hasPlayerName(playerName)) {
         	playerRegistry.removesPlayer(playerRegistry.getPlayerByName(playerName));
-        	
+
 //            playerRegistry.addPlayer(new Player(unregisterMessage.getPlayerName()));
-            System.out.println("Registered " + playerName);
+            System.out.println("UnregisterMessageHandler: Registered " + playerName);
 
         } else {
         	// player cannot be removed as it is not registerred...
-        	// send Error-response 
+        	// send Error-response
             response = new RegisterErrorMessage("The name \"" + playerName + "\" is not registerred and therefore cannot be removed");
-            System.out.println("Username \"" + playerName + "\" does not exist.");
+            System.out.println("UnregisterMessageHandler: Username \"" + playerName + "\" does not exist.");
             response = new RegisterAckMessage();
         }
-        
+
 	}
 
 }

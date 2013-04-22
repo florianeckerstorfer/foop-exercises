@@ -9,7 +9,7 @@ import foop.java.snake.common.message.exception.NoMessageHandlerFoundException;
 
 /**
  * Handles messages sent by the server to the client to indicate a change in player priorities.
- * 
+ *
  * @author Robert Kapeller <rkapeller@gmail.com>
  */
 public class PrioChangeMessageHandler extends Observable implements MessageHandlerInterface {
@@ -22,7 +22,7 @@ public class PrioChangeMessageHandler extends Observable implements MessageHandl
             throw new NoMessageHandlerFoundException("This is not a PrioChangedMessage.");
         }
 		PrioChangeMessage prioMessage = (PrioChangeMessage)message;
-		System.out.println("Got PrioChanged-Message.");
+		System.out.println("PrioChangeMessageHandler: Got PrioChanged-Message.");
 
 		// TODO Message received - what now ;-)
         // Implementation of the observer-pattern

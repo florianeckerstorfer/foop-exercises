@@ -12,7 +12,7 @@ public class InputMessageHandler implements MessageHandlerInterface {
 	@Override
 	public void handle(MessageInterface message, SocketAddress address)
 			throws NoMessageHandlerFoundException {
-		
+
 		if (message.getType() != InputMessage.TYPE) {
             throw new NoMessageHandlerFoundException("This is not a InputMessage.");
         }
@@ -20,14 +20,14 @@ public class InputMessageHandler implements MessageHandlerInterface {
 		// TODO Message received - what now ;-)
 		this.printInput((InputMessage)message);
 	}
-	
+
 	/**
 	 * Dummy-method to test and print input
 	 * @param m
 	 */
 	private void printInput(InputMessage m) {
-		System.out.println("Got new Input-Message.");
-		System.out.print("Following Key has been pressed by player "+m.getPlayerID()+": " );
+		System.out.println("InputMessageHandler: Got new Input-Message.");
+		System.out.print("InputMessageHandler: Following Key has been pressed by player "+m.getPlayerID()+": " );
 		Keycode key = m.getInput();
 
 		switch(key) {
@@ -46,9 +46,9 @@ public class InputMessageHandler implements MessageHandlerInterface {
 			case IGNORE:
 				System.out.println("IGNORE" );
 		}
-		
+
 		// TODO: store input in player object
-		
+
 	}
 
 }

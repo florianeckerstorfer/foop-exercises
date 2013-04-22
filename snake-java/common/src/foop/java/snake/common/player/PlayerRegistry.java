@@ -36,7 +36,7 @@ public class PlayerRegistry
     {
         players.add(player);
         player.setID(this.getNextPlayerID());
-        
+
         return this;
     }
 
@@ -95,17 +95,17 @@ public class PlayerRegistry
     {
         return players;
     }
-    
+
     /**
      * Retrieves next Player-ID from Stack.
-     * 
+     *
      * @return player-ID
      */
     private int getNextPlayerID() {
 	    try {
 	    	return playerIDs.removeFirst().intValue();
 	    } catch (Exception e) {
-	    	System.out.println("No ID for player left...");
+	    	System.out.println("PlayerRegistry: No ID for player left...");
 	    	// TODO: What shall we do if we run out of IDs?
 	    }
 	    return noPlayerID;

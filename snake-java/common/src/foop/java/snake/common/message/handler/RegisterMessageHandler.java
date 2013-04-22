@@ -45,34 +45,34 @@ public class RegisterMessageHandler implements MessageHandlerInterface
         }
         RegisterMessage message = (RegisterMessage)rawMessage;
 
-        System.out.println(message.getPlayerName() + " wants to register at the server.");
+        System.out.println("RegisterMessageHandler: "+message.getPlayerName() + " wants to register at the server.");
 
         MessageInterface response;
 
         if (playerRegistry.hasPlayerName(message.getPlayerName())) {
             response = new RegisterErrorMessage("The name \"" + message.getPlayerName() + "\" is already taken. Please choose another name.");
-            System.out.println("Username \"" + message.getPlayerName() + "\" already exists.");
+            System.out.println("RegisterMessageHandler: Username \"" + message.getPlayerName() + "\" already exists.");
         } else {
         	Player p = new Player(message.getPlayerName());
             playerRegistry.addPlayer(p);
-            System.out.println("Registered " + message.getPlayerName());
+            System.out.println("RegisterMessageHandler: Registered " + message.getPlayerName());
             response = new RegisterAckMessage(p.getId());
         }
 
-        SocketAddress newAddress = new InetSocketAddress(((InetSocketAddress)address).getHostName(), message.getPort());
+        InetSocketAddress newAddress = new InetSocketAddress(((InetSocketAddress)address).getHostName(), message.getPort());
+
+        System.out.println("RegisterMessageHandler: address="+newAddress.getHostName()+";port="+newAddress.getPort());
 
         try {
             TCPClient client = clientRegistry.getClient(newAddress);
             client.sendMessage(response);
-            client.close();
-//            testMessages(client);
-
-            // client.close();
+            testMessages(client);
         } catch (Exception ex) {
-            System.out.println("Couldn\'t send response to \"" + ((InetSocketAddress)newAddress).getHostName()+":"+((InetSocketAddress)newAddress).getPort() + "\".");
+            System.out.println("RegisterMessageHandler: Couldn\'t send response to \"" + ((InetSocketAddress)newAddress).getHostName()+":"+((InetSocketAddress)newAddress).getPort() + "\".");
             System.out.println(ex.getMessage());
         }
     }
+
     /**
      * Dummy method to send and test board and PrioChanged
      * @param client
@@ -101,12 +101,9 @@ public class RegisterMessageHandler implements MessageHandlerInterface
 
 		response = new PrioChangeMessage(pl);
 
-		System.out.println("Sending Prio-List");
-
         try {
-        	client.open();
+            System.out.println("RegisterMessageHandler: Sending priorities message");
             client.sendMessage(response);
-            client.close();
         } catch (IOException ex) {
             ex.printStackTrace();
         }
@@ -125,12 +122,10 @@ public class RegisterMessageHandler implements MessageHandlerInterface
 		};
 		board.setBoard(b);
 
-		System.out.println("Sending Board");
-		response = new BoardMessage(board);
+        response = new BoardMessage(board);
         try {
-	    	client.open();
+		  System.out.println("RegisterMessageHandler: Sending board message");
 	        client.sendMessage(response);
-	        client.close();
         } catch (IOException ex) {
             ex.printStackTrace();
         }

@@ -34,7 +34,6 @@ class MainClient
      */
 	public static void main(String[] args)
     {
-        System.out.println("Hello Client!");
         if (args.length < 4) {
             usage();
         }
@@ -55,7 +54,7 @@ class MainClient
 
     private TCPClient client;
     private InputHandler inputHandler;
-    
+
     private MainFrame mainFrame;
 
     protected String playerName;
@@ -86,7 +85,7 @@ class MainClient
      */
     protected void exitWithError(Exception ex)
     {
-        System.out.println("Ouch! Something went wrong:\n" + ex.getMessage());
+        System.out.println("MainClient: Ouch! Something went wrong:\n" + ex.getMessage());
         System.exit(0);
     }
 
@@ -97,7 +96,7 @@ class MainClient
      */
     protected void exitWithError(IOException ex)
     {
-        System.out.println("There was something wrong with the connection to the server:");
+        System.out.println("MainClient: There was something wrong with the connection to the server:");
         System.out.println(ex.getMessage());
         System.exit(0);
     }
@@ -109,13 +108,13 @@ class MainClient
      */
     protected void exitWithError(UnknownHostException ex)
     {
-        System.out.println("Could not find \"" + server + ":" + serverPort + "\".");
+        System.out.println("MainClient: Could not find \"" + server + ":" + serverPort + "\".");
         System.exit(0);
     }
 
-    /*
+    /**
      * Registers all the different handlers
-
+     *
      * @param handerRegistry registry to use
      */
     public void registerHandlers(MessageHandlerRegistry handlerRegistry)
@@ -160,14 +159,14 @@ class MainClient
         }
 
         try {
-            System.out.println("listen to port " + port);
+            System.out.println("MainClient: Listen to port " + port);
             client = new TCPClient(new InetSocketAddress(server, serverPort));
             client.sendMessage(new RegisterMessage(playerName, port));
-            
+
             inputHandler = new InputHandler(client);
             mainFrame.addKeyListener(new InputListener(inputHandler));
-            
-            
+
+
         } catch (Exception ex) {
             exitWithError(ex);
         }

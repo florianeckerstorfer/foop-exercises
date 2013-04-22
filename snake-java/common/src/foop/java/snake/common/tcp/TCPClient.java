@@ -15,17 +15,17 @@ public class TCPClient
     protected Socket socket;
     protected ObjectOutputStream outputStream;
     protected SocketAddress address;
-    
+
     public TCPClient(SocketAddress address)
         throws UnknownHostException, IOException
-    {	
+    {
     	this.address=address;
     	this.open();
     }
 
     /**
      * Sends a message to the server.
-     * KaRo: to fullfill the accept() of the TCPServer there must be a reconnect 
+     * KaRo: to fullfill the accept() of the TCPServer there must be a reconnect
      * after each message is sent. senMessage automatically tries to open() and close()
      * the socket.
      *
@@ -34,28 +34,28 @@ public class TCPClient
     public void sendMessage(MessageInterface message)
         throws IOException
     {
-    	if (socket.isClosed())
+    	if (socket.isClosed()) {
     		open();
-    	
+        }
+
         outputStream.writeObject(message);
         close();
     }
-    
-    public void open() 
+
+    public void open()
             throws UnknownHostException, IOException
     {
-        System.out.println("TCPClient: Opening new socket...");
+        System.out.println("TCPClient: Opening new socket to "+((InetSocketAddress)address).getAddress()+":"+((InetSocketAddress)address).getPort());
     	socket = new Socket();
         socket.connect(address);
-        outputStream = new ObjectOutputStream(socket.getOutputStream());	
+        outputStream = new ObjectOutputStream(socket.getOutputStream());
     }
 
     public void close()
         throws IOException
     {
-        System.out.println("Closing output stream to client.");
+        System.out.println("TCPClient: Closing socket to "+((InetSocketAddress)socket.getRemoteSocketAddress()).getAddress()+":"+socket.getPort());
         outputStream.close();
-        System.out.println("Closing socket to client!");
         socket.close();
     }
 }
