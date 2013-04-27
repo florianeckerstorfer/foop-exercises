@@ -95,13 +95,24 @@ public class PlayerRegistry
     {
         return players;
     }
+    
+    /**
+     * Returns the number of currently registered players.
+     * 
+     * @return The number of players
+     */
+    public int getPlayerCount()
+    {
+    	return players.size();
+    }
 
     /**
      * Retrieves next Player-ID from Stack.
      *
      * @return player-ID
      */
-    private int getNextPlayerID() {
+    private int getNextPlayerID()
+    {
 	    try {
 	    	return playerIDs.removeFirst().intValue();
 	    } catch (Exception e) {

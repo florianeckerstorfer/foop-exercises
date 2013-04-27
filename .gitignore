@@ -1,4 +1,5 @@
 /bin
+snake-java/bin
 *.class
 *.log
 *.*~
@@ -7,6 +8,7 @@
 .classpath
 .project
 .settings
+.metadata
 
 # Package Files #
 *.jar

@@ -52,6 +52,7 @@ public class RegisterMessageHandler implements MessageHandlerInterface
         if (playerRegistry.hasPlayerName(message.getPlayerName())) {
             response = new RegisterErrorMessage("The name \"" + message.getPlayerName() + "\" is already taken. Please choose another name.");
             System.out.println("RegisterMessageHandler: Username \"" + message.getPlayerName() + "\" already exists.");
+            return;
         } else {
         	Player p = new Player(message.getPlayerName());
             playerRegistry.addPlayer(p);

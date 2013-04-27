@@ -8,6 +8,7 @@ import foop.java.snake.common.message.handler.*;
 import foop.java.snake.common.tcp.TCPServer;
 import foop.java.snake.common.tcp.TCPClientRegistry;
 import foop.java.snake.common.player.PlayerRegistry;
+import foop.java.snake.server.gameloop.GameLoop;
 
 /**
  * MainServer
@@ -58,6 +59,8 @@ class MainServer
     {
         PlayerRegistry playerRegistry = new PlayerRegistry();
         TCPClientRegistry clientRegistry = new TCPClientRegistry();
+        GameLoop gameLoop = new GameLoop(playerRegistry);
+        gameLoop.start();
 
         try {
             MessageHandlerRegistry messageHandlerRegistry = new MessageHandlerRegistry();
