@@ -66,7 +66,7 @@ public class MainFrame extends JFrame implements Observer {
     /**
      * we have been updated by the Observable --> do something
      * unfortunately Observer is not generic. We have to check and cast
-     * Not so very nice but I do not really want to create gerneri Observer/Observable for this
+     * Not so very nice but I do not really want to create generic Observer/Observable for this
      */
     @Override
     public void update(Observable o, Object arg) {

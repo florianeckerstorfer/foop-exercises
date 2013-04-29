@@ -21,11 +21,24 @@ public class Board implements Serializable{
 	 * @param rows number of rows
 	 * @param columns number of columns
 	 */
-	public Board(Integer rows, Integer columns) {
-		this.setBoard(new Byte[columns][rows]);
+	public Board(Integer columns, Integer rows) {
 		this.setColumns(columns);
 		this.setRows(rows);
+        this.generateBoard();
 	}
+
+    /**
+     * Generates an empty board
+     */
+    private void generateBoard() {
+        Byte[][] board = new Byte[this.getColumns()][this.getRows()];
+        for (int i=0; i<board.length; i++) {
+            for (int j=0; j<board[i].length; j++) {
+                board[i][j] = 0;
+            }
+        }
+        this.setBoard(board);
+    }
 
 	public Integer getRows() {
 		return rows;
@@ -45,6 +58,10 @@ public class Board implements Serializable{
 	public void setBoard(Byte[][] board) {
 		this.board = board;
 	}
+
+    public void setField(int column, int row, Byte field) {
+        this.board[column][row] = field;
+    }
 
 	/**
 	 * Returns the direction of the snake head at the given position. If no snake head is there it

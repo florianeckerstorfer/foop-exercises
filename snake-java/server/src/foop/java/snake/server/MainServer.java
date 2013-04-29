@@ -59,7 +59,7 @@ class MainServer
     {
         PlayerRegistry playerRegistry = new PlayerRegistry();
         TCPClientRegistry clientRegistry = new TCPClientRegistry();
-        GameLoop gameLoop = new GameLoop(playerRegistry);
+        GameLoop gameLoop = new GameLoop(playerRegistry, clientRegistry);
         gameLoop.start();
 
         try {
@@ -68,7 +68,9 @@ class MainServer
                 RegisterMessage.TYPE, new RegisterMessageHandler(playerRegistry, clientRegistry)
             );
 
-            messageHandlerRegistry.registerHandler(InputMessage.TYPE, new InputMessageHandler());
+            InputMessageHandler i = new InputMessageHandler();
+            messageHandlerRegistry.registerHandler(InputMessage.TYPE, i);
+            i.addObserver(gameLoop);
 
             TCPServer server = new TCPServer(port, messageHandlerRegistry);
             (new Thread(server)).start();

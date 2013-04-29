@@ -1,13 +1,16 @@
 package foop.java.snake.common.message.handler;
 
 import java.net.SocketAddress;
+import java.util.HashMap;
+import java.util.Observable;
 
 import foop.java.snake.common.message.MessageInterface;
 import foop.java.snake.common.message.InputMessage;
 import foop.java.snake.common.message.InputMessage.Keycode;
 import foop.java.snake.common.message.exception.NoMessageHandlerFoundException;
+import foop.java.snake.common.player.PlayerRegistry;
 
-public class InputMessageHandler implements MessageHandlerInterface {
+public class InputMessageHandler extends Observable implements MessageHandlerInterface {
 
 	@Override
 	public void handle(MessageInterface message, SocketAddress address)
@@ -19,6 +22,10 @@ public class InputMessageHandler implements MessageHandlerInterface {
 
 		// TODO Message received - what now ;-)
 		this.printInput((InputMessage)message);
+
+        // Implementation of the observer-pattern
+        setChanged();
+        notifyObservers((InputMessage)message);
 	}
 
 	/**
