@@ -29,12 +29,12 @@ public class GameLoop extends Thread implements Observer
 	/**
 	 * The number of iterations until the game starts
 	 */
-	final private int initialGameCountdown = 1;
+	final private int initialGameCountdown = 10;
 
 	/**
 	 * The number of iterations until the priority changes
 	 */
-	final private int priorityChangeInterval = 5;
+	final private int priorityChangeInterval = 50;
 
 	/**
 	 * Stores the player registry
@@ -50,6 +50,11 @@ public class GameLoop extends Thread implements Observer
     private int boardColumns = 30;
     private int boardRows = 30;
 
+    /**
+     * indicates if new prio shall be sent
+     */
+    private boolean prioChanged = false;
+    
     private List<InputMessage> inputMessages;
 
 	/**
@@ -94,6 +99,7 @@ public class GameLoop extends Thread implements Observer
 				gameCountdown--;
                 if (gameCountdown == 0) {
                     this.setSnakes();
+                    this.setInitialPrios();
                     this.sendMessage();
                 }
 			} else {
@@ -102,8 +108,9 @@ public class GameLoop extends Thread implements Observer
                 this.sendMessage();
 			}
 
-			if ((loopCount % priorityChangeInterval) == 0) {
+			if (((loopCount % priorityChangeInterval) == 0) && gameCountdown == 0) {
 				// TODO: Send priority change to the players
+                this.changePrios();
 			}
 
 			try {
@@ -225,13 +232,92 @@ public class GameLoop extends Thread implements Observer
             try {
                 TCPClient client = this.clientRegistry.getClient(player.getAddress());
                 client.sendMessage(new BoardMessage(this.board));
-                client.sendMessage(new PrioChangeMessage(playerRegistry.getPlayers()));
+                if (true == prioChanged) {
+	                client.sendMessage(new PrioChangeMessage(playerRegistry.getPlayers()));
+                }
             } catch (IOException e) {
                 System.out.println("Error while sending to " + player.getName());
             }
         }
-    }
+        if (true == prioChanged)
+        	prioChanged=false;
 
+    }
+    /**
+     * Changes / sets the players priorities. Initially random and later on just 
+     * "rolling through". So strictly spoken the next prio... is not necessary....
+     * @param initial if true, initial random number generated
+     */
+    private void changePrios() {
+        System.out.println("Change Priorities");
+
+        int pCount = this.playerRegistry.getPlayerCount();
+		List<Player> players = playerRegistry.getPlayers();
+    	
+    	if (pCount == 1)
+    		return;
+    	
+		int firstPrio = players.get(0).getPriority(); 
+		int firstNextPrio = players.get(0).getNextPriority();
+		
+    	for (int i = 0; i <= players.size()-2; i++) {
+    		Player thisPlayer = players.get(i);
+    		Player nextPlayer = players.get(i+1);
+    		
+    		thisPlayer.setPriority(thisPlayer.getNextPriority());
+    		thisPlayer.setNextPriority(nextPlayer.getNextPriority());
+    	}
+    	
+    	players.get(pCount-1).setPriority(firstPrio);
+    	players.get(pCount-1).setNextPriority(firstNextPrio);
+
+    	prioChanged=true; // send them during next senMessage()
+
+    }
+    
+    private void setInitialPrios() {
+        System.out.println("Set initial Priorities for " + playerRegistry.getPlayerCount() + " player");
+        
+        int pCount = this.playerRegistry.getPlayerCount();
+		List<Player> players = playerRegistry.getPlayers();
+        
+		// inital prio is "pure random"
+		List<Integer> initialPrio=createPrios(pCount-1);
+		
+		System.out.println("Length of initialPrio " + initialPrio.size());
+		
+		List<Integer> nextPrio = new ArrayList<Integer>(initialPrio);
+		Collections.copy(nextPrio, initialPrio);
+		Collections.rotate(nextPrio, 1);
+		System.out.println("Length of nextPrio " + nextPrio.size());
+		
+		int i = 0;
+		for (Player player: players) {
+			System.out.println("Setting inital value for " + i);
+			player.setPriority(initialPrio.get(i));
+			player.setNextPriority(nextPrio.get(i));
+			i++;
+		}
+		prioChanged=true; // send them during next senMessage()
+    }
+    /** 
+     * prio goes from 0 to "count of player"-1
+     * @param maxprio
+     * @return
+     */
+    private List<Integer> createPrios(int maxprio) {
+    	List<Integer> prios = new ArrayList<Integer>();
+    	// TODO
+    	int tmp=maxprio;
+    	while (tmp >= 0) {
+    		prios.add(new Integer(tmp--));
+    	}
+    	Collections.shuffle(prios);
+    	return prios;
+    }
+    
+    
+    
     @Override
     public void update(Observable o, Object arg) {
         if (arg instanceof InputMessage) {
