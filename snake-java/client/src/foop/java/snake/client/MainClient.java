@@ -1,8 +1,13 @@
 package foop.java.snake.client;
 
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.UnknownHostException;
+
+import javax.swing.WindowConstants;
 
 import foop.java.snake.client.gui.InputListener;
 import foop.java.snake.client.gui.MainFrame;
@@ -11,6 +16,7 @@ import foop.java.snake.common.message.PrioChangeMessage;
 import foop.java.snake.common.message.RegisterAckMessage;
 import foop.java.snake.common.message.RegisterErrorMessage;
 import foop.java.snake.common.message.RegisterMessage;
+import foop.java.snake.common.message.UnregisterMessage;
 import foop.java.snake.common.message.handler.BoardMessageHandler;
 import foop.java.snake.common.message.handler.MessageHandlerRegistry;
 import foop.java.snake.common.message.handler.PrioChangeMessageHandler;
@@ -56,7 +62,8 @@ class MainClient
     private InputHandler inputHandler;
 
     private MainFrame mainFrame;
-
+    private MessageObserver messageObserver;
+    
     protected String playerName;
     protected int port;
     protected String server;
@@ -76,6 +83,21 @@ class MainClient
         serverPort = Integer.parseInt(args[3]);
 
     	mainFrame = new MainFrame();
+    	mainFrame.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
+
+    	// adding close-handling. Sending Deregister-message and exit
+    	mainFrame.addWindowListener(new WindowAdapter() 
+    	{
+    		public void windowClosing(WindowEvent e) {
+    			try {
+    				client.sendMessage(new UnregisterMessage(playerName));
+    			} catch (Exception ex) {
+    				// do nothing...
+    			}
+    			System.exit(0);
+    		}
+    	});
+    	messageObserver = new MessageObserver(mainFrame);
     }
 
     /**
@@ -129,14 +151,14 @@ class MainClient
 
         BoardMessageHandler b = new BoardMessageHandler();
         try {
-            b.addObserver(mainFrame);
+            b.addObserver(messageObserver);
             handlerRegistry.registerHandler(BoardMessage.TYPE, b);
         } catch (NullPointerException ex) {
             exitWithError(ex);
         }
 
 		PrioChangeMessageHandler p = new PrioChangeMessageHandler();
-		p.addObserver(mainFrame);
+		p.addObserver(messageObserver);
         handlerRegistry.registerHandler(
                 PrioChangeMessage.TYPE, p
         );

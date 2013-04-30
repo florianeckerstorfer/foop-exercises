@@ -11,7 +11,7 @@ public class InputMessage implements MessageInterface {
     public static final int TYPE = 4;
 
 	public enum Keycode {
-		IGNORE, UP, DOWN, LEFT, RIGHT 
+		IGNORE, UP, DOWN, LEFT, RIGHT, QUIT 
 	}
 	
 	private Keycode input;

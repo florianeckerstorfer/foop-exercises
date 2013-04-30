@@ -43,6 +43,9 @@ public class InputMessageHandler implements MessageHandlerInterface {
 			case DOWN:
 				System.out.println("DOWN" );
 				break;
+			case QUIT:
+				System.out.println("QUIT" );
+				break;
 			case IGNORE:
 				System.out.println("IGNORE" );
 		}

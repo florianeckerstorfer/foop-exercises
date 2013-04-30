@@ -65,8 +65,11 @@ class MainServer
         try {
             MessageHandlerRegistry messageHandlerRegistry = new MessageHandlerRegistry();
             messageHandlerRegistry.registerHandler(
-                RegisterMessage.TYPE, new RegisterMessageHandler(playerRegistry, clientRegistry)
-            );
+                    RegisterMessage.TYPE, new RegisterMessageHandler(playerRegistry, clientRegistry)
+                );
+            messageHandlerRegistry.registerHandler(
+                    UnregisterMessage.TYPE, new UnregisterMessageHandler(playerRegistry, clientRegistry)
+                );
 
             messageHandlerRegistry.registerHandler(InputMessage.TYPE, new InputMessageHandler());
 

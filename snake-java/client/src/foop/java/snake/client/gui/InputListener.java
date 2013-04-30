@@ -67,6 +67,8 @@ public class InputListener implements KeyListener
 			case 83: // 'S'
 			case 40: // Arrow Down
 				return Keycode.DOWN;
+			case 81: // 'Q for quit'
+				return Keycode.QUIT;
 			default:
 				return Keycode.IGNORE;
 		}

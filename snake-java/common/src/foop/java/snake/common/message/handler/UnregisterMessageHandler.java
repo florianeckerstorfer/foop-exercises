@@ -8,6 +8,7 @@ import foop.java.snake.common.message.UnregisterMessage;
 import foop.java.snake.common.message.MessageInterface;
 import foop.java.snake.common.message.exception.NoMessageHandlerFoundException;
 import foop.java.snake.common.player.PlayerRegistry;
+import foop.java.snake.common.tcp.TCPClient;
 import foop.java.snake.common.tcp.TCPClientRegistry;
 
 /**
@@ -35,7 +36,7 @@ public class UnregisterMessageHandler implements MessageHandlerInterface {
             throw new NoMessageHandlerFoundException("This is not a UnregisterMessage.");
         }
 		UnregisterMessage unregisterMessage = (UnregisterMessage)message;
-        MessageInterface response;
+//        MessageInterface response;
 
         // message received, remove Player from player-registry
         String playerName=unregisterMessage.getPlayerName();
@@ -49,10 +50,9 @@ public class UnregisterMessageHandler implements MessageHandlerInterface {
 
         } else {
         	// player cannot be removed as it is not registerred...
-        	// send Error-response
-            response = new RegisterErrorMessage("The name \"" + playerName + "\" is not registerred and therefore cannot be removed");
-            System.out.println("UnregisterMessageHandler: Username \"" + playerName + "\" does not exist.");
-            response = new RegisterAckMessage();
+        	// In that case we cannot send an error-response and we do nothing...
+//            response = new RegisterErrorMessage("The name \"" + playerName + "\" is not registerred and therefore cannot be removed");
+            System.out.println("UnregisterMessageHandler: Username \"" + playerName + "\" does not exist.");           
         }
 
 	}

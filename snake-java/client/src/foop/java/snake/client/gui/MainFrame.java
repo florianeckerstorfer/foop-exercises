@@ -2,7 +2,6 @@ package foop.java.snake.client.gui;
 
 import foop.java.snake.common.board.Board;
 import foop.java.snake.common.player.*;
-
 import javax.swing.*;
 
 import java.awt.*;
@@ -14,12 +13,11 @@ import java.util.List;
  * Date: 26.03.13
  * Time: 13:33
  */
-public class MainFrame extends JFrame implements Observer {
+public class MainFrame extends JFrame {
     //panel where the board is rendered
     private BoardPanel boardPanel;
     private PlayerPanel playerPanel;
 
-    private int id = 0; //our Player-ID
     private int offset = 20;
     private Color[] colors = new Color[] {
             Color.blue,
@@ -34,7 +32,8 @@ public class MainFrame extends JFrame implements Observer {
     public MainFrame() {
         init();
         //set some frame properties
-        this.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+        // do nothing but add a window listener...
+        this.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
         this.setTitle("Snake");
         this.setSize(722, 623);
         this.setVisible(true);
@@ -64,25 +63,6 @@ public class MainFrame extends JFrame implements Observer {
     }
 
     /**
-     * we have been updated by the Observable --> do something
-     * unfortunately Observer is not generic. We have to check and cast
-     * Not so very nice but I do not really want to create gerneri Observer/Observable for this
-     */
-    @Override
-    public void update(Observable o, Object arg) {
-        // Now, this is the problem here. We still have to distinguish from which Observable this is comming...
-        if (arg instanceof List<?>) {
-            this.renderPlayers((List<Player>)arg);
-        }
-        if (arg instanceof Board) {
-            this.renderBoard((Board)arg);
-        }
-        if (arg instanceof Integer) {
-            this.id=((Integer)arg).intValue();
-        }
-    }
-
-    /**
      * takes a board and renders int on the board panel
      * @param board board
      */
@@ -95,7 +75,7 @@ public class MainFrame extends JFrame implements Observer {
      * takes a list of @see {Player}-objects and renders int on the playeröierarchy panel
      * @param players List of Players
      */
-    public void renderPlayers(List<Player> players) {
+    public void renderPlayers(int id, List<Player> players) {
     	playerPanel.setPlayers(players);
     	playerPanel.repaint();
     }
@@ -113,7 +93,7 @@ public class MainFrame extends JFrame implements Observer {
         pl.add(new Player("Player 3", 2, 3, 1));
         pl.add(new Player("Player 4", 3, 6, 2));
         pl.add(new Player("Player 5", 4, 2, 3));
-        mainFrame.renderPlayers(pl);
+        mainFrame.renderPlayers(0, pl);
 
         Board board = new Board(30, 30);
         Byte[][] b = new Byte[][]{
