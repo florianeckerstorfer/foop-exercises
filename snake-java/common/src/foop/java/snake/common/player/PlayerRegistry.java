@@ -22,7 +22,7 @@ public class PlayerRegistry
      * IDs are between 1 and maxPlayerID
      */
     static {
-    	for (int i=maxPlayerID; i > 0; i--)
+    	for (int i=maxPlayerID; i >= 0; i--)
     		playerIDs.addFirst(new Integer(i));
     }
 
@@ -35,7 +35,7 @@ public class PlayerRegistry
     public PlayerRegistry addPlayer(Player player)
     {
         players.add(player);
-        player.setID(this.getNextPlayerID());
+        player.setId(this.getNextPlayerID());
 
         return this;
     }
@@ -87,6 +87,32 @@ public class PlayerRegistry
     }
 
     /**
+     * Returns the player by id.
+     *
+     * @param  id       player id
+     * @return Player
+     */
+    public Player getPlayerById(int id)
+    {
+        for (Player player : players) {
+            if (id == player.getId()) {
+                return player;
+            }
+        }
+
+        return null;
+    }
+
+    public void updatePlayer(Player player) {
+        for (int i=0; i<players.size(); i++) {
+            if (players.get(i).getId() == player.getId()) {
+                players.set(i, player);
+                return;
+            }
+        }
+    }
+
+    /**
      * Returns the list of players.
      *
      * @return
@@ -95,10 +121,10 @@ public class PlayerRegistry
     {
         return players;
     }
-    
+
     /**
      * Returns the number of currently registered players.
-     * 
+     *
      * @return The number of players
      */
     public int getPlayerCount()

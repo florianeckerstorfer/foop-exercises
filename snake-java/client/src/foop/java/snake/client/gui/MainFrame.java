@@ -2,6 +2,7 @@ package foop.java.snake.client.gui;
 
 import foop.java.snake.common.board.Board;
 import foop.java.snake.common.player.*;
+
 import javax.swing.*;
 
 import java.awt.*;
@@ -32,8 +33,7 @@ public class MainFrame extends JFrame {
     public MainFrame() {
         init();
         //set some frame properties
-        // do nothing but add a window listener...
-        this.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
+        this.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         this.setTitle("Snake");
         this.setSize(722, 623);
         this.setVisible(true);

@@ -49,25 +49,26 @@ public class RegisterMessageHandler implements MessageHandlerInterface
 
         MessageInterface response;
 
+        InetSocketAddress newAddress = new InetSocketAddress(((InetSocketAddress)address).getHostName(), message.getPort());
+
         if (playerRegistry.hasPlayerName(message.getPlayerName())) {
             response = new RegisterErrorMessage("The name \"" + message.getPlayerName() + "\" is already taken. Please choose another name.");
             System.out.println("RegisterMessageHandler: Username \"" + message.getPlayerName() + "\" already exists.");
             return;
         } else {
         	Player p = new Player(message.getPlayerName());
+            p.setAddress(newAddress);
             playerRegistry.addPlayer(p);
             System.out.println("RegisterMessageHandler: Registered " + message.getPlayerName());
             response = new RegisterAckMessage(p.getId());
         }
-
-        InetSocketAddress newAddress = new InetSocketAddress(((InetSocketAddress)address).getHostName(), message.getPort());
 
         System.out.println("RegisterMessageHandler: address="+newAddress.getHostName()+";port="+newAddress.getPort());
 
         try {
             TCPClient client = clientRegistry.getClient(newAddress);
             client.sendMessage(response);
-            testMessages(client);
+//            testMessages(client);
         } catch (Exception ex) {
             System.out.println("RegisterMessageHandler: Couldn\'t send response to \"" + ((InetSocketAddress)newAddress).getHostName()+":"+((InetSocketAddress)newAddress).getPort() + "\".");
             System.out.println(ex.getMessage());
@@ -84,15 +85,15 @@ public class RegisterMessageHandler implements MessageHandlerInterface
 
 		// Test: send board and prio-Message just for test and fun
 		Player p1 = new Player("Player 1");
-		p1.setID(1);
+		p1.setId(1);
 		Player p2 = new Player("Player 2");
-		p2.setID(2);
+		p2.setId(2);
 		Player p3 = new Player("Player 3");
-		p3.setID(3);
+		p3.setId(3);
 		Player p4 = new Player("Player 4");
-		p4.setID(4);
+		p4.setId(4);
 		Player p5 = new Player("Player 5");
-		p5.setID(5);
+		p5.setId(5);
 		List<Player> pl = new ArrayList<Player>();
 		pl.add(p1);
 		pl.add(p2);

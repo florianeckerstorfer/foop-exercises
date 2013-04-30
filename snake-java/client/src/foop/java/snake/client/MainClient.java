@@ -11,11 +11,7 @@ import javax.swing.WindowConstants;
 
 import foop.java.snake.client.gui.InputListener;
 import foop.java.snake.client.gui.MainFrame;
-import foop.java.snake.common.message.BoardMessage;
-import foop.java.snake.common.message.PrioChangeMessage;
-import foop.java.snake.common.message.RegisterAckMessage;
-import foop.java.snake.common.message.RegisterErrorMessage;
-import foop.java.snake.common.message.RegisterMessage;
+import foop.java.snake.common.message.*;
 import foop.java.snake.common.message.UnregisterMessage;
 import foop.java.snake.common.message.handler.BoardMessageHandler;
 import foop.java.snake.common.message.handler.MessageHandlerRegistry;
@@ -85,18 +81,6 @@ class MainClient
     	mainFrame = new MainFrame();
     	mainFrame.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
 
-    	// adding close-handling. Sending Deregister-message and exit
-    	mainFrame.addWindowListener(new WindowAdapter() 
-    	{
-    		public void windowClosing(WindowEvent e) {
-    			try {
-    				client.sendMessage(new UnregisterMessage(playerName));
-    			} catch (Exception ex) {
-    				// do nothing...
-    			}
-    			System.exit(0);
-    		}
-    	});
     	messageObserver = new MessageObserver(mainFrame);
     }
 
@@ -137,7 +121,7 @@ class MainClient
     /**
      * Registers all the different handlers
      *
-     * @param handerRegistry registry to use
+     * @param handlerRegistry registry to use
      */
     public void registerHandlers(MessageHandlerRegistry handlerRegistry)
     {
@@ -187,7 +171,16 @@ class MainClient
 
             inputHandler = new InputHandler(client);
             mainFrame.addKeyListener(new InputListener(inputHandler));
-
+            mainFrame.addWindowListener(new WindowAdapter() {
+                public void windowClosing(WindowEvent e) {
+                    try {
+                        client.sendMessage(new UnregisterMessage(playerName));
+                        System.exit(0);	// closing all...
+                    } catch (Exception ex) {
+                        exitWithError(ex);
+                    }
+                }
+            });
 
         } catch (Exception ex) {
             exitWithError(ex);

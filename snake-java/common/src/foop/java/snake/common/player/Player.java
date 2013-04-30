@@ -1,5 +1,7 @@
 package foop.java.snake.common.player;
 
+import foop.java.snake.common.message.InputMessage;
+
 import java.io.Serializable;
 import java.net.SocketAddress;
 
@@ -14,6 +16,7 @@ public class Player implements Serializable
     protected int priority;
     protected int nextPriority;
     protected SocketAddress address;
+    protected InputMessage.Keycode keycode;
 
     /**
      * Constructor.
@@ -61,7 +64,7 @@ public class Player implements Serializable
      * @param  id
      * @return
      */
-    public Player setID(int id)
+    public Player setId(int id)
     {
        	this.id = id;
 
@@ -128,4 +131,11 @@ public class Player implements Serializable
 		this.nextPriority = nextPriority;
 	}
 
+    public InputMessage.Keycode getKeycode() {
+        return keycode;
+    }
+
+    public void setKeycode(InputMessage.Keycode keycode) {
+        this.keycode = keycode;
+    }
 }
