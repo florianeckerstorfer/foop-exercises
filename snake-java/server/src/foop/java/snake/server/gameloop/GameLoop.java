@@ -54,7 +54,7 @@ public class GameLoop extends Thread implements Observer
      * indicates if new prio shall be sent
      */
     private boolean prioChanged = false;
-    
+
     private List<InputMessage> inputMessages;
 
 	/**
@@ -98,14 +98,14 @@ public class GameLoop extends Thread implements Observer
 				System.out.println("Game starts in " + gameCountdown);
 				gameCountdown--;
                 if (gameCountdown == 0) {
-                    this.setSnakes();
-                    this.setInitialPrios();
-                    this.sendMessage();
+                    this.initSnakes();
+                    this.initPrios();
+                    this.sendMessages();
                 }
 			} else {
 				// TODO: Implement "real" game logic, movement, collision detection, etc
                 this.calculateBoard();
-                this.sendMessage();
+                this.sendMessages();
 			}
 
 			if (((loopCount % priorityChangeInterval) == 0) && gameCountdown == 0) {
@@ -123,67 +123,101 @@ public class GameLoop extends Thread implements Observer
 		}
     }
 
-    private void setSnakes() {
-        List<Map<String, Integer>> fields = new ArrayList<Map<String, Integer>>();
-        System.out.println("setsnakes " + playerRegistry.getPlayerCount());
+    /**
+     * Randomly generate a snake consisting of head and body.
+     */
+    private void initSnakes() {
+        List<Map<String, Integer>> history = new ArrayList<Map<String, Integer>>();
+        System.out.println("init snakes " + playerRegistry.getPlayerCount());
         int i = 0;
         while(i < playerRegistry.getPlayerCount()) {
-            Map<String, Integer> field = new HashMap<String, Integer>();
-            field.put("id", playerRegistry.getPlayers().get(i).getId());
-            field.put("row", (int) (Math.random() * board.getRows()));
-            field.put("column", (int) (Math.random() * board.getColumns()));
-            field.put("direction", 2 + (int) (Math.random() * (5-2 +1)));
+            //random values for snake head field
+            Map<String, Integer> headField = new HashMap<String, Integer>();
+            headField.put("row", (int) (Math.random() * board.getRows()));
+            headField.put("column", (int) (Math.random() * board.getColumns()));
+            int id= playerRegistry.getPlayers().get(i).getId(),
+                head =  2 + (int) (Math.random() * (5-2 +1));
+            byte headDirection = (byte)(head * 16 + id);
+            byte snakeHead = this.board.getHeadDirection(headDirection);
 
-            boolean isInList = false;
-            for(Map<String, Integer> tmp : fields) {
-                if (tmp.get("row") == field.get("row") && tmp.get("column") == field.get("column")) {
-                    isInList = true;
+            //random values for snake body field
+            int row = 0,
+                column = 0,
+                rand = -1 + (int) (Math.random() * 3);
+
+            if (snakeHead == SnakeHeadDirection.snakeHeadUp) {
+                column = rand;
+                if (column == 0) {
+                    row = 1;
+                }
+                System.out.println("up " + column + " " +row);
+            } else if (snakeHead == SnakeHeadDirection.snakeHeadDown) {
+                column = rand;
+                if (column == 0) {
+                    row = -1;
+                }
+            } else if (snakeHead == SnakeHeadDirection.snakeHeadLeft) {
+                row = rand;
+                if (row == 0) {
+                    column = 1;
+                }
+            } else if (snakeHead == SnakeHeadDirection.snakeHeadRight) {
+                row = rand;
+                if (row == 0) {
+                    column = -1;
                 }
             }
-            if (!isInList) {
+
+            Map<String, Integer> bodyField = new HashMap<String, Integer>();
+            bodyField.put("row", headField.get("row") + row);
+            bodyField.put("column", headField.get("column") + column);
+
+            if (isNotInHistory(history, headField.get("column"), headField.get("row")) &&
+                    isNotInHistory(history, bodyField.get("column"), bodyField.get("row"))) {
+                System.out.println("head: " + headField.get("column") + "/" + headField.get("row"));
                 this.board.setField(
-                        field.get("row"),
-                        field.get("column"),
-                        (byte)(field.get("direction") * 16 + field.get("id"))
+                        headField.get("column"),
+                        headField.get("row"),
+                        headDirection
                 );
-                fields.add(field);
+                System.out.println("body: " + bodyField.get("column") + "/" + bodyField.get("row"));
+                this.board.setField(
+                        bodyField.get("column"),
+                        bodyField.get("row"),
+                        (byte)(SnakeHeadDirection.snakeBody + id)
+                );
+
+                history.add(headField);
+                history.add(bodyField);
                 i++;
             }
         }
     }
 
-
-    private void moveToField(int column, int row, byte snakeHeadDirection) {
+    /**
+     * Moves a snake part to a specific field
+     * @param column    column
+     * @param row       row
+     * @param snake     snake part
+     */
+    private void moveToField(int column, int row, byte snake) {
         column = (column < 0) ? this.board.getColumns() + column : column % this.board.getColumns();
         row = (row < 0) ? this.board.getRows() + row : row % this.board.getRows();
 
-        this.nextBoard.setField(column, row, snakeHeadDirection);
+        this.nextBoard.setField(column, row, snake);
     }
 
-    private void chooseDirection(int column, int row, InputMessage.Keycode key, int playerId) {
-        switch(key) {
-            case LEFT:
-                this.moveToField(column - 1, row, (byte) (SnakeHeadDirection.snakeHeadLeft + playerId));
-                break;
-            case RIGHT:
-                this.moveToField(column + 1, row, (byte) (SnakeHeadDirection.snakeHeadRight + playerId));
-                break;
-            case UP:
-                this.moveToField(column, row - 1, (byte) (SnakeHeadDirection.snakeHeadUp + playerId));
-                break;
-            case DOWN:
-                this.moveToField(column, row + 1, (byte) (SnakeHeadDirection.snakeHeadDown + playerId));
-                break;
-        }
-    }
-
+    /**
+     * Logic to move a snake head in a specific direction
+     * @param column
+     * @param row
+     * @param player
+     */
     private void moveSnakeHead(int column, int row, Player player) {
-        System.out.println("moveSnakeHead from " + player.getName() + " [" + column + "/" + row + "] ");
+        System.out.println("moveSnakeHead from " + player.getName() + " " + column + "/" + row);
 
         byte snakeHead = this.board.getSnakeHeadDirection(column, row);
         InputMessage.Keycode key = player.getKeycode();
-
-        this.nextBoard.setField(column, row, (byte)0);
 
         if (snakeHead == SnakeHeadDirection.snakeHeadUp) {
             if (key == null || key == InputMessage.Keycode.IGNORE || key == InputMessage.Keycode.DOWN) {
@@ -204,19 +238,103 @@ public class GameLoop extends Thread implements Observer
         }
 
         if (key != null) {
-            this.chooseDirection(column, row, key, player.getId());
+            switch(key) {
+                case LEFT:
+                    this.moveToField(column - 1, row,
+                            (byte) (SnakeHeadDirection.snakeHeadLeft + player.getId()));
+                    break;
+                case RIGHT:
+                    this.moveToField(column + 1, row,
+                            (byte) (SnakeHeadDirection.snakeHeadRight + player.getId()));
+                    break;
+                case UP:
+                    this.moveToField(column, row - 1,
+                            (byte) (SnakeHeadDirection.snakeHeadUp + player.getId()));
+                    break;
+                case DOWN:
+                    this.moveToField(column, row + 1,
+                            (byte) (SnakeHeadDirection.snakeHeadDown + player.getId()));
+                    break;
+            }
         }
     }
 
+    /**
+     * Determinate if a specified field is not in a history.
+     * @param history
+     * @param column
+     * @param row
+     * @return  boolean
+     */
+    private boolean isNotInHistory(List<Map<String, Integer>> history, int column, int row) {
+        for (Map<String, Integer> field: history) {
+            if (field.get("column") == column && field.get("row") == row) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
+     * Moves the body of a snake.
+     * @param column
+     * @param row
+     * @param playerId
+     * @param history
+     */
+    private void moveSnakeBody(int column, int row, int playerId, List<Map<String, Integer>> history) {
+        System.out.println("moveBody of PLayer " + playerId + " to " + column + "/" + row + " ");
+
+        Map<String, Integer> field = new HashMap<String, Integer>();
+        field.put("column", column);
+        field.put("row", row);
+        history.add(field);
+
+        Byte body = (byte) (SnakeHeadDirection.snakeBody + playerId);
+        int incCol = (column + 1) % this.board.getColumns(),
+            incRow = (row + 1) % this.board.getRows(),
+            decCol = (column - 1 < 0) ? this.board.getColumns() + column - 1 : column - 1,
+            decRow = (row - 1 < 0) ? this.board.getRows() + row - 1 : row - 1;
+
+        //check if there's another body part
+        if (isNotInHistory(history, incCol, row) &&
+                this.board.isSnake(incCol, row) &&
+                this.board.getPlayerNumber(incCol, row) == playerId) {
+            moveToField(column, row, body);
+            moveSnakeBody(incCol, row, playerId, history);
+        } else if (isNotInHistory(history, column, incRow) &&
+                this.board.isSnake(column, incRow) &&
+                this.board.getPlayerNumber(column, incRow) == playerId) {
+            moveToField(column, row, body);
+            moveSnakeBody(column, incRow, playerId, history);
+        } else if (isNotInHistory(history, decCol, row) &&
+                this.board.isSnake(decCol, row) &&
+                this.board.getPlayerNumber(decCol, row) == playerId) {
+            moveToField(column, row, body);
+            moveSnakeBody(decCol, row, playerId, history);
+        } else if (isNotInHistory(history, column, decRow) &&
+                this.board.isSnake(column, decRow) &&
+                this.board.getPlayerNumber(column, decRow) == playerId) {
+            moveToField(column, row, body);
+            moveSnakeBody(column, decRow, playerId, history);
+        }
+    }
+
+    /**
+     * Calculates and generates the next board.
+     */
     private void calculateBoard() {
         System.out.println("calculateBoard");
         this.nextBoard = new Board(this.board.getColumns(), this.board.getRows());
         for (int i=0; i<this.board.getColumns(); i++) {
             for (int j=0; j<this.board.getRows(); j++) {
-                if (this.board.isSnakeHead(i, j)) {
+                //find snake head
+                if (this.board.isSnakeHead(i, j) &&
+                        this.board.getBoard()[i][j] != SnakeHeadDirection.snakeBody) {
                     Player player = playerRegistry.getPlayerById(this.board.getPlayerNumber(i, j));
                     if (player != null) {
                         this.moveSnakeHead(i, j, player);
+                        this.moveSnakeBody(i, j, player.getId(), new ArrayList<Map<String, Integer>>());
                     } else {
                         System.out.println("Error there should be a player");
                     }
@@ -226,71 +344,69 @@ public class GameLoop extends Thread implements Observer
         this.board = this.nextBoard;
     }
 
-    private void sendMessage() {
-        System.out.println("Send board");
+    private void sendMessages() {
+        System.out.println("Send messages to players");
         for(Player player : this.playerRegistry.getPlayers()) {
             try {
                 TCPClient client = this.clientRegistry.getClient(player.getAddress());
                 client.sendMessage(new BoardMessage(this.board));
-                if (true == prioChanged) {
+                if (prioChanged) {
 	                client.sendMessage(new PrioChangeMessage(playerRegistry.getPlayers()));
                 }
             } catch (IOException e) {
                 System.out.println("Error while sending to " + player.getName());
             }
         }
-        if (true == prioChanged)
+        if (prioChanged)
         	prioChanged=false;
-
     }
     /**
-     * Changes / sets the players priorities. Initially random and later on just 
+     * Changes / sets the players priorities. Initially random and later on just
      * "rolling through". So strictly spoken the next prio... is not necessary....
-     * @param initial if true, initial random number generated
      */
     private void changePrios() {
         System.out.println("Change Priorities");
 
         int pCount = this.playerRegistry.getPlayerCount();
 		List<Player> players = playerRegistry.getPlayers();
-    	
+
     	if (pCount == 1)
     		return;
-    	
-		int firstPrio = players.get(0).getPriority(); 
+
+		int firstPrio = players.get(0).getPriority();
 		int firstNextPrio = players.get(0).getNextPriority();
-		
+
     	for (int i = 0; i <= players.size()-2; i++) {
     		Player thisPlayer = players.get(i);
     		Player nextPlayer = players.get(i+1);
-    		
+
     		thisPlayer.setPriority(thisPlayer.getNextPriority());
     		thisPlayer.setNextPriority(nextPlayer.getNextPriority());
     	}
-    	
+
     	players.get(pCount-1).setPriority(firstPrio);
     	players.get(pCount-1).setNextPriority(firstNextPrio);
 
     	prioChanged=true; // send them during next senMessage()
 
     }
-    
-    private void setInitialPrios() {
-        System.out.println("Set initial Priorities for " + playerRegistry.getPlayerCount() + " player");
-        
+
+    private void initPrios() {
+        System.out.println("init Priorities for " + playerRegistry.getPlayerCount() + " player");
+
         int pCount = this.playerRegistry.getPlayerCount();
 		List<Player> players = playerRegistry.getPlayers();
-        
+
 		// inital prio is "pure random"
 		List<Integer> initialPrio=createPrios(pCount-1);
-		
+
 		System.out.println("Length of initialPrio " + initialPrio.size());
-		
+
 		List<Integer> nextPrio = new ArrayList<Integer>(initialPrio);
 		Collections.copy(nextPrio, initialPrio);
 		Collections.rotate(nextPrio, 1);
 		System.out.println("Length of nextPrio " + nextPrio.size());
-		
+
 		int i = 0;
 		for (Player player: players) {
 			System.out.println("Setting inital value for " + i);
@@ -300,7 +416,7 @@ public class GameLoop extends Thread implements Observer
 		}
 		prioChanged=true; // send them during next senMessage()
     }
-    /** 
+    /**
      * prio goes from 0 to "count of player"-1
      * @param maxprio
      * @return
@@ -315,9 +431,7 @@ public class GameLoop extends Thread implements Observer
     	Collections.shuffle(prios);
     	return prios;
     }
-    
-    
-    
+
     @Override
     public void update(Observable o, Object arg) {
         if (arg instanceof InputMessage) {

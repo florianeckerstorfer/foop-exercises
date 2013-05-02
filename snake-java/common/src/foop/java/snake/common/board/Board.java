@@ -75,6 +75,10 @@ public class Board implements Serializable{
 		return (byte)(board[column][row]&(byte)0xF0);
 	}
 
+    public byte getHeadDirection(byte head) {
+        return (byte)(head&(byte)0xF0);
+    }
+
 	/**
 	 * Returns the player ID at a given position on the board
 	 * @param column column to be checked
@@ -98,6 +102,10 @@ public class Board implements Serializable{
 			return true;
 		return false;
 	}
+
+    public boolean isSnake(Integer column, Integer row) {
+        return isSnakeBody(column, row) && isSnakeHead(column, row);
+    }
 
 	/**
 	 * Returns the player ID at a given position on the board
