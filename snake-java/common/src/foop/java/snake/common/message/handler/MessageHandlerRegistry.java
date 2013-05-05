@@ -1,10 +1,10 @@
 package foop.java.snake.common.message.handler;
 
-import java.util.HashMap;
 import java.net.SocketAddress;
+import java.util.HashMap;
 
-import foop.java.snake.common.message.exception.NoMessageHandlerFoundException;
 import foop.java.snake.common.message.MessageInterface;
+import foop.java.snake.common.message.exception.NoMessageHandlerFoundException;
 
 /**
  * Handles messages.

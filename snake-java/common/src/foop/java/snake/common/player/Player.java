@@ -1,9 +1,9 @@
 package foop.java.snake.common.player;
 
-import foop.java.snake.common.message.InputMessage;
-
 import java.io.Serializable;
 import java.net.SocketAddress;
+
+import foop.java.snake.common.message.InputMessage;
 
 /**
  * Represents a player.
@@ -17,6 +17,7 @@ public class Player implements Serializable
     protected int nextPriority;
     protected SocketAddress address;
     protected InputMessage.Keycode keycode;
+    protected Boolean AI;
 
     /**
      * Constructor.
@@ -27,13 +28,12 @@ public class Player implements Serializable
     public Player(String name)
     {
         setName(name);
+        this.AI=false;
     }
 
-    public Player(String name, int id, int priority, int nextPriority) {
+    public Player(String name, Boolean AI) {
         this.name = name;
-        this.id = id;
-        this.priority = priority;
-        this.nextPriority = nextPriority;
+        this.AI = AI;
     }
 
     /**
@@ -137,5 +137,9 @@ public class Player implements Serializable
 
     public void setKeycode(InputMessage.Keycode keycode) {
         this.keycode = keycode;
+    }
+    
+    public Boolean isAI() {
+    	return this.AI;
     }
 }

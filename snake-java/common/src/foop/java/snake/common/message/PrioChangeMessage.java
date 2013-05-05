@@ -1,6 +1,7 @@
 package foop.java.snake.common.message;
-import foop.java.snake.common.player.*;
-import java.util.*;
+import java.util.List;
+
+import foop.java.snake.common.player.Player;
 
 /**
  * PrioChangeMessage

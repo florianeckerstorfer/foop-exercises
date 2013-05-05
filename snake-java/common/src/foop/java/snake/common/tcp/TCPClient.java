@@ -1,7 +1,11 @@
 package foop.java.snake.common.tcp;
 
-import java.io.*;
-import java.net.*;
+import java.io.IOException;
+import java.io.ObjectOutputStream;
+import java.net.InetSocketAddress;
+import java.net.Socket;
+import java.net.SocketAddress;
+import java.net.UnknownHostException;
 
 import foop.java.snake.common.message.MessageInterface;
 

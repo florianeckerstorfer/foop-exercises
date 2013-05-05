@@ -1,18 +1,23 @@
 package foop.java.snake.common.message.handler;
 
-import java.net.SocketAddress;
+import java.io.IOException;
 import java.net.InetSocketAddress;
+import java.net.SocketAddress;
 import java.util.ArrayList;
 import java.util.List;
 
-import java.io.*;
 import foop.java.snake.common.board.Board;
+import foop.java.snake.common.message.BoardMessage;
+import foop.java.snake.common.message.MessageInterface;
+import foop.java.snake.common.message.PrioChangeMessage;
+import foop.java.snake.common.message.RegisterAckMessage;
+import foop.java.snake.common.message.RegisterErrorMessage;
+import foop.java.snake.common.message.RegisterMessage;
 import foop.java.snake.common.message.exception.NoMessageHandlerFoundException;
-import foop.java.snake.common.message.*;
-import foop.java.snake.common.player.PlayerRegistry;
 import foop.java.snake.common.player.Player;
-import foop.java.snake.common.tcp.TCPClientRegistry;
+import foop.java.snake.common.player.PlayerRegistry;
 import foop.java.snake.common.tcp.TCPClient;
+import foop.java.snake.common.tcp.TCPClientRegistry;
 
 /**
  * Handles messages sent by the client to the server to register new players.

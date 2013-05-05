@@ -1,11 +1,14 @@
 package foop.java.snake.common.tcp;
 
-import java.io.*;
-import java.net.*;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.net.ServerSocket;
+import java.net.Socket;
+import java.net.UnknownHostException;
 
+import foop.java.snake.common.message.MessageInterface;
 import foop.java.snake.common.message.exception.NoMessageHandlerFoundException;
-import foop.java.snake.common.message.*;
-import foop.java.snake.common.message.handler.*;
+import foop.java.snake.common.message.handler.MessageHandlerRegistry;
 
 /**
  * TCPServer

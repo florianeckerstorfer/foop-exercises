@@ -2,13 +2,10 @@ package foop.java.snake.common.message.handler;
 
 import java.net.SocketAddress;
 
-import foop.java.snake.common.message.RegisterAckMessage;
-import foop.java.snake.common.message.RegisterErrorMessage;
-import foop.java.snake.common.message.UnregisterMessage;
 import foop.java.snake.common.message.MessageInterface;
+import foop.java.snake.common.message.UnregisterMessage;
 import foop.java.snake.common.message.exception.NoMessageHandlerFoundException;
 import foop.java.snake.common.player.PlayerRegistry;
-import foop.java.snake.common.tcp.TCPClient;
 import foop.java.snake.common.tcp.TCPClientRegistry;
 
 /**

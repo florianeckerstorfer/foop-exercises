@@ -1,18 +1,24 @@
 package foop.java.snake.server.gameloop;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Observable;
+import java.util.Observer;
+
 import foop.java.snake.common.board.Board;
 import foop.java.snake.common.board.SnakeHeadDirection;
 import foop.java.snake.common.message.BoardMessage;
 import foop.java.snake.common.message.InputMessage;
-import foop.java.snake.common.message.MessageInterface;
+import foop.java.snake.common.message.InputMessage.Keycode;
 import foop.java.snake.common.message.PrioChangeMessage;
 import foop.java.snake.common.player.Player;
 import foop.java.snake.common.player.PlayerRegistry;
 import foop.java.snake.common.tcp.TCPClient;
 import foop.java.snake.common.tcp.TCPClientRegistry;
-
-import java.io.IOException;
-import java.util.*;
 
 /**
  * GameLoop
@@ -35,6 +41,11 @@ public class GameLoop extends Thread implements Observer
 	 * The number of iterations until the priority changes
 	 */
 	final private int priorityChangeInterval = 50;
+	
+	/**
+	 * The minimum number of players
+	 */
+	final private int minPlayerCount = 4;
 
 	/**
 	 * Stores the player registry
@@ -54,8 +65,6 @@ public class GameLoop extends Thread implements Observer
      * indicates if new prio shall be sent
      */
     private boolean prioChanged = false;
-
-    private List<InputMessage> inputMessages;
 
 	/**
 	 * Constructor.
@@ -98,6 +107,8 @@ public class GameLoop extends Thread implements Observer
 				System.out.println("Game starts in " + gameCountdown);
 				gameCountdown--;
                 if (gameCountdown == 0) {
+                	if(playerCount<this.minPlayerCount)
+                		this.addAISnakes();
                     this.initSnakes();
                     this.initPrios();
                     this.sendMessages();
@@ -123,7 +134,19 @@ public class GameLoop extends Thread implements Observer
 		}
     }
 
-    /**
+	private void addAISnakes() {
+    	int name = 1;
+    	int count = this.minPlayerCount-playerRegistry.getPlayerCount();
+    	System.out.println("Adding "+count+" AI snakes to meet minimum number of snakes..");
+    	while(count>0) {
+    		Player ai = new Player("AI "+name,true);
+    		playerRegistry.addPlayer(ai);
+    		count--;
+    		name++;
+    	}
+	}
+
+	/**
      * Randomly generate a snake consisting of head and body.
      */
     private void initSnakes() {
@@ -133,8 +156,8 @@ public class GameLoop extends Thread implements Observer
         while(i < playerRegistry.getPlayerCount()) {
             //random values for snake head field
             Map<String, Integer> headField = new HashMap<String, Integer>();
-            headField.put("row", (int) (Math.random() * board.getRows()));
-            headField.put("column", (int) (Math.random() * board.getColumns()));
+            headField.put("row", (int) (Math.random() * (board.getRows()-2)+1));
+            headField.put("column", (int) (Math.random() * (board.getColumns()-2)+1));
             int id= playerRegistry.getPlayers().get(i).getId(),
                 head =  2 + (int) (Math.random() * (5-2 +1));
             byte headDirection = (byte)(head * 16 + id);
@@ -255,6 +278,8 @@ public class GameLoop extends Thread implements Observer
                     this.moveToField(column, row + 1,
                             (byte) (SnakeHeadDirection.snakeHeadDown + player.getId()));
                     break;
+                default:
+                	break;
             }
         }
     }
@@ -330,11 +355,14 @@ public class GameLoop extends Thread implements Observer
             for (int j=0; j<this.board.getRows(); j++) {
                 //find snake head
                 if (this.board.isSnakeHead(i, j) &&
-                        this.board.getBoard()[i][j] != SnakeHeadDirection.snakeBody) {
+                        (this.board.getSnakeHeadDirection(i,j)!=SnakeHeadDirection.snakeBody)) {
                     Player player = playerRegistry.getPlayerById(this.board.getPlayerNumber(i, j));
                     if (player != null) {
-                        this.moveSnakeHead(i, j, player);
-                        this.moveSnakeBody(i, j, player.getId(), new ArrayList<Map<String, Integer>>());
+                    	if(player.isAI()) {
+                    		aiDecision(i,j);
+                    	} 
+                    	this.moveSnakeHead(i, j, player);
+	                    this.moveSnakeBody(i, j, player.getId(), new ArrayList<Map<String, Integer>>());
                     } else {
                         System.out.println("Error there should be a player");
                     }
@@ -344,18 +372,55 @@ public class GameLoop extends Thread implements Observer
         this.board = this.nextBoard;
     }
 
-    private void sendMessages() {
-        System.out.println("Send messages to players");
-        for(Player player : this.playerRegistry.getPlayers()) {
-            try {
-                TCPClient client = this.clientRegistry.getClient(player.getAddress());
-                client.sendMessage(new BoardMessage(this.board));
-                if (prioChanged) {
-	                client.sendMessage(new PrioChangeMessage(playerRegistry.getPlayers()));
-                }
-            } catch (IOException e) {
-                System.out.println("Error while sending to " + player.getName());
-            }
+    private void aiDecision(int column, int row) {
+    	Player player = this.playerRegistry.getPlayerById(this.board.getPlayerNumber(column,row));
+    	byte direction = this.board.getSnakeHeadDirection(column, row);
+		Double decision=Math.random();
+		switch (direction) {
+			case SnakeHeadDirection.snakeHeadUp:
+				if(decision>=0.9)
+					player.setKeycode(Keycode.RIGHT);
+				else if(decision<=0.1)
+					player.setKeycode(Keycode.LEFT);
+				break;
+			case SnakeHeadDirection.snakeHeadDown:
+				if(decision>=0.9)
+					player.setKeycode(Keycode.RIGHT);
+				else if(decision<=0.1)
+					player.setKeycode(Keycode.LEFT);
+				break;
+			case SnakeHeadDirection.snakeHeadRight:
+				if(decision>=0.9)
+					player.setKeycode(Keycode.UP);
+				else if(decision<=0.1)
+					player.setKeycode(Keycode.DOWN);
+				break;
+			case SnakeHeadDirection.snakeHeadLeft:
+				if(decision>=0.9)
+					player.setKeycode(Keycode.UP);
+				else if(decision<=0.1)
+					player.setKeycode(Keycode.DOWN);
+				break;
+			default:
+				player.setKeycode(Keycode.IGNORE);
+		}
+	}
+
+	private void sendMessages() {
+        System.out.println("Sending messages to players");
+        List<Player> players = this.playerRegistry.getPlayers();
+        for(Player player : players) {
+        	if(!player.isAI()) {
+	            try {
+	                TCPClient client = this.clientRegistry.getClient(player.getAddress());
+	                client.sendMessage(new BoardMessage(this.board));
+	                if (prioChanged) {
+		                client.sendMessage(new PrioChangeMessage(playerRegistry.getPlayers()));
+	                }
+	            } catch (IOException e) {
+	                System.out.println("Error while sending to " + player.getName());
+	            }
+        	}
         }
         if (prioChanged)
         	prioChanged=false;

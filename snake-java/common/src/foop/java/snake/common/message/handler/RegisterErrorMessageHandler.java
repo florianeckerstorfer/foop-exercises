@@ -2,8 +2,9 @@ package foop.java.snake.common.message.handler;
 
 import java.net.SocketAddress;
 
+import foop.java.snake.common.message.MessageInterface;
+import foop.java.snake.common.message.RegisterErrorMessage;
 import foop.java.snake.common.message.exception.NoMessageHandlerFoundException;
-import foop.java.snake.common.message.*;
 
 /**
  * Handles messages sent by the server to client to indicate an error in the registration process.

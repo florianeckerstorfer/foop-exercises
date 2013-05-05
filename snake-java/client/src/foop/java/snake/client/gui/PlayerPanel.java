@@ -2,15 +2,16 @@ package foop.java.snake.client.gui;
 
 import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.Font;
 import java.awt.Graphics;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Iterator;
+import java.util.List;
 
 import javax.swing.JPanel;
 import javax.swing.border.TitledBorder;
 
-import foop.java.snake.common.player.*;
-
-import java.util.*;
+import foop.java.snake.common.player.Player;
 
 /**
  * PlayerPanel

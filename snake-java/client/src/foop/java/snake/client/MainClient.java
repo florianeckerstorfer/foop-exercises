@@ -2,7 +2,6 @@ package foop.java.snake.client;
 
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.awt.event.WindowListener;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.UnknownHostException;
@@ -11,7 +10,11 @@ import javax.swing.WindowConstants;
 
 import foop.java.snake.client.gui.InputListener;
 import foop.java.snake.client.gui.MainFrame;
-import foop.java.snake.common.message.*;
+import foop.java.snake.common.message.BoardMessage;
+import foop.java.snake.common.message.PrioChangeMessage;
+import foop.java.snake.common.message.RegisterAckMessage;
+import foop.java.snake.common.message.RegisterErrorMessage;
+import foop.java.snake.common.message.RegisterMessage;
 import foop.java.snake.common.message.UnregisterMessage;
 import foop.java.snake.common.message.handler.BoardMessageHandler;
 import foop.java.snake.common.message.handler.MessageHandlerRegistry;

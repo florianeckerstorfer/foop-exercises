@@ -1,6 +1,5 @@
 package foop.java.snake.common.board;
 import java.io.Serializable;
-import foop.java.snake.common.board.SnakeHeadDirection;
 /**
  * Board
  * Holds the current board, that is, which field is occupied by which player

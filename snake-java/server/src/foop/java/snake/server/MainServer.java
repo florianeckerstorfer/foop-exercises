@@ -2,12 +2,16 @@ package foop.java.snake.server;
 
 import java.io.IOException;
 
-import foop.java.snake.common.message.*;
-import foop.java.snake.common.message.handler.*;
-
-import foop.java.snake.common.tcp.TCPServer;
-import foop.java.snake.common.tcp.TCPClientRegistry;
+import foop.java.snake.common.message.InputMessage;
+import foop.java.snake.common.message.RegisterMessage;
+import foop.java.snake.common.message.UnregisterMessage;
+import foop.java.snake.common.message.handler.InputMessageHandler;
+import foop.java.snake.common.message.handler.MessageHandlerRegistry;
+import foop.java.snake.common.message.handler.RegisterMessageHandler;
+import foop.java.snake.common.message.handler.UnregisterMessageHandler;
 import foop.java.snake.common.player.PlayerRegistry;
+import foop.java.snake.common.tcp.TCPClientRegistry;
+import foop.java.snake.common.tcp.TCPServer;
 import foop.java.snake.server.gameloop.GameLoop;
 
 /**

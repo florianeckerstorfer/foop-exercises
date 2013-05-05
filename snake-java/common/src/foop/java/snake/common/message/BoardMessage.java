@@ -1,5 +1,5 @@
 package foop.java.snake.common.message;
-import foop.java.snake.common.board.*;
+import foop.java.snake.common.board.Board;
 /**
  * BoardMessage
  * Sent from server to Clients to indicate chenges at the board. will be sent in regular time intervalls aka "ticks"

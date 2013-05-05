@@ -1,8 +1,8 @@
 package foop.java.snake.common.tcp;
 
+import java.io.IOException;
 import java.net.SocketAddress;
 import java.net.UnknownHostException;
-import java.io.IOException;
 import java.util.HashMap;
 
 /**

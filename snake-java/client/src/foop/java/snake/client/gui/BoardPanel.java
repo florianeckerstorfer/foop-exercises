@@ -1,10 +1,12 @@
 package foop.java.snake.client.gui;
 
+import java.awt.Color;
+import java.awt.Graphics;
+
+import javax.swing.JPanel;
+
 import foop.java.snake.common.board.Board;
 import foop.java.snake.common.board.SnakeHeadDirection;
-
-import javax.swing.*;
-import java.awt.*;
 
 /**
  * User: Alexander Duml

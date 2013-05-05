@@ -1,13 +1,15 @@
 package foop.java.snake.client.gui;
 
-import foop.java.snake.common.board.Board;
-import foop.java.snake.common.player.*;
-
-import javax.swing.*;
-
-import java.awt.*;
-import java.util.*;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.util.ArrayList;
 import java.util.List;
+
+import javax.swing.JFrame;
+import javax.swing.WindowConstants;
+
+import foop.java.snake.common.board.Board;
+import foop.java.snake.common.player.Player;
 
 /**
  * User: Alexander Duml
@@ -88,11 +90,6 @@ public class MainFrame extends JFrame {
         MainFrame mainFrame = new MainFrame();
 
         List<Player> pl = new ArrayList<Player>();
-        pl.add(new Player("Player 1", 0, 5, 7));
-        pl.add(new Player("Player 2", 1, 1, 5));
-        pl.add(new Player("Player 3", 2, 3, 1));
-        pl.add(new Player("Player 4", 3, 6, 2));
-        pl.add(new Player("Player 5", 4, 2, 3));
         mainFrame.renderPlayers(0, pl);
 
         Board board = new Board(30, 30);
