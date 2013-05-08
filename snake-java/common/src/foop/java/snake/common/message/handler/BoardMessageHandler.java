@@ -27,6 +27,6 @@ public class BoardMessageHandler extends Observable implements MessageHandlerInt
 
         // Implementation of the observer-pattern
         setChanged();
-        notifyObservers(boardMessage.getBoard());
+        notifyObservers(boardMessage);
 	}
 }

@@ -1,17 +1,18 @@
 package foop.java.snake.client;
 
-import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 
 import foop.java.snake.client.gui.MainFrame;
-import foop.java.snake.common.board.Board;
-import foop.java.snake.common.player.Player;
+import foop.java.snake.common.message.BoardMessage;
+import foop.java.snake.common.message.MessageInterface;
+import foop.java.snake.common.message.PlayerInfoMessage;
+import foop.java.snake.common.message.PrioChangeMessage;
+import foop.java.snake.common.message.RegisterAckMessage;
 
 public class MessageObserver implements Observer {
 
 	MainFrame frame;
-    private int id = 0; //our Player-ID
 
 	public MessageObserver (MainFrame frame) {
 		this.frame = frame;
@@ -23,15 +24,28 @@ public class MessageObserver implements Observer {
      */
     @Override
     public void update(Observable o, Object arg) {
-        // Now, this is the problem here. We still have to distinguish from which Observable this is comming...
-        if (arg instanceof List<?>) {
-            frame.renderPlayers(id, (List<Player>)arg);
-        }
-        if (arg instanceof Board) {
-            frame.renderBoard((Board)arg);
-        }
-        if (arg instanceof Integer) {
-            this.id=((Integer)arg).intValue();
-        }
+    	MessageInterface message;
+    	if(arg instanceof MessageInterface)
+    		message=(MessageInterface) arg;
+    	else
+    		return;
+    	
+    	switch (message.getType()) {
+    		case(BoardMessage.TYPE):
+    			frame.renderBoard(((BoardMessage) message).getBoard());
+    			break;
+    		case(RegisterAckMessage.TYPE):
+    			frame.setMyID(((RegisterAckMessage) message).getPlayerID());
+    			break;
+    		case(PrioChangeMessage.TYPE):
+    			frame.renderPrios(((PrioChangeMessage)message).getPlayerPrios(),((PrioChangeMessage)message).getNextPlayerPrios());
+    			break;
+    		case(PlayerInfoMessage.TYPE):
+    			frame.renderPlayers(((PlayerInfoMessage) message).getPlayers());
+    			break;
+    		default:
+    			System.err.println("Received Message with unknown type: "+message.getType());
+    			return;
+    	}
     }
 }

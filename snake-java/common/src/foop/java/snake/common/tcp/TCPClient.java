@@ -49,7 +49,7 @@ public class TCPClient
     public void open()
             throws UnknownHostException, IOException
     {
-        System.out.println("TCPClient: Opening new socket to "+((InetSocketAddress)address).getAddress()+":"+((InetSocketAddress)address).getPort());
+        //System.out.println("TCPClient: Opening new socket to "+((InetSocketAddress)address).getAddress()+":"+((InetSocketAddress)address).getPort());
     	socket = new Socket();
         socket.connect(address);
         outputStream = new ObjectOutputStream(socket.getOutputStream());
@@ -58,7 +58,7 @@ public class TCPClient
     public void close()
         throws IOException
     {
-        System.out.println("TCPClient: Closing socket to "+((InetSocketAddress)socket.getRemoteSocketAddress()).getAddress()+":"+socket.getPort());
+        //System.out.println("TCPClient: Closing socket to "+((InetSocketAddress)socket.getRemoteSocketAddress()).getAddress()+":"+socket.getPort());
         outputStream.close();
         socket.close();
     }

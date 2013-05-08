@@ -11,6 +11,7 @@ import javax.swing.WindowConstants;
 import foop.java.snake.client.gui.InputListener;
 import foop.java.snake.client.gui.MainFrame;
 import foop.java.snake.common.message.BoardMessage;
+import foop.java.snake.common.message.PlayerInfoMessage;
 import foop.java.snake.common.message.PrioChangeMessage;
 import foop.java.snake.common.message.RegisterAckMessage;
 import foop.java.snake.common.message.RegisterErrorMessage;
@@ -18,6 +19,7 @@ import foop.java.snake.common.message.RegisterMessage;
 import foop.java.snake.common.message.UnregisterMessage;
 import foop.java.snake.common.message.handler.BoardMessageHandler;
 import foop.java.snake.common.message.handler.MessageHandlerRegistry;
+import foop.java.snake.common.message.handler.PlayerInfoMessageHandler;
 import foop.java.snake.common.message.handler.PrioChangeMessageHandler;
 import foop.java.snake.common.message.handler.RegisterAckMessageHandler;
 import foop.java.snake.common.message.handler.RegisterErrorMessageHandler;
@@ -149,6 +151,10 @@ class MainClient
         handlerRegistry.registerHandler(
                 PrioChangeMessage.TYPE, p
         );
+        
+        PlayerInfoMessageHandler pi = new PlayerInfoMessageHandler();
+        pi.addObserver(messageObserver);
+        handlerRegistry.registerHandler(PlayerInfoMessage.TYPE, pi);
     }
 
     /**

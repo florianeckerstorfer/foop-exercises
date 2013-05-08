@@ -9,7 +9,6 @@ import java.util.List;
 import foop.java.snake.common.board.Board;
 import foop.java.snake.common.message.BoardMessage;
 import foop.java.snake.common.message.MessageInterface;
-import foop.java.snake.common.message.PrioChangeMessage;
 import foop.java.snake.common.message.RegisterAckMessage;
 import foop.java.snake.common.message.RegisterErrorMessage;
 import foop.java.snake.common.message.RegisterMessage;
@@ -106,14 +105,14 @@ public class RegisterMessageHandler implements MessageHandlerInterface
 		pl.add(p4);
 		pl.add(p5);
 
-		response = new PrioChangeMessage(pl);
+	/*	response = new PrioChangeMessage(pl);
 
         try {
             System.out.println("RegisterMessageHandler: Sending priorities message");
             client.sendMessage(response);
         } catch (IOException ex) {
             ex.printStackTrace();
-        }
+        }*/
 
 		Board board = new Board(30, 30);
 		Byte[][] b = new Byte[][]{

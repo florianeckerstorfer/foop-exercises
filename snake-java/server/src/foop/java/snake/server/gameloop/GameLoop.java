@@ -14,6 +14,7 @@ import foop.java.snake.common.board.SnakeHeadDirection;
 import foop.java.snake.common.message.BoardMessage;
 import foop.java.snake.common.message.InputMessage;
 import foop.java.snake.common.message.InputMessage.Keycode;
+import foop.java.snake.common.message.PlayerInfoMessage;
 import foop.java.snake.common.message.PrioChangeMessage;
 import foop.java.snake.common.player.Player;
 import foop.java.snake.common.player.PlayerRegistry;
@@ -40,7 +41,7 @@ public class GameLoop extends Thread implements Observer
 	/**
 	 * The number of iterations until the priority changes
 	 */
-	final private int priorityChangeInterval = 50;
+	final private int priorityChangeInterval = 20;
 	
 	/**
 	 * The minimum number of players
@@ -111,6 +112,7 @@ public class GameLoop extends Thread implements Observer
                 		this.addAISnakes();
                     this.initSnakes();
                     this.initPrios();
+                    this.sendPlayerMessages();
                     this.sendMessages();
                 }
 			} else {
@@ -133,6 +135,21 @@ public class GameLoop extends Thread implements Observer
 			loopCount++;
 		}
     }
+
+	private void sendPlayerMessages() {
+		System.out.println("Sending initial player messages to players");
+        List<Player> players = this.playerRegistry.getPlayers();
+        for(Player player : players) {
+        	if(!player.isAI()) {
+	            try {
+	                TCPClient client = this.clientRegistry.getClient(player.getAddress());
+	                client.sendMessage(new PlayerInfoMessage(players));
+	            } catch (IOException e) {
+	                System.out.println("Error while sending to " + player.getName());
+	            }
+        	}
+        }
+	}
 
 	private void addAISnakes() {
     	int name = 1;
@@ -237,7 +254,7 @@ public class GameLoop extends Thread implements Observer
      * @param player
      */
     private void moveSnakeHead(int column, int row, Player player) {
-        System.out.println("moveSnakeHead from " + player.getName() + " " + column + "/" + row);
+        //System.out.println("moveSnakeHead from " + player.getName() + " " + column + "/" + row);
 
         byte snakeHead = this.board.getSnakeHeadDirection(column, row);
         InputMessage.Keycode key = player.getKeycode();
@@ -308,7 +325,7 @@ public class GameLoop extends Thread implements Observer
      * @param history
      */
     private void moveSnakeBody(int column, int row, int playerId, List<Map<String, Integer>> history) {
-        System.out.println("moveBody of PLayer " + playerId + " to " + column + "/" + row + " ");
+        //System.out.println("moveBody of PLayer " + playerId + " to " + column + "/" + row + " ");
 
         Map<String, Integer> field = new HashMap<String, Integer>();
         field.put("column", column);
@@ -350,7 +367,7 @@ public class GameLoop extends Thread implements Observer
      */
     private void calculateBoard() {
         System.out.println("calculateBoard");
-        this.nextBoard = new Board(this.board.getColumns(), this.board.getRows());
+        this.nextBoard = new Board(this.board.getColumns(), this.board.getRows(),this.board.getPriorities(), this.board.getNextPriorities());
         for (int i=0; i<this.board.getColumns(); i++) {
             for (int j=0; j<this.board.getRows(); j++) {
                 //find snake head
@@ -415,7 +432,8 @@ public class GameLoop extends Thread implements Observer
 	                TCPClient client = this.clientRegistry.getClient(player.getAddress());
 	                client.sendMessage(new BoardMessage(this.board));
 	                if (prioChanged) {
-		                client.sendMessage(new PrioChangeMessage(playerRegistry.getPlayers()));
+	                    System.out.println("before sending: currPrios/nextPrios: "+this.board.getPriorities().size()+"/"+this.board.getNextPriorities().size());
+		                client.sendMessage(new PrioChangeMessage(this.board.getPriorities(),this.board.getNextPriorities()));
 	                }
 	            } catch (IOException e) {
 	                System.out.println("Error while sending to " + player.getName());
@@ -431,72 +449,44 @@ public class GameLoop extends Thread implements Observer
      */
     private void changePrios() {
         System.out.println("Change Priorities");
+        if(this.board.getNextPriorities()==null)
+        	System.out.println("Next prios == null");
+        if(this.board.getPriorities()==null)
+        	System.out.println("prios == null");
+        
+        System.out.println("before change currPrios/nextPrios: "+this.board.getPriorities().size()+"/"+this.board.getNextPriorities().size());
+        
+        List<Integer> nextPrios = this.board.getPriorities();
+        Collections.shuffle(nextPrios);
+        this.board.setPriorities(this.board.getNextPriorities());
+        this.board.setNextPriorities(nextPrios);
+        
+        System.out.println("after change currPrios/nextPrios: "+this.board.getPriorities().size()+"/"+this.board.getNextPriorities().size());
 
-        int pCount = this.playerRegistry.getPlayerCount();
-		List<Player> players = playerRegistry.getPlayers();
-
-    	if (pCount == 1)
-    		return;
-
-		int firstPrio = players.get(0).getPriority();
-		int firstNextPrio = players.get(0).getNextPriority();
-
-    	for (int i = 0; i <= players.size()-2; i++) {
-    		Player thisPlayer = players.get(i);
-    		Player nextPlayer = players.get(i+1);
-
-    		thisPlayer.setPriority(thisPlayer.getNextPriority());
-    		thisPlayer.setNextPriority(nextPlayer.getNextPriority());
-    	}
-
-    	players.get(pCount-1).setPriority(firstPrio);
-    	players.get(pCount-1).setNextPriority(firstNextPrio);
-
+        
     	prioChanged=true; // send them during next senMessage()
-
     }
 
     private void initPrios() {
         System.out.println("init Priorities for " + playerRegistry.getPlayerCount() + " player");
 
-        int pCount = this.playerRegistry.getPlayerCount();
+        int aiCount = 0;
 		List<Player> players = playerRegistry.getPlayers();
-
-		// inital prio is "pure random"
-		List<Integer> initialPrio=createPrios(pCount-1);
-
-		System.out.println("Length of initialPrio " + initialPrio.size());
-
-		List<Integer> nextPrio = new ArrayList<Integer>(initialPrio);
-		Collections.copy(nextPrio, initialPrio);
-		Collections.rotate(nextPrio, 1);
-		System.out.println("Length of nextPrio " + nextPrio.size());
-
-		int i = 0;
-		for (Player player: players) {
-			System.out.println("Setting inital value for " + i);
-			player.setPriority(initialPrio.get(i));
-			player.setNextPriority(nextPrio.get(i));
-			i++;
+		List<Integer> prios = this.board.getPriorities();
+		List<Integer> nextPrios = this.board.getNextPriorities();
+		
+		for(Player player: players) {
+			prios.add(player.getId());
 		}
-		prioChanged=true; // send them during next senMessage()
+		
+		Collections.shuffle(prios);
+		nextPrios = new ArrayList<Integer>(prios);
+		Collections.shuffle(nextPrios);
+		this.board.setNextPriorities(nextPrios);
+		
+		prioChanged=true; // send them during next sendMessage()
     }
-    /**
-     * prio goes from 0 to "count of player"-1
-     * @param maxprio
-     * @return
-     */
-    private List<Integer> createPrios(int maxprio) {
-    	List<Integer> prios = new ArrayList<Integer>();
-    	// TODO
-    	int tmp=maxprio;
-    	while (tmp >= 0) {
-    		prios.add(new Integer(tmp--));
-    	}
-    	Collections.shuffle(prios);
-    	return prios;
-    }
-
+    
     @Override
     public void update(Observable o, Object arg) {
         if (arg instanceof InputMessage) {

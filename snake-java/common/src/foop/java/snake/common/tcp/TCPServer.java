@@ -47,12 +47,12 @@ public class TCPServer implements Runnable
         while (true) {
             try {
                 Socket connectionSocket = socket.accept();
-                System.out.println("TCPServer (port="+port+"): Accepted message");
+                // System.out.println("TCPServer (port="+port+"): Accepted message");
                 ObjectInputStream inputStream = new ObjectInputStream(connectionSocket.getInputStream());
 
                 MessageInterface message = (MessageInterface)inputStream.readObject();
                 try {
-                    System.out.println("TCPServer: got message of type " + message.getType());
+                    // System.out.println("TCPServer: got message of type " + message.getType());
                     messageHandlerRegistry.handle(message, connectionSocket.getRemoteSocketAddress());
                 } catch (NoMessageHandlerFoundException ex) {
                     System.out.println("TCPServer: Couldn\'t find message handler:\n> " + ex.getMessage());

@@ -13,8 +13,6 @@ public class Player implements Serializable
 {
     protected String name;
     protected int id;
-    protected int priority;
-    protected int nextPriority;
     protected SocketAddress address;
     protected InputMessage.Keycode keycode;
     protected Boolean AI;
@@ -103,35 +101,7 @@ public class Player implements Serializable
         return address;
     }
 
-	/**
-	 * @return the priority
-	 */
-    public int getPriority() {
-		return priority;
-	}
-
-	/**
-	 * @param priority the priority to set
-	 */
-	public void setPriority(int priority) {
-		this.priority = priority;
-	}
-
-	/**
-	 * @return the nextPriority
-	 */
-	public int getNextPriority() {
-		return nextPriority;
-	}
-
-	/**
-	 * @param nextPriority the nextPriority to set
-	 */
-	public void setNextPriority(int nextPriority) {
-		this.nextPriority = nextPriority;
-	}
-
-    public InputMessage.Keycode getKeycode() {
+	public InputMessage.Keycode getKeycode() {
         return keycode;
     }
 

@@ -3,8 +3,7 @@ package foop.java.snake.client.gui;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
-import java.util.Collections;
-import java.util.Comparator;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
@@ -23,6 +22,10 @@ import foop.java.snake.common.player.Player;
 public class PlayerPanel  extends JPanel{
     private MainFrame parent;
 	private List<Player> players;
+	private List<Integer> currentPriorities;
+	private List<Integer> nextPriorities;
+	private int myID;
+	
 
 	public PlayerPanel(MainFrame parent) {
         this.parent = parent;
@@ -33,6 +36,10 @@ public class PlayerPanel  extends JPanel{
         this.setBorder(b);
 	}
 
+	public void setMyID(int ID) {
+		this.myID=ID;
+	}
+	
 	public void setPlayers(List<Player> players) {
         this.players = players;
 	}
@@ -54,48 +61,78 @@ public class PlayerPanel  extends JPanel{
             return;
         }
 
-        //current priorities
-        Collections.sort(players, new Comparator<Player>(){
-            @Override
-            public int compare(Player p1, Player p2) {
-                if(p1.getPriority() == p2.getPriority())
-                    return 0;
-                return p1.getPriority() > p2.getPriority() ? -1 : 1;
-            }
-        });
-
+        //Player List
         graphics.setColor(Color.BLACK);
         int line = 2 * parent.getOffset();
-        graphics.drawString("Priorities", 10, line);
+        graphics.drawString("Players", 10, line);
         line += parent.getOffset();
         Iterator<Player> it = players.iterator();
         while (it.hasNext()) {
             Player p = it.next();
             graphics.setColor(parent.getPlayerColor(p.getId()));
-            graphics.drawString(String.format("%s (%s)", p.getName(), p.getPriority()) , 10, line);
+            if(p.getId()==this.myID)
+            	graphics.drawString(String.format("%s (me)", p.getName()) , 10, line);
+            else
+            	graphics.drawString(String.format("%s", p.getName()) , 10, line);
             line += parent.getOffset();
         }
-
-        //next priorities
-        Collections.sort(players, new Comparator<Player>(){
-            @Override
-            public int compare(Player p1, Player p2) {
-                if(p1.getPriority() == p2.getPriority())
-                    return 0;
-                return p1.getNextPriority() > p2.getNextPriority() ? -1 : 1;
-            }
-        });
-
+        
+        //Priorities
         graphics.setColor(Color.BLACK);
+        line += 2 * parent.getOffset();
+        graphics.drawString("Priorities", 10, line);
         line += parent.getOffset();
-        graphics.drawString("Next priorities:", 10, line);
+        System.out.println(this.currentPriorities.size()+" current priorities: "+this.currentPriorities.toString());
+        String prioNames[]= new String[this.currentPriorities.size()];
+
+        for (Player p : players) {
+        	int prioIndex = this.currentPriorities.indexOf(p.getId());
+        	System.out.println("Priority "+p.getId()+" of player #"+p.getId()+" has index "+prioIndex);
+        	if(prioNames[prioIndex]==null) {
+        		prioNames[prioIndex]=p.getName();
+        	} else {
+        		prioNames[prioIndex] = prioNames[prioIndex]+", "+p.getName();
+        	}
+        }
+        
+        System.out.println("Player names for prio list set: "+prioNames.length);
+        
+        for (String prioString: prioNames) {
+        	graphics.drawString(prioString, 10, line);
+        	line += parent.getOffset();	
+        }
+
+        //Upcoming Priorities
+        graphics.setColor(Color.BLACK);
+        line += 2 * parent.getOffset();
+        graphics.drawString("Upcoming Priorities", 10, line);
         line += parent.getOffset();
-        it = players.iterator();
-        while (it.hasNext()) {
-            Player p = it.next();
-            graphics.setColor(parent.getPlayerColor(p.getId()));
-            graphics.drawString(String.format("%s (%s)", p.getName(), p.getNextPriority()) , 10, line);
-            line += parent.getOffset();
+        System.out.println(this.nextPriorities.size()+" next priorities: "+this.nextPriorities.toString());
+        prioNames = new String[this.nextPriorities.size()];
+
+        for (Player p : players) {
+        	int prioIndex = this.nextPriorities.indexOf(p.getId());
+        	System.out.println("Priority "+p.getId()+" of player #"+p.getId()+" has index "+prioIndex);
+        	if(prioNames[prioIndex]==null) {
+        		prioNames[prioIndex]=p.getName();
+        	} else {
+        		prioNames[prioIndex] = prioNames[prioIndex]+", "+p.getName();
+        	}
+        }
+        
+        System.out.println("Player names for prio list set: "+prioNames.length);
+        
+        for (String prioString: prioNames) {
+        	graphics.drawString(prioString, 10, line);
+        	line += parent.getOffset();	
         }
     }
+
+	public void setNextPrio(List<Integer> nextPlayerPrios) {
+		this.nextPriorities=new ArrayList<Integer>(nextPlayerPrios);
+	}
+
+	public void setCurrentPrio(List<Integer> playerPrios) {
+		this.currentPriorities=new ArrayList<Integer>(playerPrios);
+	}
 }

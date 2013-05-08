@@ -22,12 +22,12 @@ public class PrioChangeMessageHandler extends Observable implements MessageHandl
             throw new NoMessageHandlerFoundException("This is not a PrioChangedMessage.");
         }
 		PrioChangeMessage prioMessage = (PrioChangeMessage)message;
-		System.out.println("PrioChangeMessageHandler: Got PrioChanged-Message.");
-
+		System.out.println("PrioChangeMessageHandler: Got PrioChanged-Message: "+prioMessage.getPlayerPrios().size()+"/"+prioMessage.getNextPlayerPrios().size());
+		
 		// TODO Message received - what now ;-)
         // Implementation of the observer-pattern
         setChanged();
-        notifyObservers(prioMessage.getPlayerPrio());
+        notifyObservers(prioMessage);
 	}
 
 }

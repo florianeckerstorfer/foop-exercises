@@ -1,8 +1,6 @@
 package foop.java.snake.common.message;
 import java.util.List;
 
-import foop.java.snake.common.player.Player;
-
 /**
  * PrioChangeMessage
  * Sent from Server to Clients whenever the priorities of the player changes
@@ -13,14 +11,14 @@ import foop.java.snake.common.player.Player;
 public class PrioChangeMessage implements MessageInterface {
 	private static final long serialVersionUID = 1;
     public static final int TYPE = 99;
-    /*
-     * Just a ordered list of player-IDs. First in the list has highest Prio
-     */
-    protected List<Player> playerPrio;
 
-    public PrioChangeMessage(List<Player> list)
+    protected List<Integer> currPrios;
+    protected List<Integer> nextPrios;
+
+    public PrioChangeMessage(List<Integer> currPrios, List<Integer> nextPrios)
     {
-        this.playerPrio = list;
+        this.currPrios = currPrios;
+        this.nextPrios = nextPrios;
     }
     
 	@Override
@@ -31,14 +29,21 @@ public class PrioChangeMessage implements MessageInterface {
 	/*
 	 * @param prio "ordered prioritylist with unique names of players. First in list has highest priority"
 	 */
-	public void setPlayerPrio(List<Player> prio) {
-		this.playerPrio=prio;
+	public void setPlayerPrios(List<Integer> currPrios) {
+		this.currPrios=currPrios;
 	}
 	
 	/*
 	 * @return ordered prioritylist with unique names of players. First in list has highest priority
 	 */
-	public List<Player> getPlayerPrio() {
-		return playerPrio;
+	public List<Integer> getPlayerPrios() {
+		return currPrios;
+	}
+
+	public void setNextPlayerPrios(List<Integer> nextPrios) {
+		this.nextPrios = nextPrios;
+	}
+	public List<Integer> getNextPlayerPrios() {
+		return this.nextPrios;
 	}	
 }

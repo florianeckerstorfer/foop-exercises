@@ -2,7 +2,6 @@ package foop.java.snake.client.gui;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.JFrame;
@@ -73,13 +72,17 @@ public class MainFrame extends JFrame {
         boardPanel.repaint();
     }
 
+    public void setMyID(int id) {
+    	playerPanel.setMyID(id);
+    }
+    
     /**
      * takes a list of @see {Player}-objects and renders int on the playeröierarchy panel
+     * @param id 
      * @param players List of Players
      */
-    public void renderPlayers(int id, List<Player> players) {
+    public void renderPlayers(List<Player> players) {
     	playerPanel.setPlayers(players);
-    	playerPanel.repaint();
     }
 
     /**
@@ -87,6 +90,7 @@ public class MainFrame extends JFrame {
      * @param args
      */
     public static void main(String[] args) {
+    	/*
         MainFrame mainFrame = new MainFrame();
 
         List<Player> pl = new ArrayList<Player>();
@@ -144,5 +148,13 @@ public class MainFrame extends JFrame {
 
         board.setBoard(b);
         mainFrame.renderBoard(board);
+        */
     }
+
+	public void renderPrios(List<Integer> playerPrios,
+			List<Integer> nextPlayerPrios) {
+		playerPanel.setCurrentPrio(playerPrios);
+		playerPanel.setNextPrio(nextPlayerPrios);
+		playerPanel.repaint();
+	}
 }

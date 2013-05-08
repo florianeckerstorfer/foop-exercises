@@ -41,6 +41,6 @@ public class RegisterAckMessageHandler  extends Observable implements MessageHan
 
         // Implementation of the observer-pattern
         setChanged();
-        notifyObservers(new Integer(message.getPlayerID()));
+        notifyObservers(message);
     }
 }
