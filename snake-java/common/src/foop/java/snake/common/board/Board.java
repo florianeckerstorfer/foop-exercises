@@ -1,6 +1,5 @@
 package foop.java.snake.common.board;
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.List;
 /**
  * Board
@@ -29,16 +28,6 @@ public class Board implements Serializable{
 		this.setColumns(columns);
 		this.setRows(rows);
         this.generateBoard();
-        this.priorities=new ArrayList<Integer>();
-        this.nextPriorities=new ArrayList<Integer>();
-	}
-	
-	public Board(Integer columns, Integer rows, List<Integer> prios, List<Integer> nextPrios) {
-		this.setColumns(columns);
-		this.setRows(rows);
-        this.generateBoard();
-        this.priorities=new ArrayList<Integer>(prios);
-        this.nextPriorities=new ArrayList<Integer>(nextPrios);
 	}
 
     /**
@@ -129,21 +118,5 @@ public class Board implements Serializable{
 	 */
 	public int getPlayerNumber(Integer column, Integer row) {
 		return board[column][row]&(byte)0x0F;
-	}
-
-	public List<Integer> getPriorities() {
-		return priorities;
-	}
-
-	public void setPriorities(List<Integer> priorities) {
-		this.priorities = priorities;
-	}
-
-	public List<Integer> getNextPriorities() {
-		return nextPriorities;
-	}
-
-	public void setNextPriorities(List<Integer> nextPriorities) {
-		this.nextPriorities = nextPriorities;
 	}
 }

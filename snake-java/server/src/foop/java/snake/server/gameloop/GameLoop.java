@@ -31,7 +31,7 @@ public class GameLoop extends Thread implements Observer
 	/**
 	 * The time that each loop takes
 	 */
-	final private int loopTime = 500;
+	final private int loopTime = 100;
 
 	/**
 	 * The number of iterations until the game starts
@@ -46,7 +46,7 @@ public class GameLoop extends Thread implements Observer
 	/**
 	 * The minimum number of players
 	 */
-	final private int minPlayerCount = 4;
+	final private int minPlayerCount = 10;
 
 	/**
 	 * Stores the player registry
@@ -62,6 +62,9 @@ public class GameLoop extends Thread implements Observer
     private int boardColumns = 30;
     private int boardRows = 30;
 
+    private List<Integer> currentPriorities;
+    private List<Integer> nextPriorities;
+    
     /**
      * indicates if new prio shall be sent
      */
@@ -367,7 +370,7 @@ public class GameLoop extends Thread implements Observer
      */
     private void calculateBoard() {
         System.out.println("calculateBoard");
-        this.nextBoard = new Board(this.board.getColumns(), this.board.getRows(),this.board.getPriorities(), this.board.getNextPriorities());
+        this.nextBoard = new Board(this.board.getColumns(), this.board.getRows());
         for (int i=0; i<this.board.getColumns(); i++) {
             for (int j=0; j<this.board.getRows(); j++) {
                 //find snake head
@@ -432,8 +435,8 @@ public class GameLoop extends Thread implements Observer
 	                TCPClient client = this.clientRegistry.getClient(player.getAddress());
 	                client.sendMessage(new BoardMessage(this.board));
 	                if (prioChanged) {
-	                    System.out.println("before sending: currPrios/nextPrios: "+this.board.getPriorities().size()+"/"+this.board.getNextPriorities().size());
-		                client.sendMessage(new PrioChangeMessage(this.board.getPriorities(),this.board.getNextPriorities()));
+	                    System.out.println("before sending: currPrios/nextPrios: "+this.currentPriorities.size()+"/"+this.nextPriorities.size());
+		                client.sendMessage(new PrioChangeMessage(this.currentPriorities,this.nextPriorities));
 	                }
 	            } catch (IOException e) {
 	                System.out.println("Error while sending to " + player.getName());
@@ -449,19 +452,19 @@ public class GameLoop extends Thread implements Observer
      */
     private void changePrios() {
         System.out.println("Change Priorities");
-        if(this.board.getNextPriorities()==null)
+        if(this.nextPriorities==null)
         	System.out.println("Next prios == null");
-        if(this.board.getPriorities()==null)
+        if(this.currentPriorities==null)
         	System.out.println("prios == null");
         
-        System.out.println("before change currPrios/nextPrios: "+this.board.getPriorities().size()+"/"+this.board.getNextPriorities().size());
+        System.out.println("before change currPrios/nextPrios: "+this.currentPriorities.size()+"/"+this.nextPriorities.size());
         
-        List<Integer> nextPrios = this.board.getPriorities();
+        List<Integer> nextPrios = this.currentPriorities;
         Collections.shuffle(nextPrios);
-        this.board.setPriorities(this.board.getNextPriorities());
-        this.board.setNextPriorities(nextPrios);
+        this.currentPriorities=this.nextPriorities;
+        this.nextPriorities=nextPrios;
         
-        System.out.println("after change currPrios/nextPrios: "+this.board.getPriorities().size()+"/"+this.board.getNextPriorities().size());
+        System.out.println("after change currPrios/nextPrios: "+this.currentPriorities.size()+"/"+this.nextPriorities.size());
 
         
     	prioChanged=true; // send them during next senMessage()
@@ -470,19 +473,19 @@ public class GameLoop extends Thread implements Observer
     private void initPrios() {
         System.out.println("init Priorities for " + playerRegistry.getPlayerCount() + " player");
 
-        int aiCount = 0;
 		List<Player> players = playerRegistry.getPlayers();
-		List<Integer> prios = this.board.getPriorities();
-		List<Integer> nextPrios = this.board.getNextPriorities();
+		this.currentPriorities = new ArrayList<Integer>();
+		this.nextPriorities = new ArrayList<Integer>();
 		
 		for(Player player: players) {
-			prios.add(player.getId());
+			currentPriorities.add(player.getId());
 		}
 		
-		Collections.shuffle(prios);
-		nextPrios = new ArrayList<Integer>(prios);
+		Collections.shuffle(currentPriorities);
+		List<Integer> nextPrios = new ArrayList<Integer>(currentPriorities);
 		Collections.shuffle(nextPrios);
-		this.board.setNextPriorities(nextPrios);
+		
+		this.nextPriorities=nextPrios;
 		
 		prioChanged=true; // send them during next sendMessage()
     }

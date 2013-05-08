@@ -84,21 +84,20 @@ public class PlayerPanel  extends JPanel{
         line += parent.getOffset();
         System.out.println(this.currentPriorities.size()+" current priorities: "+this.currentPriorities.toString());
         String prioNames[]= new String[this.currentPriorities.size()];
-
+        Color prioColors[] = new Color[this.currentPriorities.size()];
+        
         for (Player p : players) {
         	int prioIndex = this.currentPriorities.indexOf(p.getId());
         	System.out.println("Priority "+p.getId()+" of player #"+p.getId()+" has index "+prioIndex);
-        	if(prioNames[prioIndex]==null) {
-        		prioNames[prioIndex]=p.getName();
-        	} else {
-        		prioNames[prioIndex] = prioNames[prioIndex]+", "+p.getName();
-        	}
+       		prioNames[prioIndex]=p.getName();
+       		prioColors[prioIndex]=parent.getPlayerColor(p.getId());
         }
         
         System.out.println("Player names for prio list set: "+prioNames.length);
         
-        for (String prioString: prioNames) {
-        	graphics.drawString(prioString, 10, line);
+        for (int i=0;i<prioNames.length;i++) {
+        	graphics.setColor(prioColors[i]);
+        	graphics.drawString(prioNames[i], 10, line);
         	line += parent.getOffset();	
         }
 
@@ -109,21 +108,22 @@ public class PlayerPanel  extends JPanel{
         line += parent.getOffset();
         System.out.println(this.nextPriorities.size()+" next priorities: "+this.nextPriorities.toString());
         prioNames = new String[this.nextPriorities.size()];
+        prioColors = new Color[this.currentPriorities.size()];
 
         for (Player p : players) {
         	int prioIndex = this.nextPriorities.indexOf(p.getId());
         	System.out.println("Priority "+p.getId()+" of player #"+p.getId()+" has index "+prioIndex);
         	if(prioNames[prioIndex]==null) {
         		prioNames[prioIndex]=p.getName();
-        	} else {
-        		prioNames[prioIndex] = prioNames[prioIndex]+", "+p.getName();
+           		prioColors[prioIndex]=parent.getPlayerColor(p.getId());
         	}
         }
         
         System.out.println("Player names for prio list set: "+prioNames.length);
         
-        for (String prioString: prioNames) {
-        	graphics.drawString(prioString, 10, line);
+        for (int i=0;i<prioNames.length;i++) {
+        	graphics.setColor(prioColors[i]);
+        	graphics.drawString(prioNames[i], 10, line);
         	line += parent.getOffset();	
         }
     }
