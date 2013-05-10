@@ -17,6 +17,7 @@ import foop.java.snake.common.message.RegisterAckMessage;
 import foop.java.snake.common.message.RegisterErrorMessage;
 import foop.java.snake.common.message.RegisterMessage;
 import foop.java.snake.common.message.UnregisterMessage;
+import foop.java.snake.common.message.PrioChangeMessage;
 import foop.java.snake.common.message.handler.BoardMessageHandler;
 import foop.java.snake.common.message.handler.MessageHandlerRegistry;
 import foop.java.snake.common.message.handler.PlayerInfoMessageHandler;

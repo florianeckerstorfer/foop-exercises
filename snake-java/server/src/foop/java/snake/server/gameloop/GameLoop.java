@@ -1,5 +1,6 @@
 package foop.java.snake.server.gameloop;
 
+import java.awt.Point;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -18,6 +19,7 @@ import foop.java.snake.common.message.PlayerInfoMessage;
 import foop.java.snake.common.message.PrioChangeMessage;
 import foop.java.snake.common.player.Player;
 import foop.java.snake.common.player.PlayerRegistry;
+import foop.java.snake.common.snake.Snake;
 import foop.java.snake.common.tcp.TCPClient;
 import foop.java.snake.common.tcp.TCPClientRegistry;
 
@@ -31,7 +33,7 @@ public class GameLoop extends Thread implements Observer
 	/**
 	 * The time that each loop takes
 	 */
-	final private int loopTime = 100;
+	final private int loopTime = 200;
 
 	/**
 	 * The number of iterations until the game starts
@@ -69,6 +71,16 @@ public class GameLoop extends Thread implements Observer
      * indicates if new prio shall be sent
      */
     private boolean prioChanged = false;
+
+	/**
+	 * the snakes crawling on this planet
+	 */
+    private Map<Integer, Snake> snakes = new HashMap<Integer, Snake>();
+    /**
+     * how long will they be initially?
+     */
+    int initialMaxSnakeLength = 8;
+    int initialMinSnakeLength = 3;
 
 	/**
 	 * Constructor.
@@ -167,75 +179,162 @@ public class GameLoop extends Thread implements Observer
 	}
 
 	/**
-     * Randomly generate a snake consisting of head and body.
-     */
-    private void initSnakes() {
-        List<Map<String, Integer>> history = new ArrayList<Map<String, Integer>>();
-        System.out.println("init snakes " + playerRegistry.getPlayerCount());
-        int i = 0;
-        while(i < playerRegistry.getPlayerCount()) {
-            //random values for snake head field
-            Map<String, Integer> headField = new HashMap<String, Integer>();
-            headField.put("row", (int) (Math.random() * (board.getRows()-2)+1));
-            headField.put("column", (int) (Math.random() * (board.getColumns()-2)+1));
-            int id= playerRegistry.getPlayers().get(i).getId(),
-                head =  2 + (int) (Math.random() * (5-2 +1));
-            byte headDirection = (byte)(head * 16 + id);
-            byte snakeHead = this.board.getHeadDirection(headDirection);
+	 * Initially sets the snakes for the players. First version: fixed y-value, evenly distributed x-value, 
+	 * all point to the same direction 
+	 */
+	private void initSnakes() {
+        List<Player> players = this.playerRegistry.getPlayers();
+        int countOfPlayers = players.size();
+        int yPos = boardRows / 2;
+        int xPos = 0; 
+        int diffX = boardColumns / countOfPlayers;
+		
+        for (Player p : players) {
+			xPos = xPos + diffX;
+			int initialSnakeLength = (int)((double)initialMaxSnakeLength * Math.random() + initialMinSnakeLength);
+			this.snakes.put(new Integer(p.getId()), new Snake(p.getId(), new Point(xPos, yPos), initialSnakeLength, Snake.Direction.DOWN, boardColumns, boardRows));
+		}
+        drawSnakesOnBoard();
+	}
+	/**
+	 * copies the snakes onto the board
+	 */
+	private void drawSnakesOnBoard() {
+        nextBoard = new Board(this.board.getColumns(), this.board.getRows());
 
-            //random values for snake body field
-            int row = 0,
-                column = 0,
-                rand = -1 + (int) (Math.random() * 3);
-
-            if (snakeHead == SnakeHeadDirection.snakeHeadUp) {
-                column = rand;
-                if (column == 0) {
-                    row = 1;
-                }
-                System.out.println("up " + column + " " +row);
-            } else if (snakeHead == SnakeHeadDirection.snakeHeadDown) {
-                column = rand;
-                if (column == 0) {
-                    row = -1;
-                }
-            } else if (snakeHead == SnakeHeadDirection.snakeHeadLeft) {
-                row = rand;
-                if (row == 0) {
-                    column = 1;
-                }
-            } else if (snakeHead == SnakeHeadDirection.snakeHeadRight) {
-                row = rand;
-                if (row == 0) {
-                    column = -1;
-                }
-            }
-
-            Map<String, Integer> bodyField = new HashMap<String, Integer>();
-            bodyField.put("row", headField.get("row") + row);
-            bodyField.put("column", headField.get("column") + column);
-
-            if (isNotInHistory(history, headField.get("column"), headField.get("row")) &&
-                    isNotInHistory(history, bodyField.get("column"), bodyField.get("row"))) {
-                System.out.println("head: " + headField.get("column") + "/" + headField.get("row"));
-                this.board.setField(
-                        headField.get("column"),
-                        headField.get("row"),
-                        headDirection
-                );
-                System.out.println("body: " + bodyField.get("column") + "/" + bodyField.get("row"));
-                this.board.setField(
-                        bodyField.get("column"),
-                        bodyField.get("row"),
-                        (byte)(SnakeHeadDirection.snakeBody + id)
-                );
-
-                history.add(headField);
-                history.add(bodyField);
-                i++;
-            }
+        for (Snake snake : snakes.values()) {
+        	
+    		int id = snake.getId();
+        	List<Point> body = snake.getSnakeBody();
+        	Snake.Direction dir = snake.getCurrentDirection();
+        	for (int i = 0; i < body.size(); i++) {
+	        	Point pos = body.get(i);    
+	        	byte snakeDirectionOnBoard;
+	        	
+	        	if (i == 0) {
+	        		// we are drawing the head
+	            	snakeDirectionOnBoard = convertDirection(dir);
+	        	}
+	        	else {
+	            	snakeDirectionOnBoard = SnakeHeadDirection.snakeBody; 
+	        	}
+	
+	        	nextBoard.setField(pos.x, pos.y, (byte)(snakeDirectionOnBoard + id));
+        	}
         }
-    }
+        this.board = this.nextBoard;
+	}
+	
+	/**
+	 * Converts from {@link Snake.Direction} to {@link SnakeHeadDirection}
+	 * @param dir 
+	 * @return
+	 */
+	private byte convertDirection(Snake.Direction dir) {
+		switch (dir) {
+			case UP:
+				return SnakeHeadDirection.snakeHeadUp;
+			case DOWN:
+				return SnakeHeadDirection.snakeHeadDown;
+			case LEFT:
+				return SnakeHeadDirection.snakeHeadLeft;
+			case RIGHT:
+				return SnakeHeadDirection.snakeHeadRight;
+			case NONE:
+			default:
+				return SnakeHeadDirection.noSnake;
+		}
+	}
+	/**
+	 * Converts from {@link InputMessage.Keycode} to {@link Snake.Direction}
+	 * @param dir 
+	 * @return
+	 */	
+	private Snake.Direction convertKeyCodeToDist(InputMessage.Keycode key) {
+		switch (key) {
+			case UP:
+				return Snake.Direction.UP;
+			case DOWN:
+				return Snake.Direction.DOWN;
+			case LEFT:
+				return Snake.Direction.LEFT;
+			case RIGHT:
+				return Snake.Direction.RIGHT;
+			case IGNORE:
+			default:
+				return Snake.Direction.NONE;
+		}
+	}
+//	/**
+//     * Randomly generate a snake consisting of head and body.
+//     */
+//    private void initSnakes() {
+//        List<Map<String, Integer>> history = new ArrayList<Map<String, Integer>>();
+//        System.out.println("init snakes " + playerRegistry.getPlayerCount());
+//        int i = 0;
+//        while(i < playerRegistry.getPlayerCount()) {
+//            //random values for snake head field
+//            Map<String, Integer> headField = new HashMap<String, Integer>();
+//            headField.put("row", (int) (Math.random() * (board.getRows()-2)+1));
+//            headField.put("column", (int) (Math.random() * (board.getColumns()-2)+1));
+//            int id= playerRegistry.getPlayers().get(i).getId(),
+//            int head =  2 + (int) (Math.random() * (5-2 +1));
+//            byte headDirection = (byte)(head * 16 + id);
+//            byte snakeHead = this.board.getHeadDirection(headDirection);
+//
+//            //random values for snake body field
+//            int row = 0,
+//                column = 0,
+//                rand = -1 + (int) (Math.random() * 3);
+//
+//            if (snakeHead == SnakeHeadDirection.snakeHeadUp) {
+//                column = rand;
+//                if (column == 0) {
+//                    row = 1;
+//                }
+//                System.out.println("up " + column + " " +row);
+//            } else if (snakeHead == SnakeHeadDirection.snakeHeadDown) {
+//                column = rand;
+//                if (column == 0) {
+//                    row = -1;
+//                }
+//            } else if (snakeHead == SnakeHeadDirection.snakeHeadLeft) {
+//                row = rand;
+//                if (row == 0) {
+//                    column = 1;
+//                }
+//            } else if (snakeHead == SnakeHeadDirection.snakeHeadRight) {
+//                row = rand;
+//                if (row == 0) {
+//                    column = -1;
+//                }
+//            }
+//
+//            Map<String, Integer> bodyField = new HashMap<String, Integer>();
+//            bodyField.put("row", headField.get("row") + row);
+//            bodyField.put("column", headField.get("column") + column);
+//
+//            if (isNotInHistory(history, headField.get("column"), headField.get("row")) &&
+//                    isNotInHistory(history, bodyField.get("column"), bodyField.get("row"))) {
+//                System.out.println("head: " + headField.get("column") + "/" + headField.get("row"));
+//                this.board.setField(
+//                        headField.get("column"),
+//                        headField.get("row"),
+//                        headDirection
+//                );
+//                System.out.println("body: " + bodyField.get("column") + "/" + bodyField.get("row"));
+//                this.board.setField(
+//                        bodyField.get("column"),
+//                        bodyField.get("row"),
+//                        (byte)(SnakeHeadDirection.snakeBody + id)
+//                );
+//
+//                history.add(headField);
+//                history.add(bodyField);
+//                i++;
+//            }
+//        }
+//    }
 
     /**
      * Moves a snake part to a specific field
@@ -365,33 +464,89 @@ public class GameLoop extends Thread implements Observer
         }
     }
 
-    /**
-     * Calculates and generates the next board.
-     */
+    
     private void calculateBoard() {
-        System.out.println("calculateBoard");
-        this.nextBoard = new Board(this.board.getColumns(), this.board.getRows());
-        for (int i=0; i<this.board.getColumns(); i++) {
-            for (int j=0; j<this.board.getRows(); j++) {
-                //find snake head
-                if (this.board.isSnakeHead(i, j) &&
-                        (this.board.getSnakeHeadDirection(i,j)!=SnakeHeadDirection.snakeBody)) {
-                    Player player = playerRegistry.getPlayerById(this.board.getPlayerNumber(i, j));
-                    if (player != null) {
-                    	if(player.isAI()) {
-                    		aiDecision(i,j);
-                    	} 
-                    	this.moveSnakeHead(i, j, player);
-	                    this.moveSnakeBody(i, j, player.getId(), new ArrayList<Map<String, Integer>>());
-                    } else {
-                        System.out.println("Error there should be a player");
-                    }
-                }
+    	// TODO implement this!!!!!
+    	// loop over all players and move their snakes accordingly
+    	// Snake killed? what to do? I assume, that the player is no longer in the list then...
+        // In this first iteration of the final solution I just move the snake and draw it on the board
+    	for (Player player : playerRegistry.getPlayers()) {
+    		Snake snake = snakes.get(player.getId());
+        	if(player.isAI()) {
+        		player.setKeycode(aiDecision(snake.getCurrentDirection()));
+        	} 
+            
+    		InputMessage.Keycode key = player.getKeycode();
+            if (key != null) {
+            	snake.move(convertKeyCodeToDist(key), false);
+            } else {
+            	// keep the snake moving to current direction
+            	snake.move(false);
             }
-        }
-        this.board = this.nextBoard;
+    	}
+    	this.drawSnakesOnBoard();
     }
+    
+//    /**
+//     * Calculates and generates the next board.
+//     */
+//    private void calculateBoard() {
+//        System.out.println("calculateBoard");
+//        this.nextBoard = new Board(this.board.getColumns(), this.board.getRows());
+//        for (int i=0; i<this.board.getColumns(); i++) {
+//            for (int j=0; j<this.board.getRows(); j++) {
+//                //find snake head
+//                if (this.board.isSnakeHead(i, j) &&
+//                        (this.board.getSnakeHeadDirection(i,j)!=SnakeHeadDirection.snakeBody)) {
+//                    Player player = playerRegistry.getPlayerById(this.board.getPlayerNumber(i, j));
+//                    if (player != null) {
+//                    	if(player.isAI()) {
+//                    		aiDecision(i,j);
+//                    	} 
+//                    	this.moveSnakeHead(i, j, player);
+//	                    this.moveSnakeBody(i, j, player.getId(), new ArrayList<Map<String, Integer>>());
+//                    } else {
+//                        System.out.println("Error there should be a player");
+//                    }
+//                }
+//            }
+//        }
+//        this.board = this.nextBoard;
+//    }
 
+    private Keycode aiDecision(Snake.Direction currentDirection) {
+		Double decision=Math.random();
+		switch (currentDirection) {
+			case UP:
+				if(decision>=0.9)
+					return Keycode.RIGHT;
+				else if(decision<=0.1)
+					return Keycode.LEFT;
+				break;
+			case DOWN:
+				if(decision>=0.9)
+					return Keycode.RIGHT;
+				else if(decision<=0.1)
+					return Keycode.LEFT;
+				break;
+			case RIGHT:
+				if(decision>=0.9)
+					return Keycode.UP;
+				else if(decision<=0.1)
+					return Keycode.DOWN;
+				break;
+			case LEFT:
+				if(decision>=0.9)
+					return Keycode.UP;
+				else if(decision<=0.1)
+					return Keycode.DOWN;
+				break;
+			default:
+				return Keycode.IGNORE;
+		}	
+		return Keycode.IGNORE;
+    }
+    
     private void aiDecision(int column, int row) {
     	Player player = this.playerRegistry.getPlayerById(this.board.getPlayerNumber(column,row));
     	byte direction = this.board.getSnakeHeadDirection(column, row);

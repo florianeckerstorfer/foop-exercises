@@ -34,13 +34,8 @@ public class Board implements Serializable{
      * Generates an empty board
      */
     private void generateBoard() {
-        Byte[][] board = new Byte[this.getColumns()][this.getRows()];
-        for (int i=0; i<board.length; i++) {
-            for (int j=0; j<board[i].length; j++) {
-                board[i][j] = 0;
-            }
-        }
-        this.setBoard(board);
+        setBoard(new Byte[this.getColumns()][this.getRows()]);
+        clearBoard();
     }
 
 	public Integer getRows() {
@@ -118,5 +113,18 @@ public class Board implements Serializable{
 	 */
 	public int getPlayerNumber(Integer column, Integer row) {
 		return board[column][row]&(byte)0x0F;
+	}
+	/**
+	 * clears the board, that is, set all fields to 0
+	 */
+	public void clearBoard() {
+		if (board == null)
+			return;
+		
+        for (int i=0; i<board.length; i++) {
+            for (int j=0; j<board[i].length; j++) {
+                board[i][j] = 0;
+            }
+        }	
 	}
 }
