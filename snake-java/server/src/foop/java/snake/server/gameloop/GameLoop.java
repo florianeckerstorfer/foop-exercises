@@ -43,7 +43,7 @@ public class GameLoop extends Thread implements Observer
 	/**
 	 * The number of iterations until the priority changes
 	 */
-	final private int priorityChangeInterval = 20;
+	final private int priorityChangeInterval = 50;
 	
 	/**
 	 * The minimum number of players
@@ -128,7 +128,7 @@ public class GameLoop extends Thread implements Observer
 		int loopCount = 0;
 		int playerCount = 0;
 		int gameCountdown = initialGameCountdown;
-        this.board = new Board(this.boardRows, this.boardColumns);
+        this.board = new Board(this.boardColumns,this.boardRows);
 
 		while (true) {
 			System.out.println("Game Loop #" + loopCount);

@@ -55,7 +55,7 @@ public class BoardPanel extends JPanel{
         }
 
         //render snakes
-        Byte[][] field = board.getBoard();
+        byte[][] field = board.getBoard();
         for (int i=0; i<field.length; i++) {
             for (int j=0; j<field[i].length; j++) {
                 drawSnake(graphics, i, j);

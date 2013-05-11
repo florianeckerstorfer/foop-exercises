@@ -1,6 +1,6 @@
 package foop.java.snake.common.board;
 import java.io.Serializable;
-import java.util.List;
+
 /**
  * Board
  * Holds the current board, that is, which field is occupied by which player
@@ -14,10 +14,7 @@ public class Board implements Serializable{
 
 	private Integer rows;
 	private Integer columns;
-	private Byte[][] board;
-	
-	private List<Integer> priorities;
-	private List<Integer> nextPriorities;
+	private byte[][] board;
 
 	/**
 	 * Initializes a board with given dimensions
@@ -27,16 +24,8 @@ public class Board implements Serializable{
 	public Board(Integer columns, Integer rows) {
 		this.setColumns(columns);
 		this.setRows(rows);
-        this.generateBoard();
+		this.board = new byte[columns][rows];
 	}
-
-    /**
-     * Generates an empty board
-     */
-    private void generateBoard() {
-        setBoard(new Byte[this.getColumns()][this.getRows()]);
-        clearBoard();
-    }
 
 	public Integer getRows() {
 		return rows;
@@ -50,14 +39,14 @@ public class Board implements Serializable{
 	public void setColumns(Integer columns) {
 		this.columns = columns;
 	}
-	public Byte[][] getBoard() {
+	public byte[][] getBoard() {
 		return board;
 	}
-	public void setBoard(Byte[][] board) {
+	public void setBoard(byte[][] board) {
 		this.board = board;
 	}
 
-    public void setField(int column, int row, Byte field) {
+    public void setField(int column, int row, byte field) {
         this.board[column][row] = field;
     }
 
@@ -70,7 +59,7 @@ public class Board implements Serializable{
 	 * @see SnakeHeadDirection
 	 */
 	public byte getSnakeHeadDirection(Integer column, Integer row) {
-		return (byte)(board[column][row]&(byte)0xF0);
+		return (byte) (board[column][row]&(byte)0xF0);
 	}
 
     public byte getHeadDirection(byte head) {
@@ -121,10 +110,6 @@ public class Board implements Serializable{
 		if (board == null)
 			return;
 		
-        for (int i=0; i<board.length; i++) {
-            for (int j=0; j<board[i].length; j++) {
-                board[i][j] = 0;
-            }
-        }	
+        board = new byte[this.getColumns()][this.getRows()];
 	}
 }
