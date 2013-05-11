@@ -91,8 +91,35 @@ public class GameLoop extends Thread implements Observer
 	{
 		this.playerRegistry = playerRegistry;
         this.clientRegistry = clientRegistry;
+        board = new Board(boardColumns, boardRows);
 	}
 
+	private void doTest() {
+		board=new Board(17,17);
+		Snake s1=new Snake(0, new Point(10,18), 13, Snake.Direction.DOWN, 17,17);
+		Snake s2=new Snake(10, new Point(11,2), 5, Snake.Direction.LEFT, 17,17);
+		snakes.put(0, s1);
+		snakes.put(10, s2);
+		
+		boolean willgrow = false;
+		while (true) {
+			s1.move(false);
+			s2.move(willgrow);
+			drawSnakesOnBoard();
+			sendMessages();
+			try {
+				Thread.sleep(300);
+			} catch (Exception e) {}
+			Point pos = s2.getSnakeBody().get(0);
+			if (s1.checkPosition(pos) == Snake.SnakePart.BODY) {
+				s1.cut(pos);
+				willgrow=true;
+			} else {
+				willgrow=false;
+			}
+		}
+	}
+	
     /**
 	 * Threads that runs the game loop.
 	 */
@@ -109,6 +136,12 @@ public class GameLoop extends Thread implements Observer
 				// No registered players
 				System.out.println("No registered players. But I will wait until the end of times");
 			} else if (0 == playerCount && playerRegistry.getPlayerCount() > 0) {
+
+				// TEST
+                this.sendPlayerMessages();				
+		        // doTest();
+		        // TEST-END
+
 				// The first iteration that has registered players. Start the countdown
 				playerCount = playerRegistry.getPlayerCount();
 				System.out.println("Registered " + playerRegistry.getPlayerCount() + " players.");
@@ -120,6 +153,7 @@ public class GameLoop extends Thread implements Observer
 				// TODO: End game
 			} else if (gameCountdown > 0) {
 				// We have registered players, but the countdown is still running down.
+
 				System.out.println("Game starts in " + gameCountdown);
 				gameCountdown--;
                 if (gameCountdown == 0) {
@@ -200,8 +234,8 @@ public class GameLoop extends Thread implements Observer
 	 * copies the snakes onto the board
 	 */
 	private void drawSnakesOnBoard() {
-        nextBoard = new Board(this.board.getColumns(), this.board.getRows());
-
+        // nextBoard = new Board(this.board.getColumns(), this.board.getRows());
+		board.clearBoard();
         for (Snake snake : snakes.values()) {
         	
     		int id = snake.getId();
@@ -218,13 +252,30 @@ public class GameLoop extends Thread implements Observer
 	        	else {
 	            	snakeDirectionOnBoard = SnakeHeadDirection.snakeBody; 
 	        	}
-	
-	        	nextBoard.setField(pos.x, pos.y, (byte)(snakeDirectionOnBoard + id));
+	        	board.setField(pos.x, pos.y, (byte)(snakeDirectionOnBoard + id));
+	        	// nextBoard.setField(pos.x, pos.y, (byte)(snakeDirectionOnBoard + id));
         	}
         }
-        this.board = this.nextBoard;
+//        this.board = this.nextBoard;
 	}
-	
+	/**
+	 * simple sollisssion detection - first trial... Checks if snake "eats" another one
+	 * if so, target-snake is cut st this position and true is returned. False otherwise 
+	 */
+	private boolean collisionDetect(Snake snake) {
+		
+		Point pos = snake.getSnakeBody().get(0);
+		for (Snake toCheck : snakes.values()) {
+			if (snake == toCheck) {
+				continue;
+			}
+			if (toCheck.checkPosition(pos) == Snake.SnakePart.BODY) {
+				toCheck.cut(pos);
+				return true;
+			} 
+		}
+		return false;
+	}
 	/**
 	 * Converts from {@link Snake.Direction} to {@link SnakeHeadDirection}
 	 * @param dir 
@@ -475,14 +526,17 @@ public class GameLoop extends Thread implements Observer
         	if(player.isAI()) {
         		player.setKeycode(aiDecision(snake.getCurrentDirection()));
         	} 
-            
+
     		InputMessage.Keycode key = player.getKeycode();
             if (key != null) {
-            	snake.move(convertKeyCodeToDist(key), false);
+            	snake.move(convertKeyCodeToDist(key));
             } else {
             	// keep the snake moving to current direction
-            	snake.move(false);
+//            	snake.move(false);
+            	snake.move();
             }
+            boolean willGrow = collisionDetect(snake); // simple collision detection
+            snake.setIsGrowning(willGrow);
     	}
     	this.drawSnakesOnBoard();
     }
