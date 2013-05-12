@@ -104,13 +104,13 @@ public interface ISnake {
 	 *
 	 * @param position
 	 */
-	public void setHeadposition(Point position);
+	public void setHeadPosition(Point position);
 
 	/**
 	 * Checks if the given position is occupied by the snake
 	 *
 	 * @param position
-	 * @return what bodypart of the snake is occupying the position?
+	 * @return what bodyPart of the snake is occupying the position?
 	 */
 	public SnakePart checkPosition(Point position);
 
@@ -125,4 +125,10 @@ public interface ISnake {
 	 * Appends the previously cut tail, if there's any.
 	 */
 	public void grow();
+
+	/**
+	 * Returns if snake is alive
+	 * @return
+	 */
+	public boolean isAlive();
 }

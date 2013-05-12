@@ -209,7 +209,7 @@ public class Snake implements ISnake {
 	}
 
 	@Override
-	public void setHeadposition(Point position) {
+	public void setHeadPosition(Point position) {
 		if (snakeBody.size() == 0)
 			return;
 		Point currentHead = snakeBody.peekFirst();
@@ -281,5 +281,10 @@ public class Snake implements ISnake {
 			snakeBody.add(removedTail);
 		}
 		removedTail = null;
+	}
+
+	@Override
+	public boolean isAlive() {
+		return true;
 	}
 }

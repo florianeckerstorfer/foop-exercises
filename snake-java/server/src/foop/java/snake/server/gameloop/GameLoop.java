@@ -9,6 +9,7 @@ import foop.java.snake.common.message.PlayerInfoMessage;
 import foop.java.snake.common.message.PrioChangeMessage;
 import foop.java.snake.common.player.Player;
 import foop.java.snake.common.player.PlayerRegistry;
+import foop.java.snake.common.snake.DeadSnake;
 import foop.java.snake.common.snake.ISnake;
 import foop.java.snake.common.snake.Snake;
 import foop.java.snake.common.tcp.TCPClient;
@@ -75,12 +76,14 @@ public class GameLoop extends Thread implements Observer {
 	/**
 	 * the snakes crawling on this planet
 	 */
-	private Map<Integer, Snake> snakes = new HashMap<Integer, Snake>();
+	private Map<Integer, ISnake> snakes = new HashMap<Integer, ISnake>();
 	/**
 	 * how long will they be initially?
 	 */
 	int initialMaxSnakeLength = 8;
 	int initialMinSnakeLength = 3;
+
+	private int DEAD_SNAKE_ID = 0;
 
 	/**
 	 * Constructor.
@@ -224,6 +227,9 @@ public class GameLoop extends Thread implements Observer {
 			int initialSnakeLength = (int) ((double) initialMaxSnakeLength * Math.random() + initialMinSnakeLength);
 			this.snakes.put(p.getId(), new Snake(p.getId(), new Point(xPos, yPos), initialSnakeLength, Snake.Direction.DOWN, boardColumns, boardRows));
 		}
+
+		//add dead snake
+		this.snakes.put(DEAD_SNAKE_ID, new DeadSnake());
 		drawSnakesOnBoard();
 	}
 
@@ -233,8 +239,7 @@ public class GameLoop extends Thread implements Observer {
 	private void drawSnakesOnBoard() {
 		// nextBoard = new Board(this.board.getColumns(), this.board.getRows());
 		board.clearBoard();
-		for (Snake snake : snakes.values()) {
-
+		for (ISnake snake : snakes.values()) {
 			int id = snake.getId();
 			List<Point> body = snake.getSnakeBody();
 			Snake.Direction dir = snake.getCurrentDirection();
@@ -273,7 +278,7 @@ public class GameLoop extends Thread implements Observer {
 	 * @param s1	snake 1
 	 * @param s2	snake 2
 	 */
-	private void handlePriorityCollision(Snake s1, Snake s2) {
+	private void handlePriorityCollision(ISnake s1, ISnake s2) {
 		int id = comparePriorities(s1.getId(), s2.getId());
 		if (s1.getId() == id) {
 			handleCollision(s1, s2);
@@ -287,14 +292,20 @@ public class GameLoop extends Thread implements Observer {
 	 * @param s1	winning snake
 	 * @param s2	losing snake
 	 */
-	private void handleCollision(Snake s1, Snake s2) {
+	private void handleCollision(ISnake s1, ISnake s2) {
 		s1.grow();
 		List<Point> cutBodyParts = s2.cut(s1.getHead());
+
+		if(s2.getId() == DEAD_SNAKE_ID) {
+			return;
+		}
+
 		if (cutBodyParts != null) {
 			if (s2.getHead() == null) {
-				// TODO handle dead snake
+				//TODO remove dead snake
 			}
-			// TODO handle cut body parts
+			DeadSnake deadSnake = (DeadSnake) this.snakes.get(DEAD_SNAKE_ID);
+			deadSnake.addBodyParts(cutBodyParts);
 		}
 	}
 
@@ -302,8 +313,12 @@ public class GameLoop extends Thread implements Observer {
 	 Detects and handles collisions.
 	 */
 	private void detectCollisions() {
-		for (Snake s1 : snakes.values()) {
-			for (Snake s2 : snakes.values()) {
+		for (ISnake s1 : snakes.values()) {
+			if (s1.getId() == DEAD_SNAKE_ID) {
+				continue;
+			}
+
+			for (ISnake s2 : snakes.values()) {
 				if (s1 == s2) {
 					continue;
 				}
@@ -312,7 +327,7 @@ public class GameLoop extends Thread implements Observer {
 					System.out.println("case1: Snake head " + s1.getId() + " on snake head " + s2.getId());
 					handlePriorityCollision(s1, s2);
 				} else if (s2.checkPosition(s1.getHead()) == ISnake.SnakePart.BODY) {
-					if (s1.checkPosition(s1.getHead()) == ISnake.SnakePart.BODY) {
+					if (s1.checkPosition(s2.getHead()) == ISnake.SnakePart.BODY) {
 						System.out.println("case2: Snake head " + s1.getId() + " on snake head " + s2.getId());
 						handlePriorityCollision(s1, s2);
 					} else {
@@ -577,7 +592,11 @@ public class GameLoop extends Thread implements Observer {
 		// Snake killed? what to do? I assume, that the player is no longer in the list then...
 		// In this first iteration of the final solution I just move the snake and draw it on the board
 		for (Player player : playerRegistry.getPlayers()) {
-			Snake snake = snakes.get(player.getId());
+			ISnake snake = snakes.get(player.getId());
+			if (snake == null) {
+				continue;
+			}
+
 			if (player.isAI()) {
 				player.setKeycode(aiDecision(snake.getCurrentDirection()));
 			}
