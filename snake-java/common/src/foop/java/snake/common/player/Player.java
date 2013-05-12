@@ -16,7 +16,6 @@ public class Player implements Serializable {
 	protected SocketAddress address;
 	protected InputMessage.Keycode keycode;
 	protected Boolean AI;
-	protected Boolean alive = true;
 
 	/**
 	 * Constructor.

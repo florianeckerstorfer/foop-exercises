@@ -9,6 +9,7 @@ import foop.java.snake.common.message.PlayerInfoMessage;
 import foop.java.snake.common.message.PrioChangeMessage;
 import foop.java.snake.common.player.Player;
 import foop.java.snake.common.player.PlayerRegistry;
+import foop.java.snake.common.snake.ISnake;
 import foop.java.snake.common.snake.Snake;
 import foop.java.snake.common.tcp.TCPClient;
 import foop.java.snake.common.tcp.TCPClientRegistry;
@@ -99,10 +100,9 @@ public class GameLoop extends Thread implements Observer {
 		snakes.put(0, s1);
 		snakes.put(10, s2);
 
-		boolean willgrow = false;
 		while (true) {
-			s1.move(false);
-			s2.move(willgrow);
+			s1.move();
+			s2.move();
 			drawSnakesOnBoard();
 			sendMessages();
 			try {
@@ -112,9 +112,7 @@ public class GameLoop extends Thread implements Observer {
 			Point pos = s2.getSnakeBody().get(0);
 			if (s1.checkPosition(pos) == Snake.SnakePart.BODY) {
 				s1.cut(pos);
-				willgrow = true;
-			} else {
-				willgrow = false;
+				s2.grow();
 			}
 		}
 	}
@@ -164,7 +162,7 @@ public class GameLoop extends Thread implements Observer {
 				}
 			} else {
 				// TODO: Implement "real" game logic, movement, collision detection, etc
-				this.calculateBoard();
+				this.calculateSnakeMovement();
 				this.sendMessages();
 			}
 
@@ -258,22 +256,72 @@ public class GameLoop extends Thread implements Observer {
 	}
 
 	/**
-	 * simple sollisssion detection - first trial... Checks if snake "eats" another one
-	 * if so, target-snake is cut st this position and true is returned. False otherwise
+	 * Returns the id of the player with the higher id.
+	 * @param p1	player 1 id
+	 * @param p2	player 2 id
+	 * @return 		player id
 	 */
-	private boolean collisionDetect(Snake snake) {
+	private int comparePriorities(int p1, int p2) {
+		int p1Index = this.currentPriorities.indexOf(p1);
+		int p2Index = this.currentPriorities.indexOf(p2);
 
-		Point pos = snake.getSnakeBody().get(0);
-		for (Snake toCheck : snakes.values()) {
-			if (snake == toCheck) {
-				continue;
+		return p1Index < p2Index ? p1 : p2;
+	}
+
+	/**
+	 * Handles head collisions, snake with higher priority wins.
+	 * @param s1	snake 1
+	 * @param s2	snake 2
+	 */
+	private void handlePriorityCollision(Snake s1, Snake s2) {
+		int id = comparePriorities(s1.getId(), s2.getId());
+		if (s1.getId() == id) {
+			handleCollision(s1, s2);
+		} else if (s2.getId() == id) {
+			handleCollision(s2, s1);
+		}
+	}
+
+	/**
+	 * Handle collision, the winning snake grows and the losing snake is cut at the collision point.
+	 * @param s1	winning snake
+	 * @param s2	losing snake
+	 */
+	private void handleCollision(Snake s1, Snake s2) {
+		s1.grow();
+		List<Point> cutBodyParts = s2.cut(s1.getHead());
+		if (cutBodyParts != null) {
+			if (s2.getHead() == null) {
+				// TODO handle dead snake
 			}
-			if (toCheck.checkPosition(pos) == Snake.SnakePart.BODY) {
-				toCheck.cut(pos);
-				return true;
+			// TODO handle cut body parts
+		}
+	}
+
+	/**
+	 Detects and handles collisions.
+	 */
+	private void detectCollisions() {
+		for (Snake s1 : snakes.values()) {
+			for (Snake s2 : snakes.values()) {
+				if (s1 == s2) {
+					continue;
+				}
+
+				if (s2.checkPosition(s1.getHead()) == ISnake.SnakePart.HEAD) {
+					System.out.println("case1: Snake head " + s1.getId() + " on snake head " + s2.getId());
+					handlePriorityCollision(s1, s2);
+				} else if (s2.checkPosition(s1.getHead()) == ISnake.SnakePart.BODY) {
+					if (s1.checkPosition(s1.getHead()) == ISnake.SnakePart.BODY) {
+						System.out.println("case2: Snake head " + s1.getId() + " on snake head " + s2.getId());
+						handlePriorityCollision(s1, s2);
+					} else {
+						System.out.println("case3: Snake head " + s1.getId() + " on snake body " + s2.getId());
+						handleCollision(s1, s2);
+					}
+				}
 			}
 		}
-		return false;
 	}
 
 	/**
@@ -523,7 +571,7 @@ public class GameLoop extends Thread implements Observer {
 	}
 
 
-	private void calculateBoard() {
+	private void calculateSnakeMovement() {
 		// TODO implement this!!!!!
 		// loop over all players and move their snakes accordingly
 		// Snake killed? what to do? I assume, that the player is no longer in the list then...
@@ -539,12 +587,10 @@ public class GameLoop extends Thread implements Observer {
 				snake.move(convertKeyCodeToDist(key));
 			} else {
 				// keep the snake moving to current direction
-//            	snake.move(false);
 				snake.move();
 			}
-			boolean willGrow = collisionDetect(snake); // simple collision detection
-			snake.setIsGrowning(willGrow);
 		}
+		this.detectCollisions();
 		this.drawSnakesOnBoard();
 	}
 

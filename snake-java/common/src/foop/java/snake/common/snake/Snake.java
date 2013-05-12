@@ -16,7 +16,7 @@ public class Snake implements ISnake {
 	private int boardX = 0;    // the world, the snake is living on
 	private int boardY = 0;
 	private int id = 0;
-	private boolean isGrowing = false;
+	private Point removedTail = null;
 
 	/**
 	 * creates a snake with the head at a given position, a given length and the body pointing to the given position
@@ -66,14 +66,21 @@ public class Snake implements ISnake {
 	}
 
 	@Override
+	public Point getHead() {
+		return snakeBody.peekFirst() != null && this.checkPosition(snakeBody.getFirst()) == SnakePart.HEAD ?
+			snakeBody.getFirst() : null;
+	}
+
+	@Override
 	public List<Point> cut(Point position) {
 		// if not in body or if head...
 		if (!isInSnake(position))
 			return null;
 
-		// TODO What happens if the cut is at the head?
-		if (position.equals(snakeBody.get(0)))
-			return null;
+		if (position.equals(snakeBody.get(0))) {
+			snakeBody.removeFirst();
+			return snakeBody;
+		}
 
 		int cutIndex = snakeBody.indexOf(position);
 
@@ -91,21 +98,11 @@ public class Snake implements ISnake {
 
 	@Override
 	public void move() {
-		move(getCurrentDirection(), getIsGrowing());
-	}
-
-	@Override
-	public void move(boolean grow) {
-		move(getCurrentDirection(), grow);
+		move(getCurrentDirection());
 	}
 
 	@Override
 	public void move(Direction dir) {
-		move(dir, getIsGrowing());
-	}
-
-	@Override
-	public void move(Direction dir, boolean grow) {
 
 		if (snakeBody.size() == 0)
 			return;
@@ -157,11 +154,8 @@ public class Snake implements ISnake {
 		Point newHeadPos = getPosOnBoard(x, y);
 
 		snakeBody.addFirst(newHeadPos);
-
-		// if not grow, the tail is bite off...
-		if (!grow)
-			snakeBody.remove(snakeBody.size() - 1);
-		// current direction
+		// save removed tail
+		removedTail = snakeBody.removeLast();
 	}
 
 	@Override
@@ -245,16 +239,6 @@ public class Snake implements ISnake {
 		return currentDirection;
 	}
 
-	@Override
-	public void setIsGrowning(boolean isGrowning) {
-		this.isGrowing = isGrowning;
-	}
-
-	@Override
-	public boolean getIsGrowing() {
-		return isGrowing;
-	}
-
 	/**
 	 * True if point p is part of the snake (head or body)
 	 *
@@ -291,4 +275,11 @@ public class Snake implements ISnake {
 		return getPosOnBoard(p.x, p.y);
 	}
 
+	@Override
+	public void grow() {
+		if (removedTail != null) {
+			snakeBody.add(removedTail);
+		}
+		removedTail = null;
+	}
 }

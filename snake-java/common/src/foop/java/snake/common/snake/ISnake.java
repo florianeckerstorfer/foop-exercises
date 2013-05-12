@@ -49,6 +49,12 @@ public interface ISnake {
 	public List<Point> getSnakeBody();
 
 	/**
+	 * Gets head of snake, if there's none return null.
+	 * @return
+	 */
+	public Point getHead();
+
+	/**
 	 * Cuts the snake at a given position. Returns the remaining (dead) body parts
 	 * The given position is neither part of the remaining, nor part of the dead body but lost in time and space,
 	 * This snake is set all parts from head to cut-position -1
@@ -59,38 +65,15 @@ public interface ISnake {
 	public List<Point> cut(Point position);
 
 	/**
-	 * Moves the snake in the given direction and if it shall grow...
-	 * Sets the isGrowing flag.
-	 * Sets the {@link Direction} flag.
-	 *
-	 * @param dir  Direction the snake is moved
-	 * @param grow If true the tail will not be cut of, that is, the snake will grow
-	 */
-	public void move(Direction dir, boolean grow);
-
-	/**
 	 * Moves the snake in the given direction
 	 * Sets the {@link Direction} flag.
-	 * It will or will not grow depending on the flag
-	 * which is set by {@link setIsGrowning}
 	 *
 	 * @param dir  Direction the snake is moved
-	 * @param grow If true the tail will not be cut of, that is, the snake will grow
 	 */
 	public void move(Direction dir);
 
 	/**
-	 * Moves the snake towards the current direction and if it shall grow...
-	 * Sets the isGrowing flag.
-	 *
-	 * @param dir  Direction the snake is moved
-	 * @param grow If true the tail will not be cut of, that is, the snake will grow
-	 */
-	public void move(boolean grow);
-
-	/**
-	 * Moves he snake into current direction. It will or will not grow depending on the flag
-	 * which is set by {@link setIsGrowning}
+	 * Moves he snake into current direction.
 	 */
 	public void move();
 
@@ -139,17 +122,7 @@ public interface ISnake {
 	public Direction getCurrentDirection();
 
 	/**
-	 * Sets if the snake will grow during coming moves ({@link move})
-	 *
-	 * @param isGrowning
+	 * Appends the previously cut tail, if there's any.
 	 */
-	public void setIsGrowning(boolean isGrowning);
-
-	/**
-	 * Is the snake currently growing?
-	 *
-	 * @return
-	 */
-	public boolean getIsGrowing();
-
+	public void grow();
 }
