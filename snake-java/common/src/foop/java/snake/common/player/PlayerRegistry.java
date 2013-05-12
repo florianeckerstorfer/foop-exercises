@@ -21,7 +21,7 @@ public class PlayerRegistry {
 	 * IDs are between 1 and maxPlayerID
 	 */
 	static {
-		for (int i = maxPlayerID; i >= 0; i--)
+		for (int i = maxPlayerID; i > 0; i--)
 			playerIDs.addFirst(new Integer(i));
 	}
 
@@ -34,7 +34,7 @@ public class PlayerRegistry {
 	public PlayerRegistry addPlayer(Player player) {
 		players.add(player);
 		player.setId(this.getNextPlayerID());
-
+		System.out.println(player.getId());
 		return this;
 	}
 
