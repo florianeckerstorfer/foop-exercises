@@ -1,31 +1,28 @@
 package foop.java.snake.common.snake;
 
-import java.awt.Point;
+import java.awt.*;
 import java.util.List;
-
-import javax.swing.text.html.HTMLDocument.HTMLReader.IsindexAction;
-
-import foop.java.snake.common.snake.ISnake.Direction;
 
 /**
  * Representing a dead body part
  * Many of the base-methods are to be overrided as now there is no differentiation between head and body
  * Strictly spoken a dead snake has no head but only body parts...
- * @author Robert Kapeller <rkapeller@gmail.com>
  *
+ * @author Robert Kapeller <rkapeller@gmail.com>
  */
 public class DeadSnake extends Snake {
-	
-	public DeadSnake(int id,List<Point> bodyParts) {
+
+	public DeadSnake(int id, List<Point> bodyParts) {
 		super(id, bodyParts);
 	}
-	/** 
+
+	/**
 	 * dead snakes do not move ;-)
 	 */
 	public void move(Direction dir, boolean grow) {
 		// do nothing...
 		return;
 	}
-	
+
 
 }

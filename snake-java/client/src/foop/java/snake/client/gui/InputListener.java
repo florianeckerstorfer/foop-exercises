@@ -1,37 +1,34 @@
 package foop.java.snake.client.gui;
 
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
-
 import foop.java.snake.client.InputHandler;
 import foop.java.snake.common.message.InputMessage.Keycode;
+
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 
 /**
  * TCPServer
  *
  * @author Robert Kapeller<rkapeller@gmail.com>
  */
-public class InputListener implements KeyListener
-{
+public class InputListener implements KeyListener {
 	private Keycode lastKeyCode;
 	private InputHandler inputHandler;
 
-	public InputListener(InputHandler inputHandler)
-	{
-		this.inputHandler=inputHandler;
+	public InputListener(InputHandler inputHandler) {
+		this.inputHandler = inputHandler;
 		lastKeyCode = Keycode.IGNORE;
 	}
 
 	@Override
-	public void keyPressed(KeyEvent arg0)
-	{
+	public void keyPressed(KeyEvent arg0) {
 		// getExtendedKeyCode() is only available in Java 7. It is absolutley required?
 		// int currentKeyCode = arg0.getExtendedKeyCode();
 		int currentKeyCode = arg0.getKeyCode();
 
 		Keycode convertedKeyCode = convertKeycode(currentKeyCode);
-		if(convertedKeyCode != Keycode.IGNORE) {
-			if(lastKeyCode != convertedKeyCode) {
+		if (convertedKeyCode != Keycode.IGNORE) {
+			if (lastKeyCode != convertedKeyCode) {
 				lastKeyCode = convertedKeyCode;
 				inputHandler.handleInput(lastKeyCode);
 			}
@@ -41,20 +38,17 @@ public class InputListener implements KeyListener
 	}
 
 	@Override
-	public void keyReleased(KeyEvent arg0)
-	{
+	public void keyReleased(KeyEvent arg0) {
 		// TODO Auto-generated method stub
 	}
 
 	@Override
-	public void keyTyped(KeyEvent arg0)
-	{
+	public void keyTyped(KeyEvent arg0) {
 		// TODO Auto-generated method stub
 	}
 
-	private Keycode convertKeycode(int extendedKeycode)
-	{
-		switch(extendedKeycode) {
+	private Keycode convertKeycode(int extendedKeycode) {
+		switch (extendedKeycode) {
 			case 65: // 'A'
 			case 37: // Arrow Left
 				return Keycode.LEFT;

@@ -10,30 +10,29 @@ package foop.java.snake.common.message;
 
 public class UnregisterMessage implements MessageInterface {
 	private static final long serialVersionUID = 1;
-    public static final int TYPE = 5;
-    protected String playerName;
-    
-    public UnregisterMessage(String playerName)
-    {
-        this.playerName = playerName;
-    }
-    
-    @Override
+	public static final int TYPE = 5;
+	protected String playerName;
+
+	public UnregisterMessage(String playerName) {
+		this.playerName = playerName;
+	}
+
+	@Override
 	public int getType() {
 		return TYPE;
 	}
-    
-    /**
-     * @return name of the player
-     */
-    public String getPlayerName() {
-    	return playerName;
-    }
-    
-    /**
-     * @param name name of the player
-     */
-    public void setPlayerName(String name) {
-    	playerName=name;
-    }
+
+	/**
+	 * @return name of the player
+	 */
+	public String getPlayerName() {
+		return playerName;
+	}
+
+	/**
+	 * @param name name of the player
+	 */
+	public void setPlayerName(String name) {
+		playerName = name;
+	}
 }

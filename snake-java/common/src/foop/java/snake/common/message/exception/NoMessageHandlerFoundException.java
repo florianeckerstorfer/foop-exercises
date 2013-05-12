@@ -5,15 +5,12 @@ package foop.java.snake.common.message.exception;
  *
  * @author Florian Eckerstorfer <florian@eckerstorfer.co>
  */
-public class NoMessageHandlerFoundException extends Exception
-{
-    public NoMessageHandlerFoundException()
-    {
-        super();
-    }
+public class NoMessageHandlerFoundException extends Exception {
+	public NoMessageHandlerFoundException() {
+		super();
+	}
 
-    public NoMessageHandlerFoundException(String message)
-    {
-        super(message);
-    }
+	public NoMessageHandlerFoundException(String message) {
+		super(message);
+	}
 }

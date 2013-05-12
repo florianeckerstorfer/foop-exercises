@@ -7,7 +7,6 @@ import java.io.Serializable;
  *
  * @author Florian Eckerstorfer <florian@eckerstorfer.co>
  */
-public interface MessageInterface extends Serializable
-{
-    public int getType();
+public interface MessageInterface extends Serializable {
+	public int getType();
 }
