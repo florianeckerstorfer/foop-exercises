@@ -22,7 +22,7 @@ public class InputListener implements KeyListener {
 
 	@Override
 	public void keyPressed(KeyEvent arg0) {
-		// getExtendedKeyCode() is only available in Java 7. It is absolutley required?
+		// getExtendedKeyCode() is only available in Java 7. It is absolutely required?
 		// int currentKeyCode = arg0.getExtendedKeyCode();
 		int currentKeyCode = arg0.getKeyCode();
 

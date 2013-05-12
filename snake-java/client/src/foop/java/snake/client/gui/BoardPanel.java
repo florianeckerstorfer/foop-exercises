@@ -72,6 +72,7 @@ public class BoardPanel extends JPanel {
 	private void drawSnake(Graphics graphics, int column, int row) {
 		int playerId = board.getPlayerNumber(column, row);
 		graphics.setColor(parent.getPlayerColor(playerId));
+
 		if (board.isSnakeBody(column, row)) {
 			graphics.fillOval(column * parent.getOffset(), row * parent.getOffset(), parent.getOffset(), parent.getOffset());
 		} else {

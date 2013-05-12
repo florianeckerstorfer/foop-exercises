@@ -38,6 +38,10 @@ public class PlayerPanel extends JPanel {
 		this.myID = ID;
 	}
 
+	public int getMyID() {
+		return this.myID;
+	}
+
 	public void setPlayers(List<Player> players) {
 		this.players = players;
 	}

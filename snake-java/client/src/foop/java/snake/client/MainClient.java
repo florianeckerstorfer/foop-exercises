@@ -126,9 +126,15 @@ class MainClient {
 			RegisterErrorMessage.TYPE, new RegisterErrorMessageHandler()
 		);
 
-		handlerRegistry.registerHandler(
-			RegisterAckMessage.TYPE, new RegisterAckMessageHandler()
-		);
+		RegisterAckMessageHandler registerAckMessageHandler = new RegisterAckMessageHandler();
+		try {
+			registerAckMessageHandler.addObserver(messageObserver);
+			handlerRegistry.registerHandler(
+				RegisterAckMessage.TYPE, registerAckMessageHandler
+			);
+		} catch (NullPointerException ex) {
+			exitWithError(ex);
+		}
 
 		BoardMessageHandler b = new BoardMessageHandler();
 		try {
@@ -169,7 +175,7 @@ class MainClient {
 			client = new TCPClient(new InetSocketAddress(server, serverPort));
 			client.sendMessage(new RegisterMessage(playerName, port));
 
-			inputHandler = new InputHandler(client);
+			inputHandler = new InputHandler(client, mainFrame);
 			mainFrame.addKeyListener(new InputListener(inputHandler));
 			mainFrame.addWindowListener(new WindowAdapter() {
 				public void windowClosing(WindowEvent e) {

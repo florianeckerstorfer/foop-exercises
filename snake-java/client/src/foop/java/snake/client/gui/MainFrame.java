@@ -19,13 +19,20 @@ public class MainFrame extends JFrame {
 
 	private int offset = 20;
 	private Color[] colors = new Color[]{
+		Color.gray,
+		Color.black,
 		Color.blue,
 		Color.cyan,
 		Color.yellow,
 		Color.red,
 		Color.green,
 		Color.orange,
-		Color.magenta
+		Color.magenta,
+		new Color(51, 102, 0),
+		new Color(180, 17, 220),
+		new Color(244, 104, 51),
+		new Color(244, 190, 84),
+		new Color(189, 229, 19)
 	};
 
 	public MainFrame() {
@@ -74,85 +81,20 @@ public class MainFrame extends JFrame {
 		playerPanel.setMyID(id);
 	}
 
+	public int getMyID() {
+		return playerPanel.getMyID();
+	}
+
 	/**
-	 * takes a list of @see {Player}-objects and renders int on the playeröierarchy panel
+	 * takes a list of @see {Player}-objects and renders int on the playerHierarchy panel
 	 *
-	 * @param id
 	 * @param players List of Players
 	 */
 	public void renderPlayers(List<Player> players) {
 		playerPanel.setPlayers(players);
 	}
 
-	/**
-	 * Sample method to show movement of the snakes
-	 *
-	 * @param args
-	 */
-	public static void main(String[] args) {
-		/*
-        MainFrame mainFrame = new MainFrame();
-
-        List<Player> pl = new ArrayList<Player>();
-        mainFrame.renderPlayers(0, pl);
-
-        Board board = new Board(30, 30);
-        Byte[][] b = new Byte[][]{
-                {0, 0, (byte)0x20, (byte)0x10, (byte)0x10, 0, 0, 0, 0},
-                {0, 0, 0, 0, (byte)0x10, 0, 0, 0, 0},
-                {0, 0, 0, 0, (byte)0x10, 0, 0, 0, 0},
-                {0, 0, 0, 0, (byte)0x10, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0, 0, 0, (byte)0x51, 0},
-                {0, 0, 0, 0, 0, 0, 0, (byte)0x11, 0},
-                {0, 0, 0, 0, 0, 0, 0, (byte)0x11, 0},
-                {0, 0, 0, 0, 0, 0, 0, (byte)0x11, 0},
-                {0, 0, 0, 0, 0, 0, 0, (byte)0x11, 0}
-        };
-        board.setBoard(b);
-        mainFrame.renderBoard(board);
-
-        try {
-            Thread.sleep(1000);
-        } catch (InterruptedException e) {
-        }
-        b = new Byte[][]{
-                {0, (byte)0x20, (byte)0x10, (byte)0x10, (byte)0x10, 0, 0, 0, 0},
-                {0, 0, 0, 0, (byte)0x10, 0, 0, 0, 0},
-                {0, 0, 0, 0, (byte)0x10, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0, 0, 0, (byte)0x11, (byte)0x41},
-                {0, 0, 0, 0, 0, 0, 0, (byte)0x11, 0},
-                {0, 0, 0, 0, 0, 0, 0, (byte)0x11, 0},
-                {0, 0, 0, 0, 0, 0, 0, (byte)0x11, 0},
-                {0, 0, 0, 0, 0, 0, 0, 0, 0}
-        };
-
-        board.setBoard(b);
-        mainFrame.renderBoard(board);
-
-        try {
-            Thread.sleep(1000);
-        } catch (InterruptedException e) {
-        }
-        b = new Byte[][]{
-                {0, (byte)0x10, (byte)0x10, (byte)0x10, (byte)0x10, 0, 0, 0, 0},
-                {0, (byte)0x30, 0, 0, (byte)0x10, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0, 0, 0, (byte)0x11, (byte)0x11},
-                {0, 0, 0, 0, 0, 0, 0, (byte)0x11, (byte)0x31},
-                {0, 0, 0, 0, 0, 0, 0, (byte)0x11, 0},
-                {0, 0, 0, 0, 0, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0, 0, 0, 0, 0}
-        };
-
-        board.setBoard(b);
-        mainFrame.renderBoard(board);
-        */
-	}
-
-	public void renderPrios(List<Integer> playerPrios,
-							List<Integer> nextPlayerPrios) {
+	public void renderPrios(List<Integer> playerPrios, List<Integer> nextPlayerPrios) {
 		playerPanel.setCurrentPrio(playerPrios);
 		playerPanel.setNextPrio(nextPlayerPrios);
 		playerPanel.repaint();
