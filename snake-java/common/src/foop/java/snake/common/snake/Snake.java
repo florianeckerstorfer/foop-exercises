@@ -152,7 +152,10 @@ public class Snake implements ISnake {
 			default:
 		}
 		Point newHeadPos = getPosOnBoard(x, y);
-
+		// if we would bite oureself... do nothing
+		if (this.isInSnake(newHeadPos))
+			return;
+		
 		snakeBody.addFirst(newHeadPos);
 		// save removed tail
 		removedTail = snakeBody.removeLast();
