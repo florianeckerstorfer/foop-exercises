@@ -3,6 +3,7 @@ package foop.java.snake.client;
 import foop.java.snake.client.gui.InputListener;
 import foop.java.snake.client.gui.MainFrame;
 import foop.java.snake.common.message.BoardMessage;
+import foop.java.snake.common.message.GameOverMessage;
 import foop.java.snake.common.message.PlayerInfoMessage;
 import foop.java.snake.common.message.PrioChangeMessage;
 import foop.java.snake.common.message.RegisterAckMessage;
@@ -10,6 +11,7 @@ import foop.java.snake.common.message.RegisterErrorMessage;
 import foop.java.snake.common.message.RegisterMessage;
 import foop.java.snake.common.message.UnregisterMessage;
 import foop.java.snake.common.message.handler.BoardMessageHandler;
+import foop.java.snake.common.message.handler.GameOverMessageHandler;
 import foop.java.snake.common.message.handler.MessageHandlerRegistry;
 import foop.java.snake.common.message.handler.PlayerInfoMessageHandler;
 import foop.java.snake.common.message.handler.PrioChangeMessageHandler;
@@ -153,6 +155,10 @@ class MainClient {
 		PlayerInfoMessageHandler pi = new PlayerInfoMessageHandler();
 		pi.addObserver(messageObserver);
 		handlerRegistry.registerHandler(PlayerInfoMessage.TYPE, pi);
+		
+		GameOverMessageHandler go = new GameOverMessageHandler();
+		go.addObserver(messageObserver);
+		handlerRegistry.registerHandler(GameOverMessage.TYPE, go);
 	}
 
 	/**

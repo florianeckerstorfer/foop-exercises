@@ -99,4 +99,12 @@ public class MainFrame extends JFrame {
 		playerPanel.setNextPrio(nextPlayerPrios);
 		playerPanel.repaint();
 	}
+	public void gameOver(String message) {
+		// TODO just a dummy to check if it is working
+		JOptionPane.showMessageDialog(this,
+			    message,
+			    "You are dead!",
+			    JOptionPane.WARNING_MESSAGE);
+
+	}
 }

@@ -9,3 +9,5 @@ ID		Message-Class
 5		UnregisterMessage
 99		PrioChangedMessage
 100		BoardMessage
+127		PlayerInfoMessage
+128		GameOverMessage

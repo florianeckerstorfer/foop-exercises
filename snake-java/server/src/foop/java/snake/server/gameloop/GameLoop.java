@@ -3,6 +3,7 @@ package foop.java.snake.server.gameloop;
 import foop.java.snake.common.board.Board;
 import foop.java.snake.common.board.SnakeHeadDirection;
 import foop.java.snake.common.message.BoardMessage;
+import foop.java.snake.common.message.GameOverMessage;
 import foop.java.snake.common.message.InputMessage;
 import foop.java.snake.common.message.InputMessage.Keycode;
 import foop.java.snake.common.message.PlayerInfoMessage;
@@ -303,10 +304,30 @@ public class GameLoop extends Thread implements Observer {
 		if (cutBodyParts != null) {
 			if (s2.getHead() == null) {
 				//TODO remove dead snake
+				sendGameOverMessage(s2.getId(), s1.getId());
 			}
 			DeadSnake deadSnake = (DeadSnake) this.snakes.get(DEAD_SNAKE_ID);
 			deadSnake.addBodyParts(cutBodyParts);
 		}
+	}
+	/**
+	 * Sends a gameOver-Message to the given player
+	 * @param playerId
+	 */
+	private void sendGameOverMessage(int lostId, int winningId) {
+		System.out.println("Sending messages to players");
+		Player lostPlayer = playerRegistry.getPlayerById(lostId);
+		if (lostPlayer.isAI()) {
+			return;
+		}
+		try {
+			String message = playerRegistry.getPlayerById(winningId).getName();;
+			TCPClient client = this.clientRegistry.getClient(lostPlayer.getAddress());
+			client.sendMessage(new GameOverMessage("You lost!\n" + message + " killed you!"));
+		} catch (IOException e) {
+			System.out.println("Error while sending to " + lostPlayer.getName());
+	}
+		
 	}
 
 	/**
