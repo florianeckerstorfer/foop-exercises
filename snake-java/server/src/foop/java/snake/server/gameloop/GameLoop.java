@@ -338,28 +338,30 @@ public class GameLoop extends Thread implements Observer {
 			if (s1.getId() == DEAD_SNAKE_ID) {
 				continue;
 			}
+			detectCollForSnake(s1);
+		}
+	}
+	
+	private void detectCollForSnake(ISnake snake) {
+		for (ISnake s2 : snakes.values()) {
+			if (snake == s2) {
+				continue;
+			}
 
-			for (ISnake s2 : snakes.values()) {
-				if (s1 == s2) {
-					continue;
-				}
-
-				if (s2.checkPosition(s1.getHead()) == ISnake.SnakePart.HEAD) {
-					System.out.println("case1: Snake head " + s1.getId() + " on snake head " + s2.getId());
-					handlePriorityCollision(s1, s2);
-				} else if (s2.checkPosition(s1.getHead()) == ISnake.SnakePart.BODY) {
-					if (s1.checkPosition(s2.getHead()) == ISnake.SnakePart.BODY) {
-						System.out.println("case2: Snake head " + s1.getId() + " on snake head " + s2.getId());
-						handlePriorityCollision(s1, s2);
-					} else {
-						System.out.println("case3: Snake head " + s1.getId() + " on snake body " + s2.getId());
-						handleCollision(s1, s2);
-					}
+			if (s2.checkPosition(snake.getHead()) == ISnake.SnakePart.HEAD) {
+				System.out.println("case1: Snake head " + snake.getId() + " on snake head " + s2.getId());
+				handlePriorityCollision(snake, s2);
+			} else if (s2.checkPosition(snake.getHead()) == ISnake.SnakePart.BODY) {
+				if (snake.checkPosition(s2.getHead()) == ISnake.SnakePart.BODY) {
+					System.out.println("case2: Snake head " + snake.getId() + " on snake head " + s2.getId());
+					handlePriorityCollision(snake, s2);
+				} else {
+					System.out.println("case3: Snake head " + snake.getId() + " on snake body " + s2.getId());
+					handleCollision(snake, s2);
 				}
 			}
 		}
 	}
-
 	/**
 	 * Converts from {@link Snake.Direction} to {@link SnakeHeadDirection}
 	 *
@@ -629,8 +631,9 @@ public class GameLoop extends Thread implements Observer {
 				// keep the snake moving to current direction
 				snake.move();
 			}
+			detectCollForSnake(snakes.get(player.getId()));
 		}
-		this.detectCollisions();
+		// this.detectCollisions();
 		this.drawSnakesOnBoard();
 	}
 
