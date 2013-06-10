@@ -1,0 +1,18 @@
+Priorities: 
+    Darstellung nebeneinander? -> next Liste sollte auch sichtbar sein
+    oder andere übersichtlichere Darstellung (evt. Playerliste entfernen?)
+    bessere Farbdarstelung
+    "Flash" oder ähnliches wenn Änderung passiert, damit ma die             mitkriegt?
+
+GameOver:
+    Auch bei Sieg
+
+Collision Detection/Kopf vs Kopf: hat noch Bug(s), manchmal werden
+Schlangen/Köpfe zurückgeschoben statt zu fressen!
+
+Network Exceptions durchchecken und abfangen (und am Client darstellen sofern
+Client Server verliert)
+
+Testen mit mehreren Clients
+
+Tote Schlangen entfernen (aus den Listen)
