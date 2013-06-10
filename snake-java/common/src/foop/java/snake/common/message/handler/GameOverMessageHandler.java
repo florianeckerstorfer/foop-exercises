@@ -15,7 +15,7 @@ public class GameOverMessageHandler extends Observable implements
 	public void handle(MessageInterface message, SocketAddress address)
 			throws NoMessageHandlerFoundException {
 
-		if (message.getType() != InputMessage.TYPE) {
+		if (message.getType() != GameOverMessage.TYPE) {
 			throw new NoMessageHandlerFoundException("This is not a GameOver-Message.");
 		}
 
