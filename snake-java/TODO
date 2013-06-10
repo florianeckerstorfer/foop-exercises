@@ -10,8 +10,11 @@ GameOver:
 Collision Detection/Kopf vs Kopf: hat noch Bug(s), manchmal werden
 Schlangen/Köpfe zurückgeschoben statt zu fressen!
 
-Network Exceptions durchchecken und abfangen (und am Client darstellen sofern
-Client Server verliert)
+Network Exceptions:
+    durchchecken und abfangen (und am Client darstellen sofern Client Server verliert)
+    Registrieren nach Spielbeginn -> ablehnen
+    Client nicht erreichbar trotz Registrierung
+    Server nicht erreichbar
 
 Testen mit mehreren Clients
 
