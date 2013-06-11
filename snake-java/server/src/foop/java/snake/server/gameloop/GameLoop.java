@@ -68,7 +68,7 @@ public class GameLoop extends Thread implements Observer {
 
 	private List<Integer> currentPriorities;
 	private List<Integer> nextPriorities;
-
+	private List<Integer> iDsToRemove = new ArrayList<Integer>();
 	/**
 	 * indicates if new prio shall be sent
 	 */
@@ -307,6 +307,7 @@ public class GameLoop extends Thread implements Observer {
 			if (s2.getHead() == null) {
 				// TODO remove dead snake
 				sendGameOverMessage(s2.getId(), s1.getId());
+				iDsToRemove.add(s2.getId());
 			}
 			DeadSnake deadSnake = (DeadSnake) this.snakes.get(DEAD_SNAKE_ID);
 			deadSnake.addBodyParts(cutBodyParts);
@@ -399,6 +400,9 @@ public class GameLoop extends Thread implements Observer {
 		// loop over all players and move their snakes accordingly
 		// Snake killed? what to do? I assume, that the player is no longer in the list then...
 		// In this first iteration of the final solution I just move the snake and draw it on the board
+		
+		iDsToRemove.clear();
+		
 		for (Player player : playerRegistry.getPlayers()) {
 			ISnake snake = snakes.get(player.getId());
 			if (snake == null) {
@@ -418,8 +422,21 @@ public class GameLoop extends Thread implements Observer {
 			}
 			detectCollForSnake(snakes.get(player.getId()));
 		}
-		// this.detectCollisions();
+		// remove all data of "eaten" snakes
+		for (int i: iDsToRemove) {
+			snakes.remove(new Integer(i));
+			currentPriorities.remove(new Integer(i));
+			nextPriorities.remove(new Integer(i));
+			playerRegistry.removesPlayer(playerRegistry.getPlayerById(i));
+		}
+		// send new list of participating players
+		if (iDsToRemove.size() > 0) {
+			sendPlayerMessages();
+			prioChanged=true;
+		}
+		
 		this.drawSnakesOnBoard();
+		
 	}
 
 	private Keycode aiDecision(Snake.Direction currentDirection) {
