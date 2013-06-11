@@ -12,6 +12,7 @@ import java.util.List;
  * Date: 26.03.13
  * Time: 13:33
  */
+@SuppressWarnings("serial")
 public class MainFrame extends JFrame {
 	//panel where the board is rendered
 	private BoardPanel boardPanel;
@@ -40,7 +41,7 @@ public class MainFrame extends JFrame {
 		//set some frame properties
 		this.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 		this.setTitle("Snake");
-		this.setSize(722, 623);
+		this.setSize(842, 633);
 		this.setVisible(true);
 	}
 

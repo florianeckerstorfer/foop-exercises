@@ -4,7 +4,6 @@ import java.net.SocketAddress;
 import java.util.Observable;
 
 import foop.java.snake.common.message.GameOverMessage;
-import foop.java.snake.common.message.InputMessage;
 import foop.java.snake.common.message.MessageInterface;
 import foop.java.snake.common.message.exception.NoMessageHandlerFoundException;
 

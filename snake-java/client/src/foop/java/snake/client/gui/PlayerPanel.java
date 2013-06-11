@@ -6,7 +6,6 @@ import javax.swing.*;
 import javax.swing.border.TitledBorder;
 import java.awt.*;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -17,6 +16,7 @@ import java.util.List;
  *
  * @author Robert Kapeller <rkapeller@gmail.com>
  */
+@SuppressWarnings("serial")
 public class PlayerPanel extends JPanel {
 	private MainFrame parent;
 	private List<Player> players;
@@ -27,7 +27,7 @@ public class PlayerPanel extends JPanel {
 
 	public PlayerPanel(MainFrame parent) {
 		this.parent = parent;
-		this.setPreferredSize(new Dimension(120, 100));    // To set some width
+		this.setPreferredSize(new Dimension(240, 100));    // To set some width
 
 		TitledBorder b = new TitledBorder("Players");
 		b.setTitleColor(Color.DARK_GRAY);
@@ -54,6 +54,8 @@ public class PlayerPanel extends JPanel {
 	@Override
 	public void paintComponent(Graphics graphics) {
 		// clean the player-list
+		Font font = new Font ("Sans Serif", Font.BOLD , 11);
+		graphics.setFont(font);
 		graphics.setColor(Color.LIGHT_GRAY);
 		graphics.fillRect(0, 0, this.getWidth(), this.getHeight());
 
@@ -67,66 +69,52 @@ public class PlayerPanel extends JPanel {
 		//Player List
 		graphics.setColor(Color.BLACK);
 		int line = 2 * parent.getOffset();
-		graphics.drawString("Players", 10, line);
-		line += parent.getOffset();
-		Iterator<Player> it = players.iterator();
-		while (it.hasNext()) {
-			Player p = it.next();
-			graphics.setColor(parent.getPlayerColor(p.getId()));
-			if (p.getId() == this.myID)
-				graphics.drawString(String.format("%s (me)", p.getName()), 10, line);
-			else
-				graphics.drawString(String.format("%s", p.getName()), 10, line);
-			line += parent.getOffset();
-		}
 
 		//Priorities
+		int xPos = 10;
 		graphics.setColor(Color.BLACK);
 		line += 2 * parent.getOffset();
-		graphics.drawString("Priorities", 10, line);
+		graphics.drawString("Priorities", xPos, line);
 		line += parent.getOffset();
-		System.out.println(this.currentPriorities.size() + " current priorities: " + this.currentPriorities.toString());
+
 		String prioNames[] = new String[this.currentPriorities.size()];
 		Color prioColors[] = new Color[this.currentPriorities.size()];
 
 		for (Player p : players) {
 			int prioIndex = this.currentPriorities.indexOf(p.getId());
-			System.out.println("Priority " + p.getId() + " of player #" + p.getId() + " has index " + prioIndex);
+
 			prioNames[prioIndex] = p.getName();
 			prioColors[prioIndex] = parent.getPlayerColor(p.getId());
 		}
 
-		System.out.println("Player names for prio list set: " + prioNames.length);
-
 		for (int i = 0; i < prioNames.length; i++) {
 			graphics.setColor(prioColors[i]);
-			graphics.drawString(prioNames[i], 10, line);
+			graphics.drawString(prioNames[i], xPos, line);
 			line += parent.getOffset();
 		}
 
 		//Upcoming Priorities
-		graphics.setColor(Color.BLACK);
+		line = 2 * parent.getOffset();
 		line += 2 * parent.getOffset();
-		graphics.drawString("Upcoming Priorities", 10, line);
+		xPos = 120;
+		graphics.setColor(Color.BLACK);
+		graphics.drawString("Upcoming Priorities", xPos, line);
 		line += parent.getOffset();
-		System.out.println(this.nextPriorities.size() + " next priorities: " + this.nextPriorities.toString());
+
 		prioNames = new String[this.nextPriorities.size()];
 		prioColors = new Color[this.currentPriorities.size()];
 
 		for (Player p : players) {
 			int prioIndex = this.nextPriorities.indexOf(p.getId());
-			System.out.println("Priority " + p.getId() + " of player #" + p.getId() + " has index " + prioIndex);
 			if (prioNames[prioIndex] == null) {
 				prioNames[prioIndex] = p.getName();
 				prioColors[prioIndex] = parent.getPlayerColor(p.getId());
 			}
 		}
 
-		System.out.println("Player names for prio list set: " + prioNames.length);
-
 		for (int i = 0; i < prioNames.length; i++) {
 			graphics.setColor(prioColors[i]);
-			graphics.drawString(prioNames[i], 10, line);
+			graphics.drawString(prioNames[i], xPos, line);
 			line += parent.getOffset();
 		}
 	}

@@ -46,8 +46,8 @@ public class Snake implements ISnake {
 	/**
 	 * Default constructor. Empty snake...
 	 */
+	@SuppressWarnings("unused")
 	private Snake() {
-		// TODO...?
 	}
 
 	@Override
@@ -73,14 +73,9 @@ public class Snake implements ISnake {
 
 	@Override
 	public List<Point> cut(Point position) {
-		// if not in body or if head...
+		// if not in snake...
 		if (!isInSnake(position))
 			return null;
-
-		if (position.equals(snakeBody.get(0))) {
-			snakeBody.removeFirst();
-			return snakeBody;
-		}
 
 		int cutIndex = snakeBody.indexOf(position);
 
