@@ -11,6 +11,9 @@ import foop.java.snake.common.player.PlayerRegistry;
 import foop.java.snake.common.tcp.TCPClientRegistry;
 import foop.java.snake.common.tcp.TCPServer;
 import foop.java.snake.server.gameloop.GameLoop;
+import foop.java.snake.server.gameloop.PriorityManager;
+import foop.java.snake.server.gameloop.ai.AiDirectionStrategyInterface;
+import foop.java.snake.server.gameloop.ai.SimpleAiDirectionStrategy;
 
 import java.io.IOException;
 
@@ -54,10 +57,14 @@ class MainServer {
 	/**
 	 * Runs the server.
 	 */
-	public void run() {
+	public void run()
+	{
 		PlayerRegistry playerRegistry = new PlayerRegistry();
 		TCPClientRegistry clientRegistry = new TCPClientRegistry();
-		GameLoop gameLoop = new GameLoop(playerRegistry, clientRegistry);
+		AiDirectionStrategyInterface aiDirectionStrategy = new SimpleAiDirectionStrategy();
+		PriorityManager priorityManager = new PriorityManager();
+		
+		GameLoop gameLoop = new GameLoop(playerRegistry, clientRegistry, aiDirectionStrategy, priorityManager);
 		gameLoop.start();
 
 		try {

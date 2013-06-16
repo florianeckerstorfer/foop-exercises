@@ -5,7 +5,6 @@ import foop.java.snake.common.board.SnakeHeadDirection;
 import foop.java.snake.common.message.BoardMessage;
 import foop.java.snake.common.message.GameOverMessage;
 import foop.java.snake.common.message.InputMessage;
-import foop.java.snake.common.message.InputMessage.Keycode;
 import foop.java.snake.common.message.PlayerInfoMessage;
 import foop.java.snake.common.message.PrioChangeMessage;
 import foop.java.snake.common.player.Player;
@@ -15,11 +14,11 @@ import foop.java.snake.common.snake.ISnake;
 import foop.java.snake.common.snake.Snake;
 import foop.java.snake.common.tcp.TCPClient;
 import foop.java.snake.common.tcp.TCPClientRegistry;
+import foop.java.snake.server.gameloop.ai.AiDirectionStrategyInterface;
 
 import java.awt.*;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -64,20 +63,8 @@ public class GameLoop extends Thread implements Observer
 	/**
 	 * Stores the current board
 	 */
-	private Board board;
+	private Board board = new Board(30, 30);
 	
-	/**
-	 * Number of columns on the board.
-	 */
-	private int boardColumns = 30;
-	
-	/**
-	 * Number of rows on the board
-	 */
-	private int boardRows = 30;
-
-	private List<Integer> currentPriorities;
-	private List<Integer> nextPriorities;
 	private List<Integer> iDsToRemove = new ArrayList<Integer>();
 	/**
 	 * indicates if new prio shall be sent
@@ -96,17 +83,22 @@ public class GameLoop extends Thread implements Observer
 	int initialMinSnakeLength = 3;
 
 	private int DEAD_SNAKE_ID = 0;
+	
+	private AiDirectionStrategyInterface aiDirectionStrategy;
+	
+	private PriorityManager priorityManager;
 
 	/**
 	 * Constructor.
 	 *
 	 * @param playerRegistry
 	 */
-	public GameLoop(PlayerRegistry playerRegistry, TCPClientRegistry clientRegistry)
+	public GameLoop(PlayerRegistry playerRegistry, TCPClientRegistry clientRegistry, AiDirectionStrategyInterface aiDirectionStrategy, PriorityManager priorityManager)
 	{
 		this.playerRegistry = playerRegistry;
 		this.clientRegistry = clientRegistry;
-		board = new Board(boardColumns, boardRows);
+		this.aiDirectionStrategy = aiDirectionStrategy;
+		this.priorityManager = priorityManager;
 	}
 
 	/**
@@ -117,7 +109,7 @@ public class GameLoop extends Thread implements Observer
 		int loopCount = 0;
 		int playerCount = 0;
 		int gameCountdown = initialGameCountdown;
-		this.board = new Board(this.boardColumns, this.boardRows);
+		this.board = new Board(board.getColumns(), board.getRows());
 
 		while (true) {
 			System.out.println("Game Loop #" + loopCount);
@@ -145,7 +137,7 @@ public class GameLoop extends Thread implements Observer
 						this.addAISnakes();
 					}
 					this.initSnakes();
-					this.initPrios();
+					prioChanged = priorityManager.init(playerRegistry);
 					this.sendPlayerMessages();
 					this.sendMessages();
 				}
@@ -157,7 +149,7 @@ public class GameLoop extends Thread implements Observer
 
 			// Check if we need to change the priorities
 			if (((loopCount % priorityChangeInterval) == 0) && gameCountdown == 0) {
-				this.changePrios();
+				prioChanged = priorityManager.update();
 			}
 
 			try {
@@ -173,11 +165,11 @@ public class GameLoop extends Thread implements Observer
 	private void sendPlayerMessages()
 	{
 		System.out.println("Sending initial player messages to players");
-		List<Player> players = this.playerRegistry.getPlayers();
+		List<Player> players = playerRegistry.getPlayers();
 		for (Player player : players) {
 			if (!player.isAi()) {
 				try {
-					TCPClient client = this.clientRegistry.getClient(player.getAddress());
+					TCPClient client = clientRegistry.getClient(player.getAddress());
 					client.sendMessage(new PlayerInfoMessage(players));
 				} catch (IOException e) {
 					System.out.println("Error while sending to " + player.getName());
@@ -214,14 +206,14 @@ public class GameLoop extends Thread implements Observer
 	{
 		List<Player> players = this.playerRegistry.getPlayers();
 		int countOfPlayers = players.size();
-		int yPos = boardRows / 2;
+		int yPos = board.getRows() / 2;
 		int xPos = 0;
-		int diffX = boardColumns / countOfPlayers;
+		int diffX = board.getColumns() / countOfPlayers;
 
 		for (Player p : players) {
 			xPos = xPos + diffX;
 			int initialSnakeLength = (int) ((double) initialMaxSnakeLength * Math.random() + initialMinSnakeLength);
-			this.snakes.put(p.getId(), new Snake(p.getId(), new Point(xPos, yPos), initialSnakeLength, Snake.Direction.DOWN, boardColumns, boardRows));
+			this.snakes.put(p.getId(), new Snake(p.getId(), new Point(xPos, yPos), initialSnakeLength, Snake.Direction.DOWN, board.getColumns(), board.getRows()));
 		}
 
 		//add dead snake
@@ -234,8 +226,10 @@ public class GameLoop extends Thread implements Observer
 	 */
 	private void drawSnakesOnBoard()
 	{
-		// nextBoard = new Board(this.board.getColumns(), this.board.getRows());
+		// Clear the board
 		board.clearBoard();
+		
+		// Iterate through all snakes
 		for (ISnake snake : snakes.values()) {
 			int id = snake.getId();
 			List<Point> body = snake.getSnakeBody();
@@ -245,31 +239,15 @@ public class GameLoop extends Thread implements Observer
 				byte snakeDirectionOnBoard;
 
 				if (i == 0) {
-					// we are drawing the head
+					// We are drawing the head
 					snakeDirectionOnBoard = convertDirection(dir);
 				} else {
 					snakeDirectionOnBoard = SnakeHeadDirection.snakeBody;
 				}
 				board.setField(pos.x, pos.y, (byte) (snakeDirectionOnBoard + id));
-				// nextBoard.setField(pos.x, pos.y, (byte)(snakeDirectionOnBoard + id));
 			}
 		}
 //        this.board = this.nextBoard;
-	}
-
-	/**
-	 * Returns the id of the player with the higher id.
-	 * 
-	 * @param p1	player 1 id
-	 * @param p2	player 2 id
-	 * @return 		player id
-	 */
-	private int comparePriorities(int p1, int p2)
-	{
-		int p1Index = this.currentPriorities.indexOf(p1);
-		int p2Index = this.currentPriorities.indexOf(p2);
-
-		return p1Index < p2Index ? p1 : p2;
 	}
 
 	/**
@@ -279,7 +257,7 @@ public class GameLoop extends Thread implements Observer
 	 */
 	private void handlePriorityCollision(ISnake s1, ISnake s2)
 	{
-		int id = comparePriorities(s1.getId(), s2.getId());
+		int id = priorityManager.compare(s1.getId(), s2.getId());
 		if (s1.getId() == id) {
 			handleCollision(s1, s2);
 		} else if (s2.getId() == id) {
@@ -417,7 +395,7 @@ public class GameLoop extends Thread implements Observer
 			}
 
 			if (player.isAi()) {
-				player.setKeycode(aiDecision(snake.getCurrentDirection()));
+				player.setKeycode(aiDirectionStrategy.newDirection(snake.getCurrentDirection()));
 			}
 
 			InputMessage.Keycode key = player.getKeycode();
@@ -432,8 +410,8 @@ public class GameLoop extends Thread implements Observer
 		// remove all data of "eaten" snakes
 		for (int i: iDsToRemove) {
 			snakes.remove(new Integer(i));
-			currentPriorities.remove(new Integer(i));
-			nextPriorities.remove(new Integer(i));
+			priorityManager.getPriorities().remove(new Integer(i));
+			priorityManager.getUpcomingPriorities().remove(new Integer(i));
 			playerRegistry.removesPlayer(playerRegistry.getPlayerById(i));
 		}
 		// send new list of participating players
@@ -446,40 +424,6 @@ public class GameLoop extends Thread implements Observer
 		
 	}
 
-	private Keycode aiDecision(Snake.Direction currentDirection)
-	{
-		Double decision = Math.random();
-		switch (currentDirection) {
-			case UP:
-				if (decision >= 0.9)
-					return Keycode.RIGHT;
-				else if (decision <= 0.1)
-					return Keycode.LEFT;
-				break;
-			case DOWN:
-				if (decision >= 0.9)
-					return Keycode.RIGHT;
-				else if (decision <= 0.1)
-					return Keycode.LEFT;
-				break;
-			case RIGHT:
-				if (decision >= 0.9)
-					return Keycode.UP;
-				else if (decision <= 0.1)
-					return Keycode.DOWN;
-				break;
-			case LEFT:
-				if (decision >= 0.9)
-					return Keycode.UP;
-				else if (decision <= 0.1)
-					return Keycode.DOWN;
-				break;
-			default:
-				return Keycode.IGNORE;
-		}
-		return Keycode.IGNORE;
-	}
-
 	private void sendMessages()
 	{
 		System.out.println("Sending messages to players");
@@ -490,8 +434,8 @@ public class GameLoop extends Thread implements Observer
 					TCPClient client = this.clientRegistry.getClient(player.getAddress());
 					client.sendMessage(new BoardMessage(this.board));
 					if (prioChanged) {
-						System.out.println("before sending: currPrios/nextPrios: " + this.currentPriorities.size() + "/" + this.nextPriorities.size());
-						client.sendMessage(new PrioChangeMessage(this.currentPriorities, this.nextPriorities));
+						System.out.println("before sending: currPrios/nextPrios: " + priorityManager.getPriorities().size() + "/" + priorityManager.getUpcomingPriorities().size());
+						client.sendMessage(new PrioChangeMessage(priorityManager.getPriorities(), priorityManager.getUpcomingPriorities()));
 					}
 				} catch (IOException e) {
 					System.out.println("Error while sending to " + player.getName());
@@ -502,51 +446,7 @@ public class GameLoop extends Thread implements Observer
 			prioChanged = false;
 	}
 
-	/**
-	 * Changes / sets the players priorities. Initially random and later on just
-	 * "rolling through". So strictly spoken the next prio... is not necessary....
-	 */
-	private void changePrios()
-	{
-		System.out.println("Change Priorities");
-		if (this.nextPriorities == null)
-			System.out.println("Next prios == null");
-		if (this.currentPriorities == null)
-			System.out.println("prios == null");
 
-		System.out.println("before change currPrios/nextPrios: " + this.currentPriorities.size() + "/" + this.nextPriorities.size());
-
-		List<Integer> nextPrios = this.currentPriorities;
-		Collections.shuffle(nextPrios);
-		this.currentPriorities = this.nextPriorities;
-		this.nextPriorities = nextPrios;
-
-		System.out.println("after change currPrios/nextPrios: " + this.currentPriorities.size() + "/" + this.nextPriorities.size());
-
-
-		prioChanged = true; // send them during next senMessage()
-	}
-
-	private void initPrios()
-	{
-		System.out.println("init Priorities for " + playerRegistry.getPlayerCount() + " player");
-
-		List<Player> players = playerRegistry.getPlayers();
-		this.currentPriorities = new ArrayList<Integer>();
-		this.nextPriorities = new ArrayList<Integer>();
-
-		for (Player player : players) {
-			currentPriorities.add(player.getId());
-		}
-
-		Collections.shuffle(currentPriorities);
-		List<Integer> nextPrios = new ArrayList<Integer>(currentPriorities);
-		Collections.shuffle(nextPrios);
-
-		this.nextPriorities = nextPrios;
-
-		prioChanged = true; // send them during next sendMessage()
-	}
 
 	@Override
 	public void update(Observable o, Object arg)
