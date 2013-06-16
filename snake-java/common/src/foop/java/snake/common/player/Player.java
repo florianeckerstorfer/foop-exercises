@@ -8,14 +8,19 @@ import java.net.SocketAddress;
 /**
  * Represents a player.
  *
- * @author Florian Eckerstorfer <florian@eckerstorfer.co>
+ * @package   foop.java.snake.common.message.handler
+ * @author    Florian Eckerstorfer <florian@eckerstorfer.co>
+ * @copyright 2013 Alexander Duml, Fabian Grünbichler, Florian Eckerstorfer, Robert Kapeller
  */
-public class Player implements Serializable {
+public class Player implements Serializable
+{
+	private static final long serialVersionUID = -6423702100758766206L;
+	
 	protected String name;
 	protected int id;
 	protected SocketAddress address;
 	protected InputMessage.Keycode keycode;
-	protected Boolean AI;
+	protected Boolean isAi;
 
 	/**
 	 * Constructor.
@@ -25,12 +30,18 @@ public class Player implements Serializable {
 	 */
 	public Player(String name) {
 		setName(name);
-		this.AI = false;
+		this.isAi = false;
 	}
 
-	public Player(String name, Boolean AI) {
+	/**
+	 * Constructor, used to create an AI player.
+	 * 
+	 * @param name
+	 * @param isAi
+	 */
+	public Player(String name, Boolean isAi) {
 		this.name = name;
-		this.AI = AI;
+		this.isAi = isAi;
 	}
 
 	/**
@@ -94,15 +105,33 @@ public class Player implements Serializable {
 		return address;
 	}
 
-	public InputMessage.Keycode getKeycode() {
+	/**
+	 * Returns the last pressed key by the player.
+	 * 
+	 * @return
+	 */
+	public InputMessage.Keycode getKeycode()
+	{
 		return keycode;
 	}
 
-	public void setKeycode(InputMessage.Keycode keycode) {
+	/**
+	 * Sets the last pressed key by the player.
+	 * 
+	 * @param keycode
+	 */
+	public void setKeycode(InputMessage.Keycode keycode)
+	{
 		this.keycode = keycode;
 	}
 
-	public Boolean isAI() {
-		return this.AI;
+	/**
+	 * Returns if the player is an AI player.
+	 * 
+	 * @return
+	 */
+	public Boolean isAi()
+	{
+		return this.isAi;
 	}
 }

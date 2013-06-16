@@ -8,9 +8,12 @@ import java.util.List;
 /**
  * PlayerRegistry
  *
- * @author Florian Eckerstorfer <florian@eckerstorfer.co>
+ * @package   foop.java.snake.common.message.handler
+ * @author    Florian Eckerstorfer <florian@eckerstorfer.co>
+ * @copyright 2013 Alexander Duml, Fabian Grünbichler, Florian Eckerstorfer, Robert Kapeller
  */
-public class PlayerRegistry {
+public class PlayerRegistry
+{
 	protected List<Player> players = new ArrayList<Player>();
 	protected static Deque<Integer> playerIDs = new ArrayDeque<Integer>();
 	private static final int maxPlayerID = 15;
@@ -20,7 +23,8 @@ public class PlayerRegistry {
 	 * Static block to initialize the Stack for player-IDs once
 	 * IDs are between 1 and maxPlayerID
 	 */
-	static {
+	static 
+	{
 		for (int i = maxPlayerID; i > 0; i--)
 			playerIDs.addFirst(new Integer(i));
 	}
@@ -31,7 +35,8 @@ public class PlayerRegistry {
 	 * @param player
 	 * @return
 	 */
-	public PlayerRegistry addPlayer(Player player) {
+	public PlayerRegistry addPlayer(Player player)
+	{
 		players.add(player);
 		player.setId(this.getNextPlayerID());
 		System.out.println(player.getId());
@@ -44,7 +49,8 @@ public class PlayerRegistry {
 	 * @param player
 	 * @return
 	 */
-	public PlayerRegistry removesPlayer(Player player) {
+	public PlayerRegistry removesPlayer(Player player)
+	{
 		players.remove(player);
 		playerIDs.addFirst(new Integer(player.getId())); //put back ID
 		return this;
@@ -56,7 +62,8 @@ public class PlayerRegistry {
 	 * @param name
 	 * @return TRUE if a player with the given name exists, FALSE if not.
 	 */
-	public boolean hasPlayerName(String name) {
+	public boolean hasPlayerName(String name)
+	{
 		Player player = getPlayerByName(name);
 		if (null == player) {
 			return false;
@@ -71,7 +78,8 @@ public class PlayerRegistry {
 	 * @param name
 	 * @return
 	 */
-	public Player getPlayerByName(String name) {
+	public Player getPlayerByName(String name)
+	{
 		for (Player player : players) {
 			if (name.equals(player.getName())) {
 				return player;
@@ -87,7 +95,8 @@ public class PlayerRegistry {
 	 * @param id player id
 	 * @return Player
 	 */
-	public Player getPlayerById(int id) {
+	public Player getPlayerById(int id)
+	{
 		for (Player player : players) {
 			if (id == player.getId()) {
 				return player;
@@ -97,7 +106,13 @@ public class PlayerRegistry {
 		return null;
 	}
 
-	public void updatePlayer(Player player) {
+	/**
+	 * Updates the given player.
+	 * 
+	 * @param player
+	 */
+	public void updatePlayer(Player player)
+	{
 		for (int i = 0; i < players.size(); i++) {
 			if (players.get(i).getId() == player.getId()) {
 				players.set(i, player);
@@ -111,7 +126,8 @@ public class PlayerRegistry {
 	 *
 	 * @return
 	 */
-	public List<Player> getPlayers() {
+	public List<Player> getPlayers()
+	{
 		return players;
 	}
 
@@ -120,7 +136,8 @@ public class PlayerRegistry {
 	 *
 	 * @return The number of players
 	 */
-	public int getPlayerCount() {
+	public int getPlayerCount()
+	{
 		return players.size();
 	}
 
@@ -129,14 +146,14 @@ public class PlayerRegistry {
 	 *
 	 * @return player-ID
 	 */
-	private int getNextPlayerID() {
+	private int getNextPlayerID()
+	{
 		try {
 			return playerIDs.removeFirst().intValue();
 		} catch (Exception e) {
 			System.out.println("PlayerRegistry: No ID for player left...");
-			// TODO: What shall we do if we run out of IDs?
 		}
+		
 		return noPlayerID;
 	}
-
 }

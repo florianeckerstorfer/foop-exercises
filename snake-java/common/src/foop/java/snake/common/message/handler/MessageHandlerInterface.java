@@ -8,9 +8,20 @@ import java.net.SocketAddress;
 /**
  * Interface for message handlers.
  *
- * @author Florian Eckerstorfer <florian@eckerstorfer.co>
+ * @package   foop.java.snake.common.message.handler
+ * @author    Florian Eckerstorfer <florian@eckerstorfer.co>
+ * @copyright 2013 Alexander Duml, Fabian Grünbichler, Florian Eckerstorfer, Robert Kapeller
  */
-public interface MessageHandlerInterface {
+public interface MessageHandlerInterface
+{
+	/**
+	 * Handles the given message.
+	 * 
+	 * @param message The received message
+	 * @param address The address the message came from
+	 * 
+	 * @throws NoMessageHandlerFoundException
+	 */
 	public void handle(MessageInterface message, SocketAddress address)
 		throws NoMessageHandlerFoundException;
 }

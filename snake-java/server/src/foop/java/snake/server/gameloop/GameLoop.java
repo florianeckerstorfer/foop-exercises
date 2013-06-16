@@ -191,7 +191,7 @@ public class GameLoop extends Thread implements Observer {
 		System.out.println("Sending initial player messages to players");
 		List<Player> players = this.playerRegistry.getPlayers();
 		for (Player player : players) {
-			if (!player.isAI()) {
+			if (!player.isAi()) {
 				try {
 					TCPClient client = this.clientRegistry.getClient(player.getAddress());
 					client.sendMessage(new PlayerInfoMessage(players));
@@ -320,7 +320,7 @@ public class GameLoop extends Thread implements Observer {
 	private void sendGameOverMessage(int lostId, int winningId) {
 		System.out.println("Sending messages to players");
 		Player lostPlayer = playerRegistry.getPlayerById(lostId);
-		if (lostPlayer.isAI()) {
+		if (lostPlayer.isAi()) {
 			return;
 		}
 		try {
@@ -409,7 +409,7 @@ public class GameLoop extends Thread implements Observer {
 				continue;
 			}
 
-			if (player.isAI()) {
+			if (player.isAi()) {
 				player.setKeycode(aiDecision(snake.getCurrentDirection()));
 			}
 
@@ -476,7 +476,7 @@ public class GameLoop extends Thread implements Observer {
 		System.out.println("Sending messages to players");
 		List<Player> players = this.playerRegistry.getPlayers();
 		for (Player player : players) {
-			if (!player.isAI()) {
+			if (!player.isAi()) {
 				try {
 					TCPClient client = this.clientRegistry.getClient(player.getAddress());
 					client.sendMessage(new BoardMessage(this.board));

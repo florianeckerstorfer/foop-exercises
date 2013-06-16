@@ -7,11 +7,17 @@ import java.net.SocketAddress;
 import java.util.HashMap;
 
 /**
- * Handles messages.
+ * Registry for message handlers.
  *
- * @author Florian Eckerstorfer <florian@eckerstorfer.co>
+ * @package   foop.java.snake.common.message.handler
+ * @author    Florian Eckerstorfer <florian@eckerstorfer.co>
+ * @copyright 2013 Alexander Duml, Fabian Grünbichler, Florian Eckerstorfer, Robert Kapeller
  */
-public class MessageHandlerRegistry implements MessageHandlerInterface {
+public class MessageHandlerRegistry implements MessageHandlerInterface
+{
+	/**
+	 * The list of message handlers.
+	 */
 	protected HashMap<Integer, MessageHandlerInterface> handlers = new HashMap<Integer, MessageHandlerInterface>();
 
 	/**
@@ -20,7 +26,8 @@ public class MessageHandlerRegistry implements MessageHandlerInterface {
 	 * @param type
 	 * @param handler
 	 */
-	public void registerHandler(int type, MessageHandlerInterface handler) {
+	public void registerHandler(int type, MessageHandlerInterface handler)
+	{
 		System.out.println("MessageHandlerRegistry: registerHandler: " + type);
 		handlers.put(type, handler);
 	}
@@ -30,11 +37,15 @@ public class MessageHandlerRegistry implements MessageHandlerInterface {
 	 *
 	 * @param message
 	 * @param address
+	 * 
 	 * @throws NoMessageHandlerFoundException when no suitable handler is registered
 	 */
+	@Override
 	public void handle(MessageInterface message, SocketAddress address)
-		throws NoMessageHandlerFoundException {
+		throws NoMessageHandlerFoundException
+	{
 		int type = message.getType();
+		
 		if (handlers.containsKey(type)) {
 			handlers.get(type).handle(message, address);
 		} else {

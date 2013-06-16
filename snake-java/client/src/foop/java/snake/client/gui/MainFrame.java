@@ -82,6 +82,11 @@ public class MainFrame extends JFrame
 		return colors[playerId % colors.length];
 	}
 
+	/**
+	 * Returns the offset.
+	 * 
+	 * @return The offset
+	 */
 	public int getOffset()
 	{
 		return offset;
@@ -148,6 +153,15 @@ public class MainFrame extends JFrame
 	public void gameOver(String message)
 	{
 		JOptionPane.showMessageDialog(this, message, "You are dead!", JOptionPane.WARNING_MESSAGE);
-
+	}
+	
+	/**
+	 * Displays an error message on the screen.
+	 * 
+	 * @param message
+	 */
+	public void errorMessage(String message)
+	{
+		JOptionPane.showMessageDialog(this, message, "Error!", JOptionPane.ERROR_MESSAGE);
 	}
 }

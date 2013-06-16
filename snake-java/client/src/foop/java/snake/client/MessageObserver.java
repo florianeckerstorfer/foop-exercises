@@ -7,6 +7,7 @@ import foop.java.snake.common.message.MessageInterface;
 import foop.java.snake.common.message.PlayerInfoMessage;
 import foop.java.snake.common.message.PrioChangeMessage;
 import foop.java.snake.common.message.RegisterAckMessage;
+import foop.java.snake.common.message.RegisterErrorMessage;
 
 import java.util.Observable;
 import java.util.Observer;
@@ -69,6 +70,9 @@ public class MessageObserver implements Observer
 			case (GameOverMessage.TYPE):
 				// TODO what to do on game over?
 				frame.gameOver(((GameOverMessage)message).getMessage());
+				break;
+			case (RegisterErrorMessage.TYPE):
+				frame.errorMessage(((RegisterErrorMessage)message).getMessage());
 				break;
 			default:
 				System.err.println("Received Message with unknown type: " + message.getType());

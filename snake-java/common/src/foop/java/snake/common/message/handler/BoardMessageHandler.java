@@ -10,22 +10,24 @@ import java.util.Observable;
 /**
  * Handles messages sent by the server to the client to present new board-status.
  *
- * @author Robert Kapeller <rkapeller@gmail.com>
+ * @package   foop.java.snake.common.message.handler
+ * @author    Florian Eckerstorfer <florian@eckerstorfer.co>
+ * @author    Robert Kapeller <rkapeller@gmail.com>
+ * @copyright 2013 Alexander Duml, Fabian Grünbichler, Florian Eckerstorfer, Robert Kapeller
  */
-public class BoardMessageHandler extends Observable implements MessageHandlerInterface {
-
+public class BoardMessageHandler extends Observable implements MessageHandlerInterface
+{
 	@Override
 	public void handle(MessageInterface message, SocketAddress address)
-		throws NoMessageHandlerFoundException {
+		throws NoMessageHandlerFoundException 
+	{
 		if (message.getType() != BoardMessage.TYPE) {
 			throw new NoMessageHandlerFoundException("This is not a BoardMessage.");
 		}
 		BoardMessage boardMessage = (BoardMessage) message;
 
-		// TODO Message received - what now ;-)
 		System.out.println("BoardMessageHandler: Got Board-Message.");
 
-		// Implementation of the observer-pattern
 		setChanged();
 		notifyObservers(boardMessage);
 	}

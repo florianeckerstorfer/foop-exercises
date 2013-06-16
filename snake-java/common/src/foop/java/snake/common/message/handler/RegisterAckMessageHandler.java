@@ -10,33 +10,20 @@ import java.util.Observable;
 /**
  * Handles messages sent by the client to the server to register new players.
  *
- * @author Florian Eckerstorfer <florian@eckerstorfer.co>
+ * @package   foop.java.snake.common.message.handler
+ * @author    Florian Eckerstorfer <florian@eckerstorfer.co>
+ * @copyright 2013 Alexander Duml, Fabian Grünbichler, Florian Eckerstorfer, Robert Kapeller
  */
-public class RegisterAckMessageHandler extends Observable implements MessageHandlerInterface {
-	int myID;
-
-	public RegisterAckMessageHandler() {
-	}
-
-	/**
-	 * Handles a message sent by the client to the server to register a new player.
-	 *
-	 * @param rawMessage
-	 * @param address
-	 * @throws NoMessageHandlerFoundException when no handler can be found
-	 */
-	public void handle(MessageInterface rawMessage, SocketAddress address)
-		throws NoMessageHandlerFoundException {
-		if (rawMessage.getType() != RegisterAckMessage.TYPE) {
+public class RegisterAckMessageHandler extends Observable implements MessageHandlerInterface
+{
+	@Override
+	public void handle(MessageInterface message, SocketAddress address)
+		throws NoMessageHandlerFoundException
+	{
+		if (message.getType() != RegisterAckMessage.TYPE) {
 			throw new NoMessageHandlerFoundException("This is not a RegisterAckMessage.");
 		}
-		RegisterAckMessage message = (RegisterAckMessage) rawMessage;
-
-		System.out.println("RegisterAckMessageHandler: Registration successful.");
-		System.out.println("RegisterAckMessageHandler: We got the ID " + message.getPlayerID());
-		this.myID = message.getPlayerID();
-
-		// Implementation of the observer-pattern
+		
 		setChanged();
 		notifyObservers(message);
 	}

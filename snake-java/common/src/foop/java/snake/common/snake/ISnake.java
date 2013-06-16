@@ -6,16 +6,18 @@ import java.util.List;
 /**
  * Interface for a snake as we like them
  *
- * @author Robert Kapeller <rkapeller@gmail.com>
+ * @package   foop.java.snake.common.message.handler
+ * @author    Robert Kapeller <rkapeller@gmail.com>
+ * @copyright 2013 Alexander Duml, Fabian Grünbichler, Florian Eckerstorfer, Robert Kapeller
  */
-public interface ISnake {
-//
-
+public interface ISnake
+{
 	/**
 	 * Enum to define movement-directions.
 	 * Possible values are UP, DOWN, LEFT, RIGHT and NONE
 	 */
-	public enum Direction {
+	public enum Direction
+	{
 		UP, DOWN, LEFT, RIGHT, NONE
 	}
 
