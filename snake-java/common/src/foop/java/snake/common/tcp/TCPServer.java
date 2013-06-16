@@ -13,14 +13,18 @@ import java.net.UnknownHostException;
 /**
  * TCPServer
  *
- * @author Florian Eckerstorfer <florian@eckerstorfer.co>
+ * @package   foop.java.snake.common.message.handler
+ * @author    Florian Eckerstorfer <florian@eckerstorfer.co>
+ * @copyright 2013 Alexander Duml, Fabian GrŸnbichler, Florian Eckerstorfer, Robert Kapeller
  */
-public class TCPServer implements Runnable {
+public class TCPServer implements Runnable
+{
 	protected int port;
 	protected ServerSocket socket;
 	protected MessageHandlerRegistry messageHandlerRegistry;
 
-	public TCPServer(int port, MessageHandlerRegistry messageHandlerRegistry) {
+	public TCPServer(int port, MessageHandlerRegistry messageHandlerRegistry)
+	{
 		this.port = port;
 		this.messageHandlerRegistry = messageHandlerRegistry;
 	}
@@ -31,7 +35,8 @@ public class TCPServer implements Runnable {
 	 * @throws IOException            when an IO errors occurs
 	 * @throws ClassNotFoundException when a message can't be converted into an object
 	 */
-	public void run() {
+	public void run()
+	{
 		System.out.println("TCPServer: Start TCPServer at port " + port + ".");
 
 		try {
@@ -66,8 +71,8 @@ public class TCPServer implements Runnable {
 	 *
 	 * @throws IOException when an IO error occurs.
 	 */
-	public void shutdown()
-		throws IOException {
+	public void shutdown() throws IOException
+	{
 		socket.close();
 	}
 
@@ -76,7 +81,8 @@ public class TCPServer implements Runnable {
 	 *
 	 * @param ex
 	 */
-	protected void exitWithError(UnknownHostException ex) {
+	protected void exitWithError(UnknownHostException ex)
+	{
 		System.out.println("TCPServer: Unknown host:\n> " + ex.getMessage());
 		System.exit(0);
 	}
@@ -86,7 +92,8 @@ public class TCPServer implements Runnable {
 	 *
 	 * @param ex
 	 */
-	protected void exitWithError(IOException ex) {
+	protected void exitWithError(IOException ex)
+	{
 		System.out.println("TCPServer: There was something wrong with the connection to the server:");
 		System.out.println("> " + ex.getMessage());
 		System.exit(0);
@@ -97,7 +104,8 @@ public class TCPServer implements Runnable {
 	 *
 	 * @param ex
 	 */
-	protected void exitWithError(Exception ex) {
+	protected void exitWithError(Exception ex)
+	{
 		System.out.println("TCPServer: Ouch! Something went wrong:\n> " + ex.getMessage());
 		System.exit(0);
 	}

@@ -8,9 +8,15 @@ import java.util.HashMap;
 /**
  * Manages TCP clients.
  *
- * @author Florian Eckerstorfer <florian@eckerstorfer.co>
+ * @package   foop.java.snake.common.message.handler
+ * @author    Florian Eckerstorfer <florian@eckerstorfer.co>
+ * @copyright 2013 Alexander Duml, Fabian Grünbichler, Florian Eckerstorfer, Robert Kapeller
  */
-public class TCPClientRegistry {
+public class TCPClientRegistry
+{
+	/**
+	 * List of registered clients.
+	 */
 	protected HashMap<SocketAddress, TCPClient> clients = new HashMap<SocketAddress, TCPClient>();
 
 	/**
@@ -20,7 +26,8 @@ public class TCPClientRegistry {
 	 * @return
 	 */
 	public TCPClient getClient(SocketAddress address)
-		throws UnknownHostException, IOException {
+		throws UnknownHostException, IOException
+	{
 		if (clients.containsKey(address)) {
 			return clients.get(address);
 		}

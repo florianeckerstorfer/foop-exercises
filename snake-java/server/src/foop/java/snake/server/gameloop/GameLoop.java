@@ -29,9 +29,12 @@ import java.util.Observer;
 /**
  * GameLoop
  *
- * @author florian@eckerstorfer.co (Florian Eckerstorfer)
+ * @package   foop.java.snake.common.message.handler
+ * @author    Florian Eckerstorfer <florian@eckerstorfer.co>
+ * @copyright 2013 Alexander Duml, Fabian Grünbichler, Florian Eckerstorfer, Robert Kapeller
  */
-public class GameLoop extends Thread implements Observer {
+public class GameLoop extends Thread implements Observer
+{
 	/**
 	 * The time that each loop takes
 	 */
@@ -62,8 +65,15 @@ public class GameLoop extends Thread implements Observer {
 	 * Stores the current board
 	 */
 	private Board board;
-	private Board nextBoard;
+	
+	/**
+	 * Number of columns on the board.
+	 */
 	private int boardColumns = 30;
+	
+	/**
+	 * Number of rows on the board
+	 */
 	private int boardRows = 30;
 
 	private List<Integer> currentPriorities;
@@ -75,9 +85,10 @@ public class GameLoop extends Thread implements Observer {
 	private boolean prioChanged = false;
 
 	/**
-	 * the snakes crawling on this planet
+	 * The snakes crawling on this planet
 	 */
 	private Map<Integer, ISnake> snakes = new HashMap<Integer, ISnake>();
+	
 	/**
 	 * how long will they be initially?
 	 */
@@ -91,44 +102,18 @@ public class GameLoop extends Thread implements Observer {
 	 *
 	 * @param playerRegistry
 	 */
-	public GameLoop(PlayerRegistry playerRegistry, TCPClientRegistry clientRegistry) {
+	public GameLoop(PlayerRegistry playerRegistry, TCPClientRegistry clientRegistry)
+	{
 		this.playerRegistry = playerRegistry;
 		this.clientRegistry = clientRegistry;
 		board = new Board(boardColumns, boardRows);
 	}
 
-	/** 
-	 * Test-Method. Normally not used. To be removed
-	 */
-	private void doTest() {
-		this.initPrios();
-		this.currentPriorities.add(1);
-		this.currentPriorities.add(2);
-		board = new Board(17, 17);
-		Snake s1 = new Snake(0, new Point(6, 8), 2, Snake.Direction.RIGHT, 17, 17);
-		Snake s2 = new Snake(1, new Point(10, 8), 2, Snake.Direction.LEFT, 17, 17);
-		snakes.put(0, s1);
-		snakes.put(10, s2);
-
-		while (true) {
-			s1.move();
-			detectCollForSnake(s1);
-			s2.move();
-			detectCollForSnake(s2);
-			drawSnakesOnBoard();
-//			this.calculateSnakeMovement();
-			sendMessages();
-			try {
-				Thread.sleep(300);
-			} catch (Exception e) {
-			}
-		}
-	}
-
 	/**
 	 * Threads that runs the game loop.
 	 */
-	public void run() {
+	public void run()
+	{
 		int loopCount = 0;
 		int playerCount = 0;
 		int gameCountdown = initialGameCountdown;
@@ -140,12 +125,6 @@ public class GameLoop extends Thread implements Observer {
 				// No registered players
 				System.out.println("No registered players. But I will wait until the end of times");
 			} else if (0 == playerCount && playerRegistry.getPlayerCount() > 0) {
-
-				// TEST
-				this.sendPlayerMessages();
-				//	doTest();
-				// TEST-END
-
 				// The first iteration that has registered players. Start the countdown
 				playerCount = playerRegistry.getPlayerCount();
 				System.out.println("Registered " + playerRegistry.getPlayerCount() + " players.");
@@ -157,22 +136,26 @@ public class GameLoop extends Thread implements Observer {
 				// TODO: End game
 			} else if (gameCountdown > 0) {
 				// We have registered players, but the countdown is still running down.
-
 				System.out.println("Game starts in " + gameCountdown);
 				gameCountdown--;
+				// The countdown is finished.
+				// Initialize the game
 				if (gameCountdown == 0) {
-					if (playerCount < this.minPlayerCount)
+					if (playerCount < this.minPlayerCount) {
 						this.addAISnakes();
+					}
 					this.initSnakes();
 					this.initPrios();
 					this.sendPlayerMessages();
 					this.sendMessages();
 				}
 			} else {
+				// Normal game loop iteration. Move snakes and send messages
 				this.calculateSnakeMovement();
 				this.sendMessages();
 			}
 
+			// Check if we need to change the priorities
 			if (((loopCount % priorityChangeInterval) == 0) && gameCountdown == 0) {
 				this.changePrios();
 			}
@@ -187,7 +170,8 @@ public class GameLoop extends Thread implements Observer {
 		}
 	}
 
-	private void sendPlayerMessages() {
+	private void sendPlayerMessages()
+	{
 		System.out.println("Sending initial player messages to players");
 		List<Player> players = this.playerRegistry.getPlayers();
 		for (Player player : players) {
@@ -197,17 +181,25 @@ public class GameLoop extends Thread implements Observer {
 					client.sendMessage(new PlayerInfoMessage(players));
 				} catch (IOException e) {
 					System.out.println("Error while sending to " + player.getName());
+					// Remove the player from the list of players
+					players.remove(player);
 				}
 			}
 		}
 	}
 
-	private void addAISnakes() {
+	/**
+	 * Adds computer snakes to the game.
+	 * 
+	 */
+	private void addAISnakes()
+	{
 		int name = 1;
 		int count = this.minPlayerCount - playerRegistry.getPlayerCount();
 		System.out.println("Adding " + count + " AI snakes to meet minimum number of snakes..");
+		
 		while (count > 0) {
-			Player ai = new Player("AI " + name, true);
+			Player ai = new Player("Computer " + name, true);
 			playerRegistry.addPlayer(ai);
 			count--;
 			name++;
@@ -218,7 +210,8 @@ public class GameLoop extends Thread implements Observer {
 	 * Initially sets the snakes for the players. First version: fixed y-value, evenly distributed x-value,
 	 * all point to the same direction
 	 */
-	private void initSnakes() {
+	private void initSnakes()
+	{
 		List<Player> players = this.playerRegistry.getPlayers();
 		int countOfPlayers = players.size();
 		int yPos = boardRows / 2;
@@ -239,7 +232,8 @@ public class GameLoop extends Thread implements Observer {
 	/**
 	 * copies the snakes onto the board
 	 */
-	private void drawSnakesOnBoard() {
+	private void drawSnakesOnBoard()
+	{
 		// nextBoard = new Board(this.board.getColumns(), this.board.getRows());
 		board.clearBoard();
 		for (ISnake snake : snakes.values()) {
@@ -265,11 +259,13 @@ public class GameLoop extends Thread implements Observer {
 
 	/**
 	 * Returns the id of the player with the higher id.
+	 * 
 	 * @param p1	player 1 id
 	 * @param p2	player 2 id
 	 * @return 		player id
 	 */
-	private int comparePriorities(int p1, int p2) {
+	private int comparePriorities(int p1, int p2)
+	{
 		int p1Index = this.currentPriorities.indexOf(p1);
 		int p2Index = this.currentPriorities.indexOf(p2);
 
@@ -281,7 +277,8 @@ public class GameLoop extends Thread implements Observer {
 	 * @param s1	snake 1
 	 * @param s2	snake 2
 	 */
-	private void handlePriorityCollision(ISnake s1, ISnake s2) {
+	private void handlePriorityCollision(ISnake s1, ISnake s2)
+	{
 		int id = comparePriorities(s1.getId(), s2.getId());
 		if (s1.getId() == id) {
 			handleCollision(s1, s2);
@@ -295,7 +292,8 @@ public class GameLoop extends Thread implements Observer {
 	 * @param s1	winning snake
 	 * @param s2	losing snake
 	 */
-	private void handleCollision(ISnake s1, ISnake s2) {
+	private void handleCollision(ISnake s1, ISnake s2)
+	{
 		s1.grow();
 		List<Point> cutBodyParts = s2.cut(s1.getHead());
 
@@ -317,12 +315,17 @@ public class GameLoop extends Thread implements Observer {
 	 * Sends a gameOver-Message to the given player
 	 * @param playerId
 	 */
-	private void sendGameOverMessage(int lostId, int winningId) {
+	private void sendGameOverMessage(int lostId, int winningId)
+	{
 		System.out.println("Sending messages to players");
 		Player lostPlayer = playerRegistry.getPlayerById(lostId);
+		
+		// Don't send a game over message when the snake is computer-controlled
 		if (lostPlayer.isAi()) {
 			return;
 		}
+		
+		// Send a GameOver message
 		try {
 			String message = playerRegistry.getPlayerById(winningId).getName();;
 			TCPClient client = this.clientRegistry.getClient(lostPlayer.getAddress());
@@ -332,7 +335,8 @@ public class GameLoop extends Thread implements Observer {
 		}
 	}
 
-	private void detectCollForSnake(ISnake snake) {
+	private void detectCollForSnake(ISnake snake)
+	{
 		for (ISnake s2 : snakes.values()) {
 			if (snake == s2) {
 				continue;
@@ -358,7 +362,8 @@ public class GameLoop extends Thread implements Observer {
 	 * @param dir
 	 * @return
 	 */
-	private byte convertDirection(Snake.Direction dir) {
+	private byte convertDirection(Snake.Direction dir)
+	{
 		switch (dir) {
 			case UP:
 				return SnakeHeadDirection.snakeHeadUp;
@@ -380,7 +385,8 @@ public class GameLoop extends Thread implements Observer {
 	 * @param key
 	 * @return
 	 */
-	private Snake.Direction convertKeyCodeToDist(InputMessage.Keycode key) {
+	private Snake.Direction convertKeyCodeToDist(InputMessage.Keycode key)
+	{
 		switch (key) {
 			case UP:
 				return Snake.Direction.UP;
@@ -396,7 +402,8 @@ public class GameLoop extends Thread implements Observer {
 		}
 	}
 
-	private void calculateSnakeMovement() {
+	private void calculateSnakeMovement()
+	{
 		// loop over all players and move their snakes accordingly
 		// Snake killed? what to do? I assume, that the player is no longer in the list then...
 		// In this first iteration of the final solution I just move the snake and draw it on the board
@@ -439,7 +446,8 @@ public class GameLoop extends Thread implements Observer {
 		
 	}
 
-	private Keycode aiDecision(Snake.Direction currentDirection) {
+	private Keycode aiDecision(Snake.Direction currentDirection)
+	{
 		Double decision = Math.random();
 		switch (currentDirection) {
 			case UP:
@@ -472,7 +480,8 @@ public class GameLoop extends Thread implements Observer {
 		return Keycode.IGNORE;
 	}
 
-	private void sendMessages() {
+	private void sendMessages()
+	{
 		System.out.println("Sending messages to players");
 		List<Player> players = this.playerRegistry.getPlayers();
 		for (Player player : players) {
@@ -497,7 +506,8 @@ public class GameLoop extends Thread implements Observer {
 	 * Changes / sets the players priorities. Initially random and later on just
 	 * "rolling through". So strictly spoken the next prio... is not necessary....
 	 */
-	private void changePrios() {
+	private void changePrios()
+	{
 		System.out.println("Change Priorities");
 		if (this.nextPriorities == null)
 			System.out.println("Next prios == null");
@@ -517,7 +527,8 @@ public class GameLoop extends Thread implements Observer {
 		prioChanged = true; // send them during next senMessage()
 	}
 
-	private void initPrios() {
+	private void initPrios()
+	{
 		System.out.println("init Priorities for " + playerRegistry.getPlayerCount() + " player");
 
 		List<Player> players = playerRegistry.getPlayers();
@@ -538,7 +549,8 @@ public class GameLoop extends Thread implements Observer {
 	}
 
 	@Override
-	public void update(Observable o, Object arg) {
+	public void update(Observable o, Object arg)
+	{
 		if (arg instanceof InputMessage) {
 			InputMessage tmp = (InputMessage) arg;
 			Player player = playerRegistry.getPlayerById(tmp.getPlayerId());
