@@ -11,36 +11,57 @@ import foop.java.snake.common.message.RegisterAckMessage;
 import java.util.Observable;
 import java.util.Observer;
 
-public class MessageObserver implements Observer {
-
+/**
+ * MessageObserver.
+ * 
+ * @package   foop.java.snake.client
+ * @author    Florian Eckerstorfer <florian@eckerstorfer.co>
+ * @copyright 2013 Alexander Duml, Fabian GrŸnbichler, Florian Eckerstorfer, Robert Kapeller
+ */
+public class MessageObserver implements Observer
+{
 	MainFrame frame;
 
-	public MessageObserver(MainFrame frame) {
+	/**
+	 * Constructor.
+	 * 
+	 * @param frame
+	 */
+	public MessageObserver(MainFrame frame)
+	{
 		this.frame = frame;
 	}
 
 	/**
-	 * we have been updated by the Observable --> do something
-	 * unfortunately Observer is not generic. We have to check and cast
-	 * Not so very nice but I do not really want to create gerneri Observer/Observable for this
+	 * Observes incoming messages and updates the GUI.
+	 * 
+	 * @param o
+	 * @param arg 
 	 */
 	@Override
-	public void update(Observable o, Object arg) {
+	public void update(Observable o, Object arg)
+	{
 		MessageInterface message;
-		if (arg instanceof MessageInterface)
+		
+		if (arg instanceof MessageInterface) {
 			message = (MessageInterface) arg;
-		else
+		} else {
 			return;
+		}
 
+		// Handle messages based on the type.
 		switch (message.getType()) {
 			case (BoardMessage.TYPE):
 				frame.renderBoard(((BoardMessage) message).getBoard());
 				break;
 			case (RegisterAckMessage.TYPE):
-				frame.setMyID(((RegisterAckMessage) message).getPlayerID());
+				frame.setPlayerId(((RegisterAckMessage) message).getPlayerID());
 				break;
 			case (PrioChangeMessage.TYPE):
-				frame.renderPriorities(((PrioChangeMessage) message).getPlayerPrios(), ((PrioChangeMessage) message).getNextPlayerPrios());
+				frame.renderPriorities(
+					((PrioChangeMessage) message).getPlayerPrios(),
+					((PrioChangeMessage) message).getNextPlayerPrios()
+				);
 				break;
 			case (PlayerInfoMessage.TYPE):
 				frame.renderPlayers(((PlayerInfoMessage) message).getPlayers());
@@ -55,3 +76,4 @@ public class MessageObserver implements Observer {
 		}
 	}
 }
+

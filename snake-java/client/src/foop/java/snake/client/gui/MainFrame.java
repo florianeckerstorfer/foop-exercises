@@ -98,12 +98,21 @@ public class MainFrame extends JFrame
 		boardPanel.repaint();
 	}
 
-	public void setMyID(int id)
+	/**
+	 * Sets the player ID.
+	 * 
+	 * @param id
+	 */
+	public void setPlayerId(int id)
 	{
 		playerPanel.setPlayerId(id);
 	}
 
-	public int getMyID()
+	/**
+	 * Returns the player ID.
+	 * @return
+	 */
+	public int getPlayerId()
 	{
 		return playerPanel.getPlayerId();
 	}

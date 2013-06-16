@@ -30,16 +30,20 @@ import java.net.UnknownHostException;
 /**
  * MainClient
  *
- * @author Florian Eckerstorfer <florian@eckerstorfer.co>
+ * @package   foop.java.snake.client
+ * @author    Florian Eckerstorfer <florian@eckerstorfer.co>
+ * @copyright 2013 Alexander Duml, Fabian Grünbichler, Florian Eckerstorfer, Robert Kapeller
  */
-class MainClient {
+class MainClient
+{
 	/**
 	 * Client main method.
 	 *
 	 * @param args
 	 * @return
 	 */
-	public static void main(String[] args) {
+	public static void main(String[] args)
+	{
 		if (args.length < 4) {
 			usage();
 		}
@@ -53,29 +57,60 @@ class MainClient {
 	 *
 	 * @return
 	 */
-	protected static void usage() {
+	protected static void usage()
+	{
 		System.out.println("Usage: java -jar snake-client.jar PLAYER_NAME PORT SERVER SERVER_PORT");
 		System.exit(0);
 	}
 
+	/**
+	 * The TCP client.
+	 */
 	private TCPClient client;
+	
+	/**
+	 * The input handler.
+	 */
 	private InputHandler inputHandler;
 
+	/**
+	 * The main GUI window.
+	 */
 	private MainFrame mainFrame;
+	
+	/**
+	 * The message observer
+	 */
 	private MessageObserver messageObserver;
 
+	/**
+	 * The name of the player.
+	 */
 	protected String playerName;
+	
+	/**
+	 * The port the client runs on.
+	 */
 	protected int port;
+	
+	/**
+	 * The hostname of the server.
+	 */
 	protected String server;
+	
+	/**
+	 * The port of the server.
+	 */
 	protected int serverPort;
 
 	/**
-	 * Initializes the MainClient.
+	 * Constructor. Initializes the MainClient.
 	 *
 	 * @param args
 	 * @return
 	 */
-	public MainClient(String[] args) {
+	public MainClient(String[] args)
+	{
 		playerName = args[0];
 		port = Integer.parseInt(args[1]);
 		server = args[2];
@@ -92,7 +127,8 @@ class MainClient {
 	 *
 	 * @param ex
 	 */
-	protected void exitWithError(Exception ex) {
+	protected void exitWithError(Exception ex)
+	{
 		System.out.println("MainClient: Ouch! Something went wrong:\n" + ex.getMessage());
 		System.exit(0);
 	}
@@ -102,7 +138,8 @@ class MainClient {
 	 *
 	 * @param ex
 	 */
-	protected void exitWithError(IOException ex) {
+	protected void exitWithError(IOException ex)
+	{
 		System.out.println("MainClient: There was something wrong with the connection to the server:");
 		System.out.println(ex.getMessage());
 		System.exit(0);
@@ -113,7 +150,8 @@ class MainClient {
 	 *
 	 * @param ex
 	 */
-	protected void exitWithError(UnknownHostException ex) {
+	protected void exitWithError(UnknownHostException ex)
+	{
 		System.out.println("MainClient: Could not find \"" + server + ":" + serverPort + "\".");
 		System.exit(0);
 	}
@@ -123,7 +161,8 @@ class MainClient {
 	 *
 	 * @param handlerRegistry registry to use
 	 */
-	public void registerHandlers(MessageHandlerRegistry handlerRegistry) {
+	public void registerHandlers(MessageHandlerRegistry handlerRegistry)
+	{
 		handlerRegistry.registerHandler(
 			RegisterErrorMessage.TYPE, new RegisterErrorMessageHandler()
 		);
@@ -163,13 +202,15 @@ class MainClient {
 
 	/**
 	 * Runs the client.
+	 * 
 	 */
-	public void run() {
+	public void run()
+	{
 		try {
 			MessageHandlerRegistry messageHandlerRegistry = new MessageHandlerRegistry();
-
 			registerHandlers(messageHandlerRegistry);
 
+			// Start the client "server" in a new thread.
 			TCPServer server = new TCPServer(port, messageHandlerRegistry);
 			(new Thread(server)).start();
 		} catch (Exception ex) {
@@ -185,6 +226,7 @@ class MainClient {
 			mainFrame.addKeyListener(new InputListener(inputHandler));
 			mainFrame.addWindowListener(new WindowAdapter() {
 				public void windowClosing(WindowEvent e) {
+					// If the window is closed, send an unregister message.
 					try {
 						client.sendMessage(new UnregisterMessage(playerName));
 						System.exit(0);    // closing all...
