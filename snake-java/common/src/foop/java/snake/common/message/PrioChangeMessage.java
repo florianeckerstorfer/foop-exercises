@@ -3,48 +3,72 @@ package foop.java.snake.common.message;
 import java.util.List;
 
 /**
- * PrioChangeMessage
+ * PrioChangeMessage.
  * Sent from Server to Clients whenever the priorities of the player changes
  *
- * @author Robert Kapeller <rkapeller@gmail.com>
+ * @package   foop.java.snake.common.message
+ * @author    Florian Eckerstorfer <florian@eckerstorfer.co>
+ * @author    Robert Kapeller <rkapeller@gmail.com>
+ * @copyright 2013 Alexander Duml, Fabian Grünbichler, Florian Eckerstorfer, Robert Kapeller
  */
 //TODO recheck and finish it
-public class PrioChangeMessage implements MessageInterface {
+public class PrioChangeMessage implements MessageInterface
+{
 	private static final long serialVersionUID = 1;
 	public static final int TYPE = 99;
 
-	protected List<Integer> currPrios;
-	protected List<Integer> nextPrios;
+	protected List<Integer> priorities;
+	protected List<Integer> upcomingPriorities;
 
-	public PrioChangeMessage(List<Integer> currPrios, List<Integer> nextPrios) {
-		this.currPrios = currPrios;
-		this.nextPrios = nextPrios;
+	public PrioChangeMessage(List<Integer> currPrios, List<Integer> nextPrios)
+	{
+		this.priorities = currPrios;
+		this.upcomingPriorities = nextPrios;
 	}
 
 	@Override
-	public int getType() {
+	public int getType()
+	{
 		return TYPE;
 	}
 
-	/*
-	 * @param prio "ordered prioritylist with unique names of players. First in list has highest priority"
+	/**
+	 * Sets the priorities.
+	 * 
+	 * @param priorities The ordered list of priorities, highest priority first.
 	 */
-	public void setPlayerPrios(List<Integer> currPrios) {
-		this.currPrios = currPrios;
+	public void setPriorities(List<Integer> priorities)
+	{
+		this.priorities = priorities;
 	}
 
-	/*
-	 * @return ordered prioritylist with unique names of players. First in list has highest priority
+	/**
+	 * Returns the priorities.
+	 * 
+	 * @return The ordered list of priorities
 	 */
-	public List<Integer> getPlayerPrios() {
-		return currPrios;
+	public List<Integer> getPriorities()
+	{
+		return priorities;
 	}
 
-	public void setNextPlayerPrios(List<Integer> nextPrios) {
-		this.nextPrios = nextPrios;
+	/**
+	 * Sets the upcoming priorities.
+	 * 
+	 * @param upcomingPriorities The ordered list of upcoming priorities, highest priority first.
+	 */
+	public void setUpcomingPriorities(List<Integer> upcomingPriorities)
+	{
+		this.upcomingPriorities = upcomingPriorities;
 	}
 
-	public List<Integer> getNextPlayerPrios() {
-		return this.nextPrios;
+	/**
+	 * Returns the upcoming player priorities.
+	 * 
+	 * @return The orderd list of upcoming priorities.
+	 */
+	public List<Integer> getUpcomingPriorities()
+	{
+		return this.upcomingPriorities;
 	}
 }

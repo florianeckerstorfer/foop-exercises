@@ -33,7 +33,7 @@ public class InputMessageHandler extends Observable implements MessageHandlerInt
 	 */
 	private void printInput(InputMessage m) {
 		System.out.println("InputMessageHandler: Got new Input-Message.");
-		System.out.print("InputMessageHandler: Following Key has been pressed by player " + m.getPlayerID() + ": ");
+		System.out.print("InputMessageHandler: Following Key has been pressed by player " + m.getPlayerId() + ": ");
 		Keycode key = m.getInput();
 
 		switch (key) {

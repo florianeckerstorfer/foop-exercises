@@ -541,7 +541,7 @@ public class GameLoop extends Thread implements Observer {
 	public void update(Observable o, Object arg) {
 		if (arg instanceof InputMessage) {
 			InputMessage tmp = (InputMessage) arg;
-			Player player = playerRegistry.getPlayerById(tmp.getPlayerID());
+			Player player = playerRegistry.getPlayerById(tmp.getPlayerId());
 			if (player != null) {
 				player.setKeycode(tmp.getInput());
 			}

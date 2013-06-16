@@ -7,9 +7,9 @@ import javax.swing.*;
 import java.awt.*;
 
 /**
- * @package foop.java.snake.client.gui
- * @author  Alexander Duml
- * @author  Florian Eckerstorfer
+ * @package   foop.java.snake.client.gui
+ * @author    Alexander Duml
+ * @author    Florian Eckerstorfer <florian@eckerstorfer.co>
  * @copyright 2013 Alexander Duml, Fabian Grünbichler, Florian Eckerstorfer, Robert Kapeller  
  */
 public class BoardPanel extends JPanel

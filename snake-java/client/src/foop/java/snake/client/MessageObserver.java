@@ -59,8 +59,8 @@ public class MessageObserver implements Observer
 				break;
 			case (PrioChangeMessage.TYPE):
 				frame.renderPriorities(
-					((PrioChangeMessage) message).getPlayerPrios(),
-					((PrioChangeMessage) message).getNextPlayerPrios()
+					((PrioChangeMessage) message).getPriorities(),
+					((PrioChangeMessage) message).getUpcomingPriorities()
 				);
 				break;
 			case (PlayerInfoMessage.TYPE):
