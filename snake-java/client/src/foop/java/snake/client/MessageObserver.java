@@ -40,7 +40,7 @@ public class MessageObserver implements Observer {
 				frame.setMyID(((RegisterAckMessage) message).getPlayerID());
 				break;
 			case (PrioChangeMessage.TYPE):
-				frame.renderPrios(((PrioChangeMessage) message).getPlayerPrios(), ((PrioChangeMessage) message).getNextPlayerPrios());
+				frame.renderPriorities(((PrioChangeMessage) message).getPlayerPrios(), ((PrioChangeMessage) message).getNextPlayerPrios());
 				break;
 			case (PlayerInfoMessage.TYPE):
 				frame.renderPlayers(((PlayerInfoMessage) message).getPlayers());

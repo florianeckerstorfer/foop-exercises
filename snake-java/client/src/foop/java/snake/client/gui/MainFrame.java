@@ -8,18 +8,23 @@ import java.awt.*;
 import java.util.List;
 
 /**
- * User: Alexander Duml
- * Date: 26.03.13
- * Time: 13:33
+ * @package   foop.java.snake.client.gui
+ * @author    Alexander Duml
+ * @copyright 2013 Alexander Duml, Fabian Grünbichler, Florian Eckerstorfer, Robert Kapeller
  */
 @SuppressWarnings("serial")
-public class MainFrame extends JFrame {
-	//panel where the board is rendered
+public class MainFrame extends JFrame
+{
+	/**
+	 * The panel where the board is rendered
+	 */
 	private BoardPanel boardPanel;
+	
 	private PlayerPanel playerPanel;
 
 	private int offset = 20;
-	private Color[] colors = new Color[]{
+	
+	private Color[] colors = new Color[] {
 		Color.gray,
 		Color.black,
 		Color.blue,
@@ -36,7 +41,12 @@ public class MainFrame extends JFrame {
 		new Color(189, 229, 19)
 	};
 
-	public MainFrame() {
+	/**
+	 * Constructor.
+	 * 
+	 */
+	public MainFrame()
+	{
 		init();
 		//set some frame properties
 		this.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
@@ -46,9 +56,10 @@ public class MainFrame extends JFrame {
 	}
 
 	/**
-	 * initializes the frame
+	 * Initializes the frame
 	 */
-	private void init() {
+	private void init()
+	{
 		this.getContentPane().setBackground(Color.LIGHT_GRAY);
 		this.setLayout(new BorderLayout());
 		boardPanel = new BoardPanel(this);
@@ -60,52 +71,74 @@ public class MainFrame extends JFrame {
 
 	}
 
-	public Color getPlayerColor(int playerId) {
+	/**
+	 * Returns the color of the player with the given ID.
+	 * 
+	 * @param playerId
+	 * @return
+	 */
+	public Color getPlayerColor(int playerId)
+	{
 		return colors[playerId % colors.length];
 	}
 
-	public int getOffset() {
+	public int getOffset()
+	{
 		return offset;
 	}
 
 	/**
-	 * takes a board and renders int on the board panel
+	 * Takes a board and renders it on the board panel.
 	 *
 	 * @param board board
 	 */
-	public void renderBoard(Board board) {
+	public void renderBoard(Board board)
+	{
 		boardPanel.setBoard(board);
 		boardPanel.repaint();
 	}
 
-	public void setMyID(int id) {
-		playerPanel.setMyID(id);
+	public void setMyID(int id)
+	{
+		playerPanel.setPlayerId(id);
 	}
 
-	public int getMyID() {
-		return playerPanel.getMyID();
+	public int getMyID()
+	{
+		return playerPanel.getPlayerId();
 	}
 
 	/**
-	 * takes a list of @see {Player}-objects and renders int on the playerHierarchy panel
+	 * Takes a list of Player-objects and renders them on the playerHierarchy panel
 	 *
 	 * @param players List of Players
 	 */
-	public void renderPlayers(List<Player> players) {
+	public void renderPlayers(List<Player> players)
+	{
 		playerPanel.setPlayers(players);
 	}
 
-	public void renderPrios(List<Integer> playerPrios, List<Integer> nextPlayerPrios) {
+	/**
+	 * Renders the priorities.
+	 * 
+	 * @param playerPrios
+	 * @param nextPlayerPrios
+	 */
+	public void renderPriorities(List<Integer> playerPrios, List<Integer> nextPlayerPrios)
+	{
 		playerPanel.setCurrentPrio(playerPrios);
-		playerPanel.setNextPrio(nextPlayerPrios);
+		playerPanel.setUpcomingPriorities(nextPlayerPrios);
 		playerPanel.repaint();
 	}
-	public void gameOver(String message) {
-		// TODO just a dummy to check if it is working
-		JOptionPane.showMessageDialog(this,
-			    message,
-			    "You are dead!",
-			    JOptionPane.WARNING_MESSAGE);
+	
+	/**
+	 * Display the game over message on the screen.
+	 * 
+	 * @param message
+	 */
+	public void gameOver(String message)
+	{
+		JOptionPane.showMessageDialog(this, message, "You are dead!", JOptionPane.WARNING_MESSAGE);
 
 	}
 }

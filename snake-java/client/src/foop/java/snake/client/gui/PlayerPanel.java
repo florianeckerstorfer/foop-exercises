@@ -10,22 +10,52 @@ import java.util.List;
 
 /**
  * PlayerPanel
+ * 
  * Used to draw information about the Players (color, priority...)
  * Remark: Probably better to incorporate this functionality into BoardPanel as there are
  * shared data like color
  *
- * @author Robert Kapeller <rkapeller@gmail.com>
+ * @package   foop.java.snape.client.gui
+ * @author    Robert Kapeller <rkapeller@gmail.com>
+ * @author    Florian Eckerstorfer <florian@eckerstorfer.co>
+ * @copyright 2013 Alexander Duml, Fabian Grünbichler, Florian Eckerstorfer, Robert Kapeller
  */
-@SuppressWarnings("serial")
-public class PlayerPanel extends JPanel {
+public class PlayerPanel extends JPanel
+{
+	private static final long serialVersionUID = 7957053122451535883L;
+	
+	/**
+	 * The main game frame.
+	 */
 	private MainFrame parent;
+	
+	/**
+	 * The list of players.
+	 */
 	private List<Player> players;
+	
+	/**
+	 * The list of current priorities.
+	 */
 	private List<Integer> currentPriorities;
-	private List<Integer> nextPriorities;
-	private int myID;
+	
+	/**
+	 * The list of upcoming priorities.
+	 */
+	private List<Integer> upcomingPriorities;
+	
+	/**
+	 * The ID of the this player.
+	 */
+	private int playerId;
 
-
-	public PlayerPanel(MainFrame parent) {
+	/**
+	 * Constructor.
+	 * 
+	 * @param parent
+	 */
+	public PlayerPanel(MainFrame parent)
+	{
 		this.parent = parent;
 		this.setPreferredSize(new Dimension(240, 100));    // To set some width
 
@@ -34,96 +64,134 @@ public class PlayerPanel extends JPanel {
 		this.setBorder(b);
 	}
 
-	public void setMyID(int ID) {
-		this.myID = ID;
+	/**
+	 * Sets the ID of the player.
+	 * 
+	 * @param playerId
+	 */
+	public void setPlayerId(int playerId)
+	{
+		this.playerId = playerId;
 	}
 
-	public int getMyID() {
-		return this.myID;
+	/**
+	 * Returns the ID of the player.
+	 * 
+	 * @return
+	 */
+	public int getPlayerId()
+	{
+		return this.playerId;
 	}
 
-	public void setPlayers(List<Player> players) {
+	/**
+	 * Sets the players.
+	 * 
+	 * @param players
+	 */
+	public void setPlayers(List<Player> players)
+	{
 		this.players = players;
 	}
 
 	/**
-	 * renders the player list
+	 * Renders the player list
 	 *
 	 * @param graphics canvas
 	 */
 	@Override
-	public void paintComponent(Graphics graphics) {
-		// clean the player-list
-		Font font = new Font ("Sans Serif", Font.BOLD , 11);
-		graphics.setFont(font);
-		graphics.setColor(Color.LIGHT_GRAY);
-		graphics.fillRect(0, 0, this.getWidth(), this.getHeight());
+	public void paintComponent(Graphics graphics)
+	{
+		configureFont(graphics);
+		cleanPlayerList(graphics);
 
-		//check if there are any players
+		// Check if there are any players
 		if (players == null || (players != null && players.isEmpty())) {
 			graphics.setColor(Color.BLACK);
 			graphics.drawString("Waiting for Players:", 10, 50);
 			return;
 		}
 
-		//Player List
+		// Player List
 		graphics.setColor(Color.BLACK);
-		int line = 2 * parent.getOffset();
 
-		//Priorities
-		int xPos = 10;
+		// Render Priorities
 		graphics.setColor(Color.BLACK);
-		line += 2 * parent.getOffset();
-		graphics.drawString("Priorities", xPos, line);
+		renderPriorities(graphics, 10, this.currentPriorities, "Priorities");
+		renderPriorities(graphics, 120, this.upcomingPriorities, "Upcoming");
+	}
+
+	/**
+	 * Renders the list of priorities.
+	 * 
+	 * @param graphics
+	 * @param line
+	 */
+	private void renderPriorities(Graphics graphics, int xPos, List<Integer> priorities, String label)
+	{
+		int line = 4 * parent.getOffset();
+		
+		// Draw label
+		graphics.drawString(label, xPos, line);
 		line += parent.getOffset();
 
-		String prioNames[] = new String[this.currentPriorities.size()];
-		Color prioColors[] = new Color[this.currentPriorities.size()];
+		String names[] = new String[priorities.size()];
+		Color colors[] = new Color[priorities.size()];
 
+		// Get player names and colors
 		for (Player p : players) {
-			int prioIndex = this.currentPriorities.indexOf(p.getId());
+			int index = priorities.indexOf(p.getId());
 
-			prioNames[prioIndex] = p.getName();
-			prioColors[prioIndex] = parent.getPlayerColor(p.getId());
+			names[index] = p.getName();
+			colors[index] = parent.getPlayerColor(p.getId());
 		}
 
-		for (int i = 0; i < prioNames.length; i++) {
-			graphics.setColor(prioColors[i]);
-			graphics.drawString(prioNames[i], xPos, line);
-			line += parent.getOffset();
-		}
-
-		//Upcoming Priorities
-		line = 2 * parent.getOffset();
-		line += 2 * parent.getOffset();
-		xPos = 120;
-		graphics.setColor(Color.BLACK);
-		graphics.drawString("Upcoming Priorities", xPos, line);
-		line += parent.getOffset();
-
-		prioNames = new String[this.nextPriorities.size()];
-		prioColors = new Color[this.currentPriorities.size()];
-
-		for (Player p : players) {
-			int prioIndex = this.nextPriorities.indexOf(p.getId());
-			if (prioNames[prioIndex] == null) {
-				prioNames[prioIndex] = p.getName();
-				prioColors[prioIndex] = parent.getPlayerColor(p.getId());
-			}
-		}
-
-		for (int i = 0; i < prioNames.length; i++) {
-			graphics.setColor(prioColors[i]);
-			graphics.drawString(prioNames[i], xPos, line);
+		// Render priorities
+		for (int i = 0; i < names.length; i++) {
+			graphics.setColor(colors[i]);
+			graphics.drawString(names[i], xPos, line);
 			line += parent.getOffset();
 		}
 	}
 
-	public void setNextPrio(List<Integer> nextPlayerPrios) {
-		this.nextPriorities = new ArrayList<Integer>(nextPlayerPrios);
+	/**
+	 * Cleans the player list.
+	 * 
+	 * @param graphics
+	 */
+	private void cleanPlayerList(Graphics graphics)
+	{
+		graphics.fillRect(0, 0, this.getWidth(), this.getHeight());
 	}
 
-	public void setCurrentPrio(List<Integer> playerPrios) {
+	/**
+	 * Configures the font used in the player panel.
+	 * 
+	 * @param graphics
+	 */
+	private void configureFont(Graphics graphics)
+	{
+		graphics.setFont(new Font ("Sans Serif", Font.BOLD , 11));
+		graphics.setColor(Color.LIGHT_GRAY);
+	}
+
+	/**
+	 * Sets the upcoming priorities.
+	 * 
+	 * @param upcomingPlayerPriorities
+	 */
+	public void setUpcomingPriorities(List<Integer> upcomingPlayerPriorities)
+	{
+		this.upcomingPriorities = new ArrayList<Integer>(upcomingPlayerPriorities);
+	}
+
+	/**
+	 * Sets the current priorities.
+	 * 
+	 * @param playerPrios
+	 */
+	public void setCurrentPrio(List<Integer> playerPrios)
+	{
 		this.currentPriorities = new ArrayList<Integer>(playerPrios);
 	}
 }

@@ -7,47 +7,79 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
 /**
- * TCPServer
+ * InputListener
  *
- * @author Robert Kapeller<rkapeller@gmail.com>
+ * @package   foop.java.snake.client.gui
+ * @author    Robert Kapeller<rkapeller@gmail.com>
+ * @copyright 2013 Alexander Duml, Fabian Grünbichler, Florian Eckerstorfer, Robert Kapeller
  */
-public class InputListener implements KeyListener {
-	private Keycode lastKeyCode;
+public class InputListener implements KeyListener
+{
+	/**
+	 * The previously pressed key. 
+	 */
+	private Keycode lastKeyCode = Keycode.IGNORE;
+	
+	/**
+	 * The input handler.
+	 */
 	private InputHandler inputHandler;
 
-	public InputListener(InputHandler inputHandler) {
+	/**
+	 * Constructor
+	 * 
+	 * @param inputHandler
+	 */
+	public InputListener(InputHandler inputHandler)
+	{
 		this.inputHandler = inputHandler;
-		lastKeyCode = Keycode.IGNORE;
 	}
 
+	/**
+	 * Key pressed event.
+	 * 
+	 * @param event
+	 */
 	@Override
-	public void keyPressed(KeyEvent arg0) {
-		// getExtendedKeyCode() is only available in Java 7. It is absolutely required?
-		// int currentKeyCode = arg0.getExtendedKeyCode();
-		int currentKeyCode = arg0.getKeyCode();
-
-		Keycode convertedKeyCode = convertKeycode(currentKeyCode);
+	public void keyPressed(KeyEvent event)
+	{
+		Keycode convertedKeyCode = convertKeycode(event.getKeyCode());
+		
+		// Only handle when the user pressed a valid key
 		if (convertedKeyCode != Keycode.IGNORE) {
+			// Only react when the user pressed a different key
 			if (lastKeyCode != convertedKeyCode) {
 				lastKeyCode = convertedKeyCode;
 				inputHandler.handleInput(lastKeyCode);
 			}
-			System.out.println("Orig: " + currentKeyCode);
-			System.out.println("Conv: " + convertedKeyCode);
+			System.out.println("Pressed key: " + convertedKeyCode);
 		}
 	}
 
+	/**
+	 * Key released event. Do nothing.
+	 * 
+	 * @param event
+	 */
 	@Override
-	public void keyReleased(KeyEvent arg0) {
-		// TODO Auto-generated method stub
-	}
+	public void keyReleased(KeyEvent event) {}
 
+	/**
+	 * Key typed event. Do nothing.
+	 * 
+	 * @param event
+	 */
 	@Override
-	public void keyTyped(KeyEvent arg0) {
-		// TODO Auto-generated method stub
-	}
+	public void keyTyped(KeyEvent event) {}
 
-	private Keycode convertKeycode(int extendedKeycode) {
+	/**
+	 * Convert the given key code into something more meaningful.
+	 * 
+	 * @param extendedKeycode
+	 * @return
+	 */
+	private Keycode convertKeycode(int extendedKeycode)
+	{
 		switch (extendedKeycode) {
 			case 65: // 'A'
 			case 37: // Arrow Left
@@ -67,5 +99,4 @@ public class InputListener implements KeyListener {
 				return Keycode.IGNORE;
 		}
 	}
-
 }
