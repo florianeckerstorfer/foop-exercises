@@ -3,7 +3,6 @@ package foop.java.snake.server.gameloop;
 import foop.java.snake.common.board.Board;
 import foop.java.snake.common.board.SnakeHeadDirection;
 import foop.java.snake.common.message.BoardMessage;
-import foop.java.snake.common.message.GameOverMessage;
 import foop.java.snake.common.message.InputMessage;
 import foop.java.snake.common.message.PlayerInfoMessage;
 import foop.java.snake.common.message.PrioChangeMessage;
@@ -15,6 +14,7 @@ import foop.java.snake.common.snake.Snake;
 import foop.java.snake.common.tcp.TCPClient;
 import foop.java.snake.common.tcp.TCPClientRegistry;
 import foop.java.snake.server.gameloop.ai.AiDirectionStrategyInterface;
+import foop.java.snake.server.gameloop.collisiondetection.CollisionDetectionStrategyInterface;
 
 import java.awt.*;
 import java.io.IOException;
@@ -65,7 +65,7 @@ public class GameLoop extends Thread implements Observer
 	 */
 	private Board board = new Board(30, 30);
 	
-	private List<Integer> iDsToRemove = new ArrayList<Integer>();
+	private List<Integer> idsToRemove = new ArrayList<Integer>();
 	/**
 	 * indicates if new prio shall be sent
 	 */
@@ -82,23 +82,32 @@ public class GameLoop extends Thread implements Observer
 	int initialMaxSnakeLength = 8;
 	int initialMinSnakeLength = 3;
 
-	private int DEAD_SNAKE_ID = 0;
-	
 	private AiDirectionStrategyInterface aiDirectionStrategy;
 	
+	/**
+	 * The priority manager
+	 */
 	private PriorityManager priorityManager;
+
+	/**
+	 * The collision detection strategy
+	 */
+	private CollisionDetectionStrategyInterface collisionDetectionStrategy;
 
 	/**
 	 * Constructor.
 	 *
 	 * @param playerRegistry
 	 */
-	public GameLoop(PlayerRegistry playerRegistry, TCPClientRegistry clientRegistry, AiDirectionStrategyInterface aiDirectionStrategy, PriorityManager priorityManager)
+	public GameLoop(PlayerRegistry playerRegistry, TCPClientRegistry clientRegistry,
+			AiDirectionStrategyInterface aiDirectionStrategy, PriorityManager priorityManager,
+			CollisionDetectionStrategyInterface collisionDetectionStrategy)
 	{
 		this.playerRegistry = playerRegistry;
 		this.clientRegistry = clientRegistry;
 		this.aiDirectionStrategy = aiDirectionStrategy;
 		this.priorityManager = priorityManager;
+		this.collisionDetectionStrategy = collisionDetectionStrategy;
 	}
 
 	/**
@@ -216,8 +225,8 @@ public class GameLoop extends Thread implements Observer
 			this.snakes.put(p.getId(), new Snake(p.getId(), new Point(xPos, yPos), initialSnakeLength, Snake.Direction.DOWN, board.getColumns(), board.getRows()));
 		}
 
-		//add dead snake
-		this.snakes.put(DEAD_SNAKE_ID, new DeadSnake());
+		// Add dead snake
+		snakes.put(CollisionDetectionStrategyInterface.DEAD_SNAKE_ID, new DeadSnake());
 		drawSnakesOnBoard();
 	}
 
@@ -249,70 +258,7 @@ public class GameLoop extends Thread implements Observer
 		}
 //        this.board = this.nextBoard;
 	}
-
-	/**
-	 * Handles head collisions, snake with higher priority wins.
-	 * @param s1	snake 1
-	 * @param s2	snake 2
-	 */
-	private void handlePriorityCollision(ISnake s1, ISnake s2)
-	{
-		int id = priorityManager.compare(s1.getId(), s2.getId());
-		if (s1.getId() == id) {
-			handleCollision(s1, s2);
-		} else if (s2.getId() == id) {
-			handleCollision(s2, s1);
-		}
-	}
-
-	/**
-	 * Handle collision, the winning snake grows and the losing snake is cut at the collision point.
-	 * @param s1	winning snake
-	 * @param s2	losing snake
-	 */
-	private void handleCollision(ISnake s1, ISnake s2)
-	{
-		s1.grow();
-		List<Point> cutBodyParts = s2.cut(s1.getHead());
-
-		if(s2.getId() == DEAD_SNAKE_ID) {
-			return;
-		}
-
-		if (cutBodyParts != null) {
-			if (s2.getHead() == null) {
-				// TODO remove dead snake
-				sendGameOverMessage(s2.getId(), s1.getId());
-				iDsToRemove.add(s2.getId());
-			}
-			DeadSnake deadSnake = (DeadSnake) this.snakes.get(DEAD_SNAKE_ID);
-			deadSnake.addBodyParts(cutBodyParts);
-		}
-	}
-	/**
-	 * Sends a gameOver-Message to the given player
-	 * @param playerId
-	 */
-	private void sendGameOverMessage(int lostId, int winningId)
-	{
-		System.out.println("Sending messages to players");
-		Player lostPlayer = playerRegistry.getPlayerById(lostId);
-		
-		// Don't send a game over message when the snake is computer-controlled
-		if (lostPlayer.isAi()) {
-			return;
-		}
-		
-		// Send a GameOver message
-		try {
-			String message = playerRegistry.getPlayerById(winningId).getName();;
-			TCPClient client = this.clientRegistry.getClient(lostPlayer.getAddress());
-			client.sendMessage(new GameOverMessage("You lost!\n" + message + " killed you!"));
-		} catch (IOException e) {
-			System.out.println("Error while sending to " + lostPlayer.getName());
-		}
-	}
-
+	
 	private void detectCollForSnake(ISnake snake)
 	{
 		for (ISnake s2 : snakes.values()) {
@@ -322,18 +268,19 @@ public class GameLoop extends Thread implements Observer
 
 			if (s2.checkPosition(snake.getHead()) == ISnake.SnakePart.HEAD) {
 				System.out.println("case1: Snake head " + snake.getId() + " on snake head " + s2.getId());
-				handlePriorityCollision(snake, s2);
+				collisionDetectionStrategy.handleHeadCollision(snakes, idsToRemove, snake, s2);
 			} else if (s2.checkPosition(snake.getHead()) == ISnake.SnakePart.BODY) {
 				if (snake.checkPosition(s2.getHead()) == ISnake.SnakePart.BODY) {
 					System.out.println("case2: Snake head " + snake.getId() + " on snake head " + s2.getId());
-					handlePriorityCollision(snake, s2);
+					collisionDetectionStrategy.handleHeadCollision(snakes, idsToRemove, snake, s2);
 				} else {
 					System.out.println("case3: Snake head " + snake.getId() + " on snake body " + s2.getId());
-					handleCollision(snake, s2);
+					collisionDetectionStrategy.handleCollision(snakes, idsToRemove, snake, s2);
 				}
 			}
 		}
 	}
+	
 	/**
 	 * Converts from {@link Snake.Direction} to {@link SnakeHeadDirection}
 	 *
@@ -386,7 +333,7 @@ public class GameLoop extends Thread implements Observer
 		// Snake killed? what to do? I assume, that the player is no longer in the list then...
 		// In this first iteration of the final solution I just move the snake and draw it on the board
 		
-		iDsToRemove.clear();
+		idsToRemove.clear();
 		
 		for (Player player : playerRegistry.getPlayers()) {
 			ISnake snake = snakes.get(player.getId());
@@ -408,14 +355,14 @@ public class GameLoop extends Thread implements Observer
 			detectCollForSnake(snakes.get(player.getId()));
 		}
 		// remove all data of "eaten" snakes
-		for (int i: iDsToRemove) {
+		for (int i: idsToRemove) {
 			snakes.remove(new Integer(i));
 			priorityManager.getPriorities().remove(new Integer(i));
 			priorityManager.getUpcomingPriorities().remove(new Integer(i));
 			playerRegistry.removesPlayer(playerRegistry.getPlayerById(i));
 		}
 		// send new list of participating players
-		if (iDsToRemove.size() > 0) {
+		if (idsToRemove.size() > 0) {
 			sendPlayerMessages();
 			prioChanged=true;
 		}

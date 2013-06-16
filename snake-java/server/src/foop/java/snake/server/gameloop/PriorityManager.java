@@ -26,6 +26,13 @@ public class PriorityManager
 	 */
 	private List<Integer> upcomingPriorities;
 	
+	/**
+	 * Initializes the priority lists.
+	 * 
+	 * @param playerRegistry
+	 * 
+	 * @return true
+	 */
 	public Boolean init(PlayerRegistry playerRegistry)
 	{
 		System.out.println("init Priorities for " + playerRegistry.getPlayerCount() + " player");
@@ -50,6 +57,8 @@ public class PriorityManager
 	/**
 	 * Changes / sets the players priorities. Initially random and later on just
 	 * "rolling through". So strictly spoken the next prio... is not necessary....
+	 * 
+	 * @return true
 	 */
 	public Boolean update()
 	{
