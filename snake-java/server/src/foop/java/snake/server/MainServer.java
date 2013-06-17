@@ -67,9 +67,11 @@ class MainServer {
 		AiDirectionStrategyInterface aiDirectionStrategy = new SimpleAiDirectionStrategy();
 		PriorityManager priorityManager = new PriorityManager();
 		MessageHandler messageHandler = new MessageHandler(playerRegistry, clientRegistry);
-		CollisionDetectionStrategyInterface collisionDetectionStrategy = new SimpleCollisionDetectionStrategy(priorityManager, messageHandler);
+		CollisionDetectionStrategyInterface collisionDetectionStrategy = new SimpleCollisionDetectionStrategy(
+				priorityManager, messageHandler);
 		
-		GameLoop gameLoop = new GameLoop(playerRegistry, clientRegistry, aiDirectionStrategy, priorityManager, collisionDetectionStrategy);
+		GameLoop gameLoop = new GameLoop(playerRegistry, aiDirectionStrategy, priorityManager, 
+				collisionDetectionStrategy, messageHandler);
 		gameLoop.start();
 
 		try {

@@ -14,9 +14,24 @@ import java.util.List;
  */
 public class PlayerRegistry
 {
+	/**
+	 * List of players.
+	 */
 	protected List<Player> players = new ArrayList<Player>();
+	
+	/**
+	 * Queue of available player IDs.
+	 */
 	protected static Deque<Integer> playerIDs = new ArrayDeque<Integer>();
+	
+	/**
+	 * Maximum player ID.
+	 */
 	private static final int maxPlayerID = 15;
+	
+	/**
+	 * Pseudo ID when no more IDs are available.
+	 */
 	private static final int noPlayerID = -1;
 
 	/**

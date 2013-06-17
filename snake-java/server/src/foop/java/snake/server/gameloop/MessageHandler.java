@@ -1,8 +1,13 @@
 package foop.java.snake.server.gameloop;
 
 import java.io.IOException;
+import java.util.List;
 
+import foop.java.snake.common.board.Board;
+import foop.java.snake.common.message.BoardMessage;
 import foop.java.snake.common.message.GameOverMessage;
+import foop.java.snake.common.message.PlayerInfoMessage;
+import foop.java.snake.common.message.PrioChangeMessage;
 import foop.java.snake.common.player.Player;
 import foop.java.snake.common.player.PlayerRegistry;
 import foop.java.snake.common.tcp.TCPClient;
@@ -17,6 +22,59 @@ public class MessageHandler
 	{
 		this.playerRegistry = playerRegistry;
 		this.clientRegistry = clientRegistry;
+	}
+	
+	/**
+	 * Sends the {@see PlayerInfoMessage} to all players.
+	 * 
+	 */
+	public void sendPlayerInfoMessage()
+	{
+		System.out.println("Sending initial player messages to players");
+		List<Player> players = playerRegistry.getPlayers();
+		for (Player player : players) {
+			if (!player.isAi()) {
+				try {
+					TCPClient client = clientRegistry.getClient(player.getAddress());
+					client.sendMessage(new PlayerInfoMessage(players));
+				} catch (IOException e) {
+					System.out.println("Error while sending to " + player.getName());
+					// Remove the player from the list of players
+					players.remove(player);
+				}
+			}
+		}
+	}
+	
+	public void sendBoardMessage(Board board)
+	{
+		System.out.println("Sending board messages to players");
+		for (Player player : playerRegistry.getPlayers()) {
+			if (!player.isAi()) {
+				try {
+					TCPClient client = clientRegistry.getClient(player.getAddress());
+					client.sendMessage(new BoardMessage(board));
+				} catch (IOException e) {
+					System.out.println("Error while sending to " + player.getName());
+				}
+			}
+		}
+	}
+	
+	public void sendPrioChangeMessage(PriorityManager priorityManager)
+	{
+		System.out.println("Sending prio change messages to players");
+		for (Player player : playerRegistry.getPlayers()) {
+			if (!player.isAi()) {
+				try {
+					TCPClient client = clientRegistry.getClient(player.getAddress());
+					System.out.println("before sending: currPrios/nextPrios: " + priorityManager.getPriorities().size() + "/" + priorityManager.getUpcomingPriorities().size());
+					client.sendMessage(new PrioChangeMessage(priorityManager.getPriorities(), priorityManager.getUpcomingPriorities()));
+				} catch (IOException e) {
+					System.out.println("Error while sending to " + player.getName());
+				}
+			}
+		}
 	}
 	
 	/**

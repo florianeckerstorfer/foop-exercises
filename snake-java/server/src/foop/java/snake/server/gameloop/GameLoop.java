@@ -2,22 +2,16 @@ package foop.java.snake.server.gameloop;
 
 import foop.java.snake.common.board.Board;
 import foop.java.snake.common.board.SnakeHeadDirection;
-import foop.java.snake.common.message.BoardMessage;
 import foop.java.snake.common.message.InputMessage;
-import foop.java.snake.common.message.PlayerInfoMessage;
-import foop.java.snake.common.message.PrioChangeMessage;
 import foop.java.snake.common.player.Player;
 import foop.java.snake.common.player.PlayerRegistry;
 import foop.java.snake.common.snake.DeadSnake;
 import foop.java.snake.common.snake.ISnake;
 import foop.java.snake.common.snake.Snake;
-import foop.java.snake.common.tcp.TCPClient;
-import foop.java.snake.common.tcp.TCPClientRegistry;
 import foop.java.snake.server.gameloop.ai.AiDirectionStrategyInterface;
 import foop.java.snake.server.gameloop.collisiondetection.CollisionDetectionStrategyInterface;
 
 import java.awt.*;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -58,7 +52,6 @@ public class GameLoop extends Thread implements Observer
 	 * Stores the player registry
 	 */
 	private PlayerRegistry playerRegistry;
-	private TCPClientRegistry clientRegistry;
 
 	/**
 	 * Stores the current board
@@ -95,19 +88,24 @@ public class GameLoop extends Thread implements Observer
 	private CollisionDetectionStrategyInterface collisionDetectionStrategy;
 
 	/**
+	 * The message handler.
+	 */
+	private MessageHandler messageHandler;
+
+	/**
 	 * Constructor.
 	 *
 	 * @param playerRegistry
 	 */
-	public GameLoop(PlayerRegistry playerRegistry, TCPClientRegistry clientRegistry,
+	public GameLoop(PlayerRegistry playerRegistry,
 			AiDirectionStrategyInterface aiDirectionStrategy, PriorityManager priorityManager,
-			CollisionDetectionStrategyInterface collisionDetectionStrategy)
+			CollisionDetectionStrategyInterface collisionDetectionStrategy, MessageHandler messageHandler)
 	{
 		this.playerRegistry = playerRegistry;
-		this.clientRegistry = clientRegistry;
 		this.aiDirectionStrategy = aiDirectionStrategy;
 		this.priorityManager = priorityManager;
 		this.collisionDetectionStrategy = collisionDetectionStrategy;
+		this.messageHandler = messageHandler;
 	}
 
 	/**
@@ -147,13 +145,19 @@ public class GameLoop extends Thread implements Observer
 					}
 					this.initSnakes();
 					prioChanged = priorityManager.init(playerRegistry);
-					this.sendPlayerMessages();
-					this.sendMessages();
+					messageHandler.sendPlayerInfoMessage();
+					messageHandler.sendBoardMessage(board);
+					if (prioChanged) {
+						messageHandler.sendPrioChangeMessage(priorityManager);
+					}
 				}
 			} else {
 				// Normal game loop iteration. Move snakes and send messages
 				this.calculateSnakeMovement();
-				this.sendMessages();
+				messageHandler.sendBoardMessage(board);
+				if (prioChanged) {
+					messageHandler.sendPrioChangeMessage(priorityManager);
+				}
 			}
 
 			// Check if we need to change the priorities
@@ -168,24 +172,6 @@ public class GameLoop extends Thread implements Observer
 				e.printStackTrace();
 			}
 			loopCount++;
-		}
-	}
-
-	private void sendPlayerMessages()
-	{
-		System.out.println("Sending initial player messages to players");
-		List<Player> players = playerRegistry.getPlayers();
-		for (Player player : players) {
-			if (!player.isAi()) {
-				try {
-					TCPClient client = clientRegistry.getClient(player.getAddress());
-					client.sendMessage(new PlayerInfoMessage(players));
-				} catch (IOException e) {
-					System.out.println("Error while sending to " + player.getName());
-					// Remove the player from the list of players
-					players.remove(player);
-				}
-			}
 		}
 	}
 
@@ -363,37 +349,13 @@ public class GameLoop extends Thread implements Observer
 		}
 		// send new list of participating players
 		if (idsToRemove.size() > 0) {
-			sendPlayerMessages();
+			messageHandler.sendPlayerInfoMessage();
 			prioChanged=true;
 		}
 		
 		this.drawSnakesOnBoard();
 		
 	}
-
-	private void sendMessages()
-	{
-		System.out.println("Sending messages to players");
-		List<Player> players = this.playerRegistry.getPlayers();
-		for (Player player : players) {
-			if (!player.isAi()) {
-				try {
-					TCPClient client = this.clientRegistry.getClient(player.getAddress());
-					client.sendMessage(new BoardMessage(this.board));
-					if (prioChanged) {
-						System.out.println("before sending: currPrios/nextPrios: " + priorityManager.getPriorities().size() + "/" + priorityManager.getUpcomingPriorities().size());
-						client.sendMessage(new PrioChangeMessage(priorityManager.getPriorities(), priorityManager.getUpcomingPriorities()));
-					}
-				} catch (IOException e) {
-					System.out.println("Error while sending to " + player.getName());
-				}
-			}
-		}
-		if (prioChanged)
-			prioChanged = false;
-	}
-
-
 
 	@Override
 	public void update(Observable o, Object arg)
