@@ -12,7 +12,7 @@ import java.util.HashMap;
  * @author    Florian Eckerstorfer <florian@eckerstorfer.co>
  * @copyright 2013 Alexander Duml, Fabian Grünbichler, Florian Eckerstorfer, Robert Kapeller
  */
-public class TCPClientRegistry
+public class TCPClientRegistry implements ClientRegistryInterface
 {
 	/**
 	 * List of registered clients.
@@ -25,7 +25,7 @@ public class TCPClientRegistry
 	 * @param address
 	 * @return
 	 */
-	public TCPClient getClient(SocketAddress address)
+	public ClientInterface getClient(SocketAddress address)
 		throws UnknownHostException, IOException
 	{
 		if (clients.containsKey(address)) {

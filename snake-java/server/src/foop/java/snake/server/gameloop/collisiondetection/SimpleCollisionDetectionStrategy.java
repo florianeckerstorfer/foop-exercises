@@ -41,14 +41,42 @@ public class SimpleCollisionDetectionStrategy implements
 	}
 	
 	/**
+	 * Detects if the given snake collides with another snake.
+	 * 
+	 * @param snakes
+	 * @param idsToRemove
+	 * @param snake
+	 */
+	public void detectCollision(Map<Integer, ISnake> snakes, List<Integer> idsToRemove, ISnake snake)
+	{
+		for (ISnake s2 : snakes.values()) {
+			if (snake == s2) {
+				continue;
+			}
+
+			if (s2.checkPosition(snake.getHead()) == ISnake.SnakePart.HEAD) {
+				System.out.println("case1: Snake head " + snake.getId() + " on snake head " + s2.getId());
+				handleHeadCollision(snakes, idsToRemove, snake, s2);
+			} else if (s2.checkPosition(snake.getHead()) == ISnake.SnakePart.BODY) {
+				if (snake.checkPosition(s2.getHead()) == ISnake.SnakePart.BODY) {
+					System.out.println("case2: Snake head " + snake.getId() + " on snake head " + s2.getId());
+					handleHeadCollision(snakes, idsToRemove, snake, s2);
+				} else {
+					System.out.println("case3: Snake head " + snake.getId() + " on snake body " + s2.getId());
+					handleCollision(snakes, idsToRemove, snake, s2);
+				}
+			}
+		}
+	}
+	
+	/**
 	 * Handles head collisions, snake with higher priority wins.
 	 * 
 	 * @param snakes The list of snakes
 	 * @param snake1 The first snake
 	 * @param snake2 The second snake
 	 */
-	@Override
-	public void handleHeadCollision(Map<Integer, ISnake> snakes, List<Integer> idsToRemove, ISnake snake1, ISnake snake2)
+	private void handleHeadCollision(Map<Integer, ISnake> snakes, List<Integer> idsToRemove, ISnake snake1, ISnake snake2)
 	{
 		int winner = priorityManager.compare(snake1.getId(), snake2.getId());
 		
@@ -68,8 +96,7 @@ public class SimpleCollisionDetectionStrategy implements
 	 * 
 	 * @return TRUE when the loser is dead, FALSE when otherwise.
 	 */
-	@Override
-	public void handleCollision(Map<Integer, ISnake> snakes, List<Integer> idsToRemove, ISnake winner, ISnake loser)
+	private void handleCollision(Map<Integer, ISnake> snakes, List<Integer> idsToRemove, ISnake winner, ISnake loser)
 	{
 		winner.grow();
 		List<Point> cutBodyParts = loser.cut(winner.getHead());

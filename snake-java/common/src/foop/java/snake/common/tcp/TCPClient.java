@@ -15,7 +15,7 @@ import java.net.UnknownHostException;
  * @author    Florian Eckerstorfer <florian@eckerstorfer.co>
  * @copyright 2013 Alexander Duml, Fabian Grünbichler, Florian Eckerstorfer, Robert Kapeller
  */
-public class TCPClient
+public class TCPClient implements ClientInterface
 {
 	/**
 	 * The socket
@@ -55,8 +55,7 @@ public class TCPClient
 	 *
 	 * @param message
 	 */
-	public void sendMessage(MessageInterface message)
-		throws IOException
+	public void sendMessage(MessageInterface message) throws IOException
 	{
 		if (socket.isClosed()) {
 			open();
@@ -72,8 +71,7 @@ public class TCPClient
 	 * @throws UnknownHostException
 	 * @throws IOException
 	 */
-	public void open()
-		throws UnknownHostException, IOException
+	public void open() throws UnknownHostException, IOException
 	{
 		//System.out.println("TCPClient: Opening new socket to "+((InetSocketAddress)address).getAddress()+":"+((InetSocketAddress)address).getPort());
 		socket = new Socket();
@@ -86,8 +84,7 @@ public class TCPClient
 	 * 
 	 * @throws IOException
 	 */
-	public void close()
-		throws IOException
+	public void close() throws IOException
 	{
 		//System.out.println("TCPClient: Closing socket to "+((InetSocketAddress)socket.getRemoteSocketAddress()).getAddress()+":"+socket.getPort());
 		outputStream.close();

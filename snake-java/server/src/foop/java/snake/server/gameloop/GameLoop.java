@@ -7,6 +7,7 @@ import foop.java.snake.common.player.Player;
 import foop.java.snake.common.player.PlayerRegistry;
 import foop.java.snake.common.snake.DeadSnake;
 import foop.java.snake.common.snake.ISnake;
+import foop.java.snake.common.snake.Movement;
 import foop.java.snake.common.snake.Snake;
 import foop.java.snake.server.gameloop.ai.AiDirectionStrategyInterface;
 import foop.java.snake.server.gameloop.collisiondetection.CollisionDetectionStrategyInterface;
@@ -22,7 +23,7 @@ import java.util.Observer;
 /**
  * GameLoop
  *
- * @package   foop.java.snake.common.message.handler
+ * @package   foop.java.snake.server.gameloop
  * @author    Florian Eckerstorfer <florian@eckerstorfer.co>
  * @copyright 2013 Alexander Duml, Fabian Grünbichler, Florian Eckerstorfer, Robert Kapeller
  */
@@ -208,7 +209,7 @@ public class GameLoop extends Thread implements Observer
 		for (Player p : players) {
 			xPos = xPos + diffX;
 			int initialSnakeLength = (int) ((double) initialMaxSnakeLength * Math.random() + initialMinSnakeLength);
-			this.snakes.put(p.getId(), new Snake(p.getId(), new Point(xPos, yPos), initialSnakeLength, Snake.Direction.DOWN, board.getColumns(), board.getRows()));
+			this.snakes.put(p.getId(), new Snake(p.getId(), new Point(xPos, yPos), initialSnakeLength, Movement.Direction.DOWN, board.getColumns(), board.getRows()));
 		}
 
 		// Add dead snake
@@ -228,14 +229,14 @@ public class GameLoop extends Thread implements Observer
 		for (ISnake snake : snakes.values()) {
 			int id = snake.getId();
 			List<Point> body = snake.getSnakeBody();
-			Snake.Direction dir = snake.getCurrentDirection();
+			Movement.Direction dir = snake.getCurrentDirection();
 			for (int i = 0; i < body.size(); i++) {
 				Point pos = body.get(i);
 				byte snakeDirectionOnBoard;
 
 				if (i == 0) {
 					// We are drawing the head
-					snakeDirectionOnBoard = convertDirection(dir);
+					snakeDirectionOnBoard = Movement.convertDirection(dir);
 				} else {
 					snakeDirectionOnBoard = SnakeHeadDirection.snakeBody;
 				}
@@ -245,74 +246,6 @@ public class GameLoop extends Thread implements Observer
 //        this.board = this.nextBoard;
 	}
 	
-	private void detectCollForSnake(ISnake snake)
-	{
-		for (ISnake s2 : snakes.values()) {
-			if (snake == s2) {
-				continue;
-			}
-
-			if (s2.checkPosition(snake.getHead()) == ISnake.SnakePart.HEAD) {
-				System.out.println("case1: Snake head " + snake.getId() + " on snake head " + s2.getId());
-				collisionDetectionStrategy.handleHeadCollision(snakes, idsToRemove, snake, s2);
-			} else if (s2.checkPosition(snake.getHead()) == ISnake.SnakePart.BODY) {
-				if (snake.checkPosition(s2.getHead()) == ISnake.SnakePart.BODY) {
-					System.out.println("case2: Snake head " + snake.getId() + " on snake head " + s2.getId());
-					collisionDetectionStrategy.handleHeadCollision(snakes, idsToRemove, snake, s2);
-				} else {
-					System.out.println("case3: Snake head " + snake.getId() + " on snake body " + s2.getId());
-					collisionDetectionStrategy.handleCollision(snakes, idsToRemove, snake, s2);
-				}
-			}
-		}
-	}
-	
-	/**
-	 * Converts from {@link Snake.Direction} to {@link SnakeHeadDirection}
-	 *
-	 * @param dir
-	 * @return
-	 */
-	private byte convertDirection(Snake.Direction dir)
-	{
-		switch (dir) {
-			case UP:
-				return SnakeHeadDirection.snakeHeadUp;
-			case DOWN:
-				return SnakeHeadDirection.snakeHeadDown;
-			case LEFT:
-				return SnakeHeadDirection.snakeHeadLeft;
-			case RIGHT:
-				return SnakeHeadDirection.snakeHeadRight;
-			case NONE:
-			default:
-				return SnakeHeadDirection.noSnake;
-		}
-	}
-
-	/**
-	 * Converts from {@link InputMessage.Keycode} to {@link Snake.Direction}
-	 *
-	 * @param key
-	 * @return
-	 */
-	private Snake.Direction convertKeyCodeToDist(InputMessage.Keycode key)
-	{
-		switch (key) {
-			case UP:
-				return Snake.Direction.UP;
-			case DOWN:
-				return Snake.Direction.DOWN;
-			case LEFT:
-				return Snake.Direction.LEFT;
-			case RIGHT:
-				return Snake.Direction.RIGHT;
-			case IGNORE:
-			default:
-				return Snake.Direction.NONE;
-		}
-	}
-
 	private void calculateSnakeMovement()
 	{
 		// loop over all players and move their snakes accordingly
@@ -333,12 +266,12 @@ public class GameLoop extends Thread implements Observer
 
 			InputMessage.Keycode key = player.getKeycode();
 			if (key != null) {
-				snake.move(convertKeyCodeToDist(key));
+				snake.move(Movement.convertKeyCodeToDirection(key));
 			} else {
 				// keep the snake moving to current direction
 				snake.move();
 			}
-			detectCollForSnake(snakes.get(player.getId()));
+			collisionDetectionStrategy.detectCollision(snakes, idsToRemove, snakes.get(player.getId()));
 		}
 		// remove all data of "eaten" snakes
 		for (int i: idsToRemove) {

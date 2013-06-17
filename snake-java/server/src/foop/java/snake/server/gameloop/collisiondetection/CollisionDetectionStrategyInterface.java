@@ -16,6 +16,5 @@ public interface CollisionDetectionStrategyInterface
 {
 	Integer DEAD_SNAKE_ID = 0;
 	
-	public void handleHeadCollision(Map<Integer, ISnake> snakes, List<Integer> idsToRemove, ISnake snake1, ISnake snake2);
-	public void handleCollision(Map<Integer, ISnake> snakes, List<Integer> idsToRemove, ISnake winner, ISnake loser);
+	public void detectCollision(Map<Integer, ISnake> snakes, List<Integer> idsToRemove, ISnake snake);
 }

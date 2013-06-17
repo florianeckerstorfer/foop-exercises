@@ -1,7 +1,7 @@
 package foop.java.snake.server.gameloop.ai;
 
 import foop.java.snake.common.message.InputMessage.Keycode;
-import foop.java.snake.common.snake.ISnake.Direction;
+import foop.java.snake.common.snake.Movement;
 
 /**
  * Simple, random-based strategy for computer-controlled snakes to change their direction.
@@ -13,7 +13,7 @@ import foop.java.snake.common.snake.ISnake.Direction;
 public class SimpleAiDirectionStrategy implements AiDirectionStrategyInterface
 {
 	@Override
-	public Keycode newDirection(Direction currentDirection)
+	public Keycode newDirection(Movement.Direction currentDirection)
 	{
 		Double decision = Math.random();
 		switch (currentDirection) {

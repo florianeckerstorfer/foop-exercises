@@ -8,6 +8,7 @@ import foop.java.snake.common.message.handler.MessageHandlerRegistry;
 import foop.java.snake.common.message.handler.RegisterMessageHandler;
 import foop.java.snake.common.message.handler.UnregisterMessageHandler;
 import foop.java.snake.common.player.PlayerRegistry;
+import foop.java.snake.common.tcp.ClientRegistryInterface;
 import foop.java.snake.common.tcp.TCPClientRegistry;
 import foop.java.snake.common.tcp.TCPServer;
 import foop.java.snake.server.gameloop.GameLoop;
@@ -25,8 +26,10 @@ import java.io.IOException;
  *
  * @author Florian Eckerstorfer <florian@eckerstorfer.co>
  */
-class MainServer {
-	public static void main(String[] args) {
+class MainServer
+{
+	public static void main(String[] args)
+	{
 		if (args.length < 1) {
 			usage();
 		}
@@ -40,7 +43,8 @@ class MainServer {
 	 *
 	 * @return
 	 */
-	protected static void usage() {
+	protected static void usage()
+	{
 		System.out.println("Usage: java -jar snake-server.jar PORT");
 		System.exit(0);
 	}
@@ -53,7 +57,8 @@ class MainServer {
 	 * @param args
 	 * @return
 	 */
-	public MainServer(String[] args) {
+	public MainServer(String[] args)
+	{
 		port = Integer.parseInt(args[0]);
 	}
 
@@ -63,7 +68,7 @@ class MainServer {
 	public void run()
 	{
 		PlayerRegistry playerRegistry = new PlayerRegistry();
-		TCPClientRegistry clientRegistry = new TCPClientRegistry();
+		ClientRegistryInterface clientRegistry = new TCPClientRegistry();
 		AiDirectionStrategyInterface aiDirectionStrategy = new SimpleAiDirectionStrategy();
 		PriorityManager priorityManager = new PriorityManager();
 		MessageHandler messageHandler = new MessageHandler(playerRegistry, clientRegistry);
@@ -99,7 +104,8 @@ class MainServer {
 	 *
 	 * @param ex
 	 */
-	protected void exitWithError(IOException ex) {
+	protected void exitWithError(IOException ex)
+	{
 		System.out.println("MainServer: There was some error with the TCP connection:\n" + ex.getMessage());
 		System.exit(0);
 	}
@@ -109,7 +115,8 @@ class MainServer {
 	 *
 	 * @param ex
 	 */
-	protected void exitWithError(ClassNotFoundException ex) {
+	protected void exitWithError(ClassNotFoundException ex)
+	{
 		System.out.println("MainServer: Couldn't understand received message:\n" + ex.getMessage());
 		System.exit(0);
 	}
@@ -119,7 +126,8 @@ class MainServer {
 	 *
 	 * @param ex
 	 */
-	protected void exitWithError(Exception ex) {
+	protected void exitWithError(Exception ex)
+	{
 		System.out.println("MainServer: Oh no! Something went wrong:\n" + ex.getMessage());
 		System.exit(0);
 	}

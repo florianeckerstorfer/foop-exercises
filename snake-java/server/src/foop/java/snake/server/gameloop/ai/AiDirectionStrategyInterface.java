@@ -1,7 +1,7 @@
 package foop.java.snake.server.gameloop.ai;
 
 import foop.java.snake.common.message.InputMessage.Keycode;
-import foop.java.snake.common.snake.Snake;
+import foop.java.snake.common.snake.Movement;
 
 /**
  * Interface for classes that implement a strategy to make decisions on how a computer controlled snake
@@ -19,5 +19,5 @@ public interface AiDirectionStrategyInterface
 	 * @param currentDirection
 	 * @return
 	 */
-	public Keycode newDirection(Snake.Direction currentDirection);
+	public Keycode newDirection(Movement.Direction currentDirection);
 }

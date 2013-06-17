@@ -10,15 +10,29 @@ import foop.java.snake.common.message.PlayerInfoMessage;
 import foop.java.snake.common.message.PrioChangeMessage;
 import foop.java.snake.common.player.Player;
 import foop.java.snake.common.player.PlayerRegistry;
-import foop.java.snake.common.tcp.TCPClient;
-import foop.java.snake.common.tcp.TCPClientRegistry;
+import foop.java.snake.common.tcp.ClientInterface;
+import foop.java.snake.common.tcp.ClientRegistryInterface;
 
+/**
+ * MessageHandler
+ *
+ * @package   foop.java.snake.server.gameloop
+ * @author    Florian Eckerstorfer <florian@eckerstorfer.co>
+ * @copyright 2013 Alexander Duml, Fabian Grünbichler, Florian Eckerstorfer, Robert Kapeller
+ */
 public class MessageHandler
 {
+	/**
+	 * Player registry.
+	 */
 	private PlayerRegistry playerRegistry;
-	private TCPClientRegistry clientRegistry;
+	
+	/**
+	 * Client registry.
+	 */
+	private ClientRegistryInterface clientRegistry;
 
-	public MessageHandler(PlayerRegistry playerRegistry, TCPClientRegistry clientRegistry)
+	public MessageHandler(PlayerRegistry playerRegistry, ClientRegistryInterface clientRegistry)
 	{
 		this.playerRegistry = playerRegistry;
 		this.clientRegistry = clientRegistry;
@@ -35,7 +49,7 @@ public class MessageHandler
 		for (Player player : players) {
 			if (!player.isAi()) {
 				try {
-					TCPClient client = clientRegistry.getClient(player.getAddress());
+					ClientInterface client = clientRegistry.getClient(player.getAddress());
 					client.sendMessage(new PlayerInfoMessage(players));
 				} catch (IOException e) {
 					System.out.println("Error while sending to " + player.getName());
@@ -52,7 +66,7 @@ public class MessageHandler
 		for (Player player : playerRegistry.getPlayers()) {
 			if (!player.isAi()) {
 				try {
-					TCPClient client = clientRegistry.getClient(player.getAddress());
+					ClientInterface client = clientRegistry.getClient(player.getAddress());
 					client.sendMessage(new BoardMessage(board));
 				} catch (IOException e) {
 					System.out.println("Error while sending to " + player.getName());
@@ -67,7 +81,7 @@ public class MessageHandler
 		for (Player player : playerRegistry.getPlayers()) {
 			if (!player.isAi()) {
 				try {
-					TCPClient client = clientRegistry.getClient(player.getAddress());
+					ClientInterface client = clientRegistry.getClient(player.getAddress());
 					System.out.println("before sending: currPrios/nextPrios: " + priorityManager.getPriorities().size() + "/" + priorityManager.getUpcomingPriorities().size());
 					client.sendMessage(new PrioChangeMessage(priorityManager.getPriorities(), priorityManager.getUpcomingPriorities()));
 				} catch (IOException e) {
@@ -95,7 +109,7 @@ public class MessageHandler
 		// Send a GameOver message
 		try {
 			String message = playerRegistry.getPlayerById(winningId).getName();;
-			TCPClient client = clientRegistry.getClient(lostPlayer.getAddress());
+			ClientInterface client = clientRegistry.getClient(lostPlayer.getAddress());
 			client.sendMessage(new GameOverMessage("You lost!\n" + message + " killed you!"));
 		} catch (IOException e) {
 			System.out.println("Error while sending to " + lostPlayer.getName());

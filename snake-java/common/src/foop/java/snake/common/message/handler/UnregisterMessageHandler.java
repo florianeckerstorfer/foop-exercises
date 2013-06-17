@@ -4,7 +4,7 @@ import foop.java.snake.common.message.MessageInterface;
 import foop.java.snake.common.message.UnregisterMessage;
 import foop.java.snake.common.message.exception.NoMessageHandlerFoundException;
 import foop.java.snake.common.player.PlayerRegistry;
-import foop.java.snake.common.tcp.TCPClientRegistry;
+import foop.java.snake.common.tcp.ClientRegistryInterface;
 
 import java.net.SocketAddress;
 
@@ -19,10 +19,17 @@ import java.net.SocketAddress;
  */
 public class UnregisterMessageHandler implements MessageHandlerInterface
 {
+	/**
+	 * Player registry.
+	 */
 	protected PlayerRegistry playerRegistry;
-	protected TCPClientRegistry clientRegistry;
+	
+	/**
+	 * Client registry.
+	 */
+	protected ClientRegistryInterface clientRegistry;
 
-	public UnregisterMessageHandler(PlayerRegistry playerRegistry, TCPClientRegistry clientRegistry)
+	public UnregisterMessageHandler(PlayerRegistry playerRegistry, ClientRegistryInterface clientRegistry)
 	{
 		this.playerRegistry = playerRegistry;
 		this.clientRegistry = clientRegistry;

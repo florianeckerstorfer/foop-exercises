@@ -13,15 +13,6 @@ import java.util.List;
 public interface ISnake
 {
 	/**
-	 * Enum to define movement-directions.
-	 * Possible values are UP, DOWN, LEFT, RIGHT and NONE
-	 */
-	public enum Direction
-	{
-		UP, DOWN, LEFT, RIGHT, NONE
-	}
-
-	/**
 	 * Enum to define snake pody parts
 	 * Possible values are HEAD, BODY, NONE
 	 */
@@ -68,11 +59,11 @@ public interface ISnake
 
 	/**
 	 * Moves the snake in the given direction
-	 * Sets the {@link Direction} flag.
+	 * Sets the {@link Movement.Direction} flag.
 	 *
 	 * @param dir  Direction the snake is moved
 	 */
-	public void move(Direction dir);
+	public void move(Movement.Direction dir);
 
 	/**
 	 * Moves he snake into current direction.
@@ -98,7 +89,7 @@ public interface ISnake
 	 * @param size including head (size of smaller or equal to 1 means that only the head remains
 	 * @param dir  Direction the head points to
 	 */
-	public void setSize(int size, Direction dir);
+	public void setSize(int size, Movement.Direction dir);
 
 	/**
 	 * Sets the head of the snake to the given position.
@@ -119,9 +110,9 @@ public interface ISnake
 	/**
 	 * Returns the direction the snake is currently heading
 	 *
-	 * @return {@link Direction}
+	 * @return {@link Movement.Direction}
 	 */
-	public Direction getCurrentDirection();
+	public Movement.Direction getCurrentDirection();
 
 	/**
 	 * Appends the previously cut tail, if there's any.

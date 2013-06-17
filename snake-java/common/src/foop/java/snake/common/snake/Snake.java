@@ -16,7 +16,7 @@ import java.util.List;
 public class Snake implements ISnake
 {
 	private LinkedList<Point> snakeBody = new LinkedList<Point>(); // this will be the snake...
-	private Direction currentDirection = Direction.NONE;
+	private Movement.Direction currentDirection = Movement.Direction.NONE;
 	private int boardX = 0;    // the world, the snake is living on
 	private int boardY = 0;
 	private int id = 0;
@@ -27,9 +27,9 @@ public class Snake implements ISnake
 	 *
 	 * @param position position of the head of the snake
 	 * @param size     including head (size of smaller or equal to 1 means that only the head remains
-	 * @param dir      direction the head points ( see {@link Direction})
+	 * @param dir      direction the head points ( see {@link Movement.Direction})
 	 */
-	public Snake(int id, Point position, int size, Direction dir, int boardWidth, int boardHeight)
+	public Snake(int id, Point position, int size, Movement.Direction dir, int boardWidth, int boardHeight)
 	{
 		setId(id);
 		setBoardSize(boardWidth, boardHeight);
@@ -110,7 +110,7 @@ public class Snake implements ISnake
 	}
 
 	@Override
-	public void move(Direction dir)
+	public void move(Movement.Direction dir)
 	{
 		if (snakeBody.size() == 0) {
 			return;
@@ -121,14 +121,14 @@ public class Snake implements ISnake
 		int y = snakeBody.peekFirst().y;
 
 		// to avoid useless movings...
-		if (dir == Direction.NONE) {
+		if (dir == Movement.Direction.NONE) {
 			dir = currentDirection;
 		}
 		
 		// the ifs are necessary to avoid self-"eating"
 		switch (dir) {
 			case UP:
-				if (currentDirection != Direction.DOWN) {
+				if (currentDirection != Movement.Direction.DOWN) {
 					y--;
 					currentDirection = dir;
 				} else {
@@ -136,7 +136,7 @@ public class Snake implements ISnake
 				}
 				break;
 			case DOWN:
-				if (currentDirection != Direction.UP) {
+				if (currentDirection != Movement.Direction.UP) {
 					y++;
 					currentDirection = dir;
 				} else {
@@ -144,7 +144,7 @@ public class Snake implements ISnake
 				}
 				break;
 			case LEFT:
-				if (currentDirection != Direction.RIGHT) {
+				if (currentDirection != Movement.Direction.RIGHT) {
 					x--;
 					currentDirection = dir;
 				} else {
@@ -152,7 +152,7 @@ public class Snake implements ISnake
 				}
 				break;
 			case RIGHT:
-				if (currentDirection != Direction.LEFT) {
+				if (currentDirection != Movement.Direction.LEFT) {
 					x++;
 					currentDirection = dir;
 				} else {
@@ -184,7 +184,7 @@ public class Snake implements ISnake
 	}
 
 	@Override
-	public void setSize(int size, Direction dir)
+	public void setSize(int size, Movement.Direction dir)
 	{
 		// TODO untested
 		int currentSize = snakeBody.size();
@@ -259,7 +259,7 @@ public class Snake implements ISnake
 	}
 
 	@Override
-	public Direction getCurrentDirection()
+	public Movement.Direction getCurrentDirection()
 	{
 		return currentDirection;
 	}

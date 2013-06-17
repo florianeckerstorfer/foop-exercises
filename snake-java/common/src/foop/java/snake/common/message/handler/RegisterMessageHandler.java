@@ -7,8 +7,8 @@ import foop.java.snake.common.message.RegisterMessage;
 import foop.java.snake.common.message.exception.NoMessageHandlerFoundException;
 import foop.java.snake.common.player.Player;
 import foop.java.snake.common.player.PlayerRegistry;
-import foop.java.snake.common.tcp.TCPClient;
-import foop.java.snake.common.tcp.TCPClientRegistry;
+import foop.java.snake.common.tcp.ClientInterface;
+import foop.java.snake.common.tcp.ClientRegistryInterface;
 
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
@@ -23,9 +23,9 @@ import java.net.SocketAddress;
 public class RegisterMessageHandler implements MessageHandlerInterface
 {
 	protected PlayerRegistry playerRegistry;
-	protected TCPClientRegistry clientRegistry;
+	protected ClientRegistryInterface clientRegistry;
 
-	public RegisterMessageHandler(PlayerRegistry playerRegistry, TCPClientRegistry clientRegistry)
+	public RegisterMessageHandler(PlayerRegistry playerRegistry, ClientRegistryInterface clientRegistry)
 	{
 		this.playerRegistry = playerRegistry;
 		this.clientRegistry = clientRegistry;
@@ -67,7 +67,7 @@ public class RegisterMessageHandler implements MessageHandlerInterface
 		System.out.println("RegisterMessageHandler: address=" + newAddress.getHostName() + ";port=" + newAddress.getPort());
 
 		try {
-			TCPClient client = clientRegistry.getClient(newAddress);
+			ClientInterface client = clientRegistry.getClient(newAddress);
 			client.sendMessage(response);
 		} catch (Exception ex) {
 			System.out.println("RegisterMessageHandler: Couldn\'t send response to \"" + ((InetSocketAddress) newAddress).getHostName() + ":" + ((InetSocketAddress) newAddress).getPort() + "\".");

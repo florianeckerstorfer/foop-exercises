@@ -64,8 +64,8 @@ public class DeadSnake implements ISnake
 	}
 
 	@Override
-	public Direction getCurrentDirection() {
-		return Direction.NONE;
+	public Movement.Direction getCurrentDirection() {
+		return Movement.Direction.NONE;
 	}
 
 	@Override
@@ -77,7 +77,7 @@ public class DeadSnake implements ISnake
 	public void setId(int id) {}
 
 	@Override
-	public void move(Direction dir) {}
+	public void move(Movement.Direction dir) {}
 
 	@Override
 	public void move() {}
@@ -86,7 +86,7 @@ public class DeadSnake implements ISnake
 	public void setBoardSize(int sizeX, int sizeY) {}
 
 	@Override
-	public void setSize(int size, Direction dir) {}
+	public void setSize(int size, Movement.Direction dir) {}
 
 	@Override
 	public void setHeadPosition(Point position) {}
