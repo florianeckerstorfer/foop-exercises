@@ -14,6 +14,7 @@ import foop.java.snake.common.tcp.TCPServer;
 import foop.java.snake.server.gameloop.GameLoop;
 import foop.java.snake.server.gameloop.MessageHandler;
 import foop.java.snake.server.gameloop.PriorityManager;
+import foop.java.snake.server.gameloop.SnakeManager;
 import foop.java.snake.server.gameloop.ai.AiDirectionStrategyInterface;
 import foop.java.snake.server.gameloop.ai.SimpleAiDirectionStrategy;
 import foop.java.snake.server.gameloop.collisiondetection.CollisionDetectionStrategyInterface;
@@ -74,9 +75,9 @@ class MainServer
 		MessageHandler messageHandler = new MessageHandler(playerRegistry, clientRegistry);
 		CollisionDetectionStrategyInterface collisionDetectionStrategy = new SimpleCollisionDetectionStrategy(
 				priorityManager, messageHandler);
+		SnakeManager snakeManager = new SnakeManager(playerRegistry,  priorityManager, aiDirectionStrategy, collisionDetectionStrategy);
 		
-		GameLoop gameLoop = new GameLoop(playerRegistry, aiDirectionStrategy, priorityManager, 
-				collisionDetectionStrategy, messageHandler);
+		GameLoop gameLoop = new GameLoop(playerRegistry, priorityManager,  messageHandler, snakeManager);
 		gameLoop.start();
 
 		try {

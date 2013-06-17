@@ -60,14 +60,15 @@ public class PriorityManager
 	 * 
 	 * @return true
 	 */
-	public Boolean update()
+	public void update(MessageHandler messageHandler)
 	{
 		List<Integer> nextPrios = priorities;
 		Collections.shuffle(nextPrios);
 		priorities = upcomingPriorities;
 		upcomingPriorities = nextPrios;
 
-		return true; // send them during next senMessage()
+		// Send message to clients
+		messageHandler.sendPrioChangeMessage(this);
 	}
 	
 	/**
