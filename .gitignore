@@ -23,3 +23,6 @@ snake-java/bin
 
 # Mac files
 *.DS_store
+
+# eiffel
+EIFGENs
