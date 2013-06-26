@@ -1,8 +1,5 @@
 note
-	description: "Summary description for {STUDENT_ACCOUNT}."
-	author: ""
-	date: "$Date$"
-	revision: "$Revision$"
+	description: "Retiree class, inherts from person"
 
 class
 	PERSON_RETIREE
@@ -12,6 +9,16 @@ inherit
 
 create
 	make
+
+feature -- setter
+	set_retiree_number (new_number: STRING)
+		do
+			retiree_number := new_number
+		end
+
+feature -- access
+	retiree_number: STRING
+		-- Pensionisten Nummer
 
 end
 

@@ -1,5 +1,5 @@
 note
-	description: "Summary description for {ACCOUNT}."
+	description: "Normal bank account"
 
 class
 	ACCOUNT
@@ -15,6 +15,7 @@ create
 
 feature {NONE} -- initialize
 	make (signer: PERSON new_amount: DOUBLE c_limit: DOUBLE d_interest: DOUBLE c_interest: DOUBLE)
+		-- constructor
 		require
 			min_amount: amount >= 0
 		do
@@ -23,11 +24,13 @@ feature {NONE} -- initialize
 			set_debit_interest(d_interest)
 			set_credit_interest(c_interest)
 
+			set_owner (signer)
 			add_signer (signer)
 		end
 
-feature --change elements
+feature -- element change
 	deposit (sum: DOUBLE)
+		-- deposit money
 		require
 			transaction_ok: sum >= min_sum
 		do
@@ -35,6 +38,7 @@ feature --change elements
 		end
 
 	disburse (sum: DOUBLE)
+		-- disburse money
 		require
 			transaction_ok: sum >= min_sum
 		do
@@ -44,6 +48,7 @@ feature --change elements
 		end
 
 	transfer (payee: ACCOUNT sum: DOUBLE)
+		-- transfer money to different account
 		require
 			payee_ok: payee /= Void
 			transaction_ok: sum >= min_sum
@@ -70,6 +75,11 @@ feature -- setter
 			credit_interest := new_credit_interest
 		end
 
+	set_owner (new_owner: PERSON)
+		do
+			owner := new_owner
+		end
+
 	add_signer (signer: PERSON)
 		do
 			if signers = Void then
@@ -87,6 +97,8 @@ feature -- accesss
 		-- Habenverzinsung
 	credit_interest: DOUBLE assign set_credit_interest
 		-- Sollverzinsung		
+	owner: PERSON
+		-- Besitzer
 	signers: LINKED_LIST[PERSON]
 		-- Zeichnungsberechtigte, erster Zeichnungberechtigter ist der Besitzer des Kontos
 
@@ -97,38 +109,45 @@ feature -- constants
 		end
 
 	min_sum: DOUBLE
+		-- minimum amount of money of banking action
 		once
 			Result := 2
 		end
 
 	min_debit_interest: DOUBLE
+		-- minimal debit interest
 		once
 			Result := 0.01
 		end
 	max_debit_interest: DOUBLE
+		-- maximal debit interest
 		once
 			Result := 0.75
 		end
 
 	min_credit_interest: DOUBLE
+		-- maximal credit interest
 		once
 			Result := 0.1
 		end
 
 	max_credit_interest: DOUBLE
+		-- minimal credit interest
 		once
 			Result := 0.5
 		end
 
 	min_credit_limit: DOUBLE
+		-- minimal credit limit
 		once
 			Result := -1000
 		end
 
 feature --output
 	out: STRING
+		-- return the whole information of the account in a printable string
 		do
-			Result := "%N" + account_type + "%NOwner: " + signers.first.name + "%NSigners: "
+			Result := "%N" + account_type + "%NOwner: " + owner.name + "%NSigners: "
 
 			across signers as signer
 			loop

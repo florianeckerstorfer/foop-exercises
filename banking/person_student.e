@@ -1,8 +1,5 @@
 note
-	description: "Summary description for {STUDENT_ACCOUNT}."
-	author: ""
-	date: "$Date$"
-	revision: "$Revision$"
+	description: "Student class, inherts from person"
 
 class
 	PERSON_STUDENT
@@ -12,5 +9,15 @@ inherit
 
 create
 	make
-	
+
+feature -- setter
+	set_matriculation_number (new_number: STRING)
+		do
+			matriculation_number := new_number
+		end
+
+feature -- access
+	matriculation_number: STRING
+		-- Matrikelnummer
+
 end
