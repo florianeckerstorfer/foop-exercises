@@ -16,7 +16,8 @@ inherit
 			max_debit_interest,
 			min_credit_interest,
 			max_credit_interest,
-			min_credit_limit
+			min_credit_limit,
+			owner
 		end
 
 create
@@ -38,6 +39,10 @@ feature -- setter
 		ensure then
 			only_one_signer: signers.count.abs = 1
 		end
+
+feature -- access
+	owner: PERSON_STUDENT
+		-- Student
 
 feature -- constants
 	account_type: STRING
