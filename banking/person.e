@@ -1,8 +1,5 @@
 note
-	description: "Summary description for {PERSON}."
-	author: ""
-	date: "$Date$"
-	revision: "$Revision$"
+	description: "Person class"
 
 class
 	PERSON
@@ -13,7 +10,7 @@ create
 feature
 	name: STRING
 
-feature {NONE}
+feature -- initilaize
 	make(person_name: STRING)
 	do
 		name := person_name

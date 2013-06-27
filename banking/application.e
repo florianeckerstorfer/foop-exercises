@@ -24,7 +24,7 @@ feature {NONE} -- Initialization
 			account_student: ACCOUNT_STUDENT
 			account_retiree: ACCOUNT_RETIREE
 
-			account_cat_call: ACCOUNT_RETIREE
+			account_cat_call: ACCOUNT -- ACCOUNT_RETIREE
 		do
 			print ("%N%NBANKING APPLICATION%N")
 
@@ -73,12 +73,12 @@ feature {NONE} -- Initialization
 
 			-- create cat call
 			-- http://dev.eiffel.com/Covariance_through_renaming
+			print ("%N%N%NCAT CALL:%N=========%N")
 			account_cat_call := account_retiree
 			account_cat_call.set_owner (student)
 
-			print ("%N%N%NCAT CALL:%N=========%N")
 			print(account_cat_call.out)
-			-- print("%NRetiree number (via account): " + account_cat_call.owner.retiree_number);
+			--print("%NRetiree number (via account): " + account_cat_call.owner.retiree_number);
 		end
 
 end

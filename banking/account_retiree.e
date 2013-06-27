@@ -1,5 +1,5 @@
 note
-	description: "Summary description for {ACCOUNT_RETIREE}."
+	description: "Retiree account for retirees, inherts from account"
 
 class
 	ACCOUNT_RETIREE
@@ -8,7 +8,7 @@ inherit
 	ACCOUNT
 		rename
 			make as make_account
-		redefine
+		redefine	-- redefine/overwrite functions/constants/variables
 			add_signer,
 			account_type,
 			min_sum,
@@ -17,14 +17,16 @@ inherit
 			min_credit_interest,
 			max_credit_interest,
 			min_credit_limit,
-			owner
+			owner,
+			set_owner
 		end
 
 create
 	make
 
-feature {NONE} -- initialize
+feature -- initialize
 	make (retiree: PERSON_RETIREE new_amount: DOUBLE c_limit: DOUBLE d_interest: DOUBLE c_interest: DOUBLE)
+		-- constructor calls constructor of inherited class
 		do
 			make_account(retiree, new_amount, c_limit, d_interest, c_interest)
 		end
@@ -40,6 +42,11 @@ feature -- setter
 			only_one_signer: signers.count.abs = 1
 		end
 
+	set_owner (new_owner: PERSON_RETIREE)
+		do
+			owner := new_owner
+		end
+
 feature -- access
 	owner: PERSON_RETIREE
 		-- Pensionist
@@ -51,6 +58,7 @@ feature -- constants
 		end
 
 	min_sum: DOUBLE
+		-- minimum amount of money of banking action
 		once
 			Result := 1
 		end

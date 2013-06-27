@@ -13,7 +13,7 @@ inherit
 create
 	make
 
-feature {NONE} -- initialize
+feature -- initialize
 	make (signer: PERSON new_amount: DOUBLE c_limit: DOUBLE d_interest: DOUBLE c_interest: DOUBLE)
 		-- constructor
 		require
