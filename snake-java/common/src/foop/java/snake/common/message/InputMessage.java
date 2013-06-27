@@ -5,8 +5,8 @@ package foop.java.snake.common.message;
  *
  * @package   foop.java.snake.common.message
  * @author    Florian Eckerstorfer <florian@eckerstorfer.co>
- * @author    Fabian Grünbichler
- * @copyright 2013 Alexander Duml, Fabian Grünbichler, Florian Eckerstorfer, Robert Kapeller
+ * @author    Fabian Gr√ºnbichler
+ * @copyright 2013 Alexander Duml, Fabian Gr√ºnbichler, Florian Eckerstorfer, Robert Kapeller
  */
 public class InputMessage implements MessageInterface
 {

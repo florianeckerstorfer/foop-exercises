@@ -9,7 +9,7 @@ import java.util.List;
  * @package   foop.java.snake.common.message
  * @author    Florian Eckerstorfer <florian@eckerstorfer.co>
  * @author    Robert Kapeller <rkapeller@gmail.com>
- * @copyright 2013 Alexander Duml, Fabian Grünbichler, Florian Eckerstorfer, Robert Kapeller
+ * @copyright 2013 Alexander Duml, Fabian Gr√ºnbichler, Florian Eckerstorfer, Robert Kapeller
  */
 //TODO recheck and finish it
 public class PrioChangeMessage implements MessageInterface

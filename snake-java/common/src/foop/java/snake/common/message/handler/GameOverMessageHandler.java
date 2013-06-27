@@ -13,7 +13,7 @@ import foop.java.snake.common.message.exception.NoMessageHandlerFoundException;
  * @package   foop.java.snake.common.message.handler
  * @author    Florian Eckerstorfer <florian@eckerstorfer.co>
  * @author    Robert Kapeller <rkapeller@gmail.com>
- * @copyright 2013 Alexander Duml, Fabian Grünbichler, Florian Eckerstorfer, Robert Kapeller
+ * @copyright 2013 Alexander Duml, Fabian Gr√ºnbichler, Florian Eckerstorfer, Robert Kapeller
  *
  */
 public class GameOverMessageHandler extends Observable implements

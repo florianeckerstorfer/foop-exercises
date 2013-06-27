@@ -10,7 +10,7 @@ import java.awt.*;
  * @package   foop.java.snake.client.gui
  * @author    Alexander Duml
  * @author    Florian Eckerstorfer <florian@eckerstorfer.co>
- * @copyright 2013 Alexander Duml, Fabian Grünbichler, Florian Eckerstorfer, Robert Kapeller  
+ * @copyright 2013 Alexander Duml, Fabian Gr√ºnbichler, Florian Eckerstorfer, Robert Kapeller  
  */
 public class BoardPanel extends JPanel
 {

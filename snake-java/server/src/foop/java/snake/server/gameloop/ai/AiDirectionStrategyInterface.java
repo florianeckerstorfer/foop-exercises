@@ -9,7 +9,7 @@ import foop.java.snake.common.snake.Movement;
  * 
  * @package   foop.java.snake.common.snake
  * @author    Florian Eckerstorfer <florian@eckerstorfer.co>
- * @copyright 2013 Alexander Duml, Fabian Grünbichler, Florian Eckerstorfer, Robert Kapeller
+ * @copyright 2013 Alexander Duml, Fabian Gr√ºnbichler, Florian Eckerstorfer, Robert Kapeller
  */
 public interface AiDirectionStrategyInterface
 {

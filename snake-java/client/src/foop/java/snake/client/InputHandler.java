@@ -12,7 +12,7 @@ import java.io.IOException;
  * 
  * @package   foop.java.snake.client
  * @author    Florian Eckerstorfer <florian@eckerstorfer.co>
- * @copyright 2013 Alexander Duml, Fabian Grünbichler, Florian Eckerstorfer, Robert Kapelle
+ * @copyright 2013 Alexander Duml, Fabian Gr√ºnbichler, Florian Eckerstorfer, Robert Kapelle
  */
 public class InputHandler
 {

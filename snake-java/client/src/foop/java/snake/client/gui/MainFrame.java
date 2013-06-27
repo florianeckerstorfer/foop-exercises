@@ -10,7 +10,7 @@ import java.util.List;
 /**
  * @package   foop.java.snake.client.gui
  * @author    Alexander Duml
- * @copyright 2013 Alexander Duml, Fabian Grünbichler, Florian Eckerstorfer, Robert Kapeller
+ * @copyright 2013 Alexander Duml, Fabian Gr√ºnbichler, Florian Eckerstorfer, Robert Kapeller
  */
 @SuppressWarnings("serial")
 public class MainFrame extends JFrame

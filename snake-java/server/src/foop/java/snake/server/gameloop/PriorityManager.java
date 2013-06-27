@@ -12,7 +12,7 @@ import foop.java.snake.common.player.PlayerRegistry;
  * 
  * @package   foop.java.snake.common.message.handler
  * @author    Florian Eckerstorfer <florian@eckerstorfer.co>
- * @copyright 2013 Alexander Duml, Fabian Grünbichler, Florian Eckerstorfer, Robert Kapeller
+ * @copyright 2013 Alexander Duml, Fabian Gr√ºnbichler, Florian Eckerstorfer, Robert Kapeller
  */
 public class PriorityManager
 {

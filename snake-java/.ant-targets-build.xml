@@ -1,0 +1,17 @@
+clean
+clean-client
+clean-common
+clean-server
+compile
+compile-client
+compile-common
+compile-server
+dist-client
+dist-server
+init-client
+init-common
+init-server
+run-client-1
+run-client-2
+run-client-2b
+run-server

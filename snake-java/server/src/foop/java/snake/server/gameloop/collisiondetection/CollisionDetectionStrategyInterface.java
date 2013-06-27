@@ -10,7 +10,7 @@ import foop.java.snake.common.snake.ISnake;
  * 
  * @package   foop.java.snake.server.gameloop.collisiondetection
  * @author    Florian Eckerstorfer <florian@eckerstorfer.co>
- * @copyright 2013 Alexander Duml, Fabian Grünbichler, Florian Eckerstorfer, Robert Kapeller
+ * @copyright 2013 Alexander Duml, Fabian Gr√ºnbichler, Florian Eckerstorfer, Robert Kapeller
  */
 public interface CollisionDetectionStrategyInterface
 {

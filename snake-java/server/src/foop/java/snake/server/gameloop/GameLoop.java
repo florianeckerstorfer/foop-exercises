@@ -13,7 +13,7 @@ import java.util.Observer;
  *
  * @package   foop.java.snake.server.gameloop
  * @author    Florian Eckerstorfer <florian@eckerstorfer.co>
- * @copyright 2013 Alexander Duml, Fabian Grünbichler, Florian Eckerstorfer, Robert Kapeller
+ * @copyright 2013 Alexander Duml, Fabian Gr√ºnbichler, Florian Eckerstorfer, Robert Kapeller
  */
 public class GameLoop extends Thread implements Observer
 {

@@ -11,7 +11,7 @@ import java.awt.event.KeyListener;
  *
  * @package   foop.java.snake.client.gui
  * @author    Robert Kapeller<rkapeller@gmail.com>
- * @copyright 2013 Alexander Duml, Fabian Grünbichler, Florian Eckerstorfer, Robert Kapeller
+ * @copyright 2013 Alexander Duml, Fabian Gr√ºnbichler, Florian Eckerstorfer, Robert Kapeller
  */
 public class InputListener implements KeyListener
 {

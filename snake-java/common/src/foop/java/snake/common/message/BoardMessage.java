@@ -11,7 +11,7 @@ import foop.java.snake.common.board.Board;
  * @package   foop.java.snake.common.message
  * @author    Robert Kapeller <rkapeller@gmail.com>
  * @author    Florian Eckerstorfer <florian@eckerstorfer.co>
- * @copyright 2013 Alexander Duml, Fabian Grünbichler, Florian Eckerstorfer, Robert Kapeller
+ * @copyright 2013 Alexander Duml, Fabian Gr√ºnbichler, Florian Eckerstorfer, Robert Kapeller
  */
 public class BoardMessage implements MessageInterface
 {
